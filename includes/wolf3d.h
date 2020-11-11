@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:57:39 by jthuy             #+#    #+#             */
-/*   Updated: 2020/09/07 19:58:52 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/11/11 20:03:06 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,8 @@
 # include "SDL_mixer.h"
 
 
-# define WIDTH	2400
-# define HEIGHT	1200
+# define WIDTH	1600
+# define HEIGHT	800
 
 # define PLAYER_ANGLE 0
 
@@ -93,9 +93,16 @@ typedef struct	s_drawer
 
 typedef struct	s_sprite
 {
-	float		x;
-	float		y;
-	Uint32		color;
+	double		pos_x;
+	double		pos_y;
+	double		direction;
+	double		rotator;
+	double		dist;
+	int			size;
+	int			h_offset;
+	int			v_offset;
+	int			cursor_x;
+	int			cursor_y;
 }				t_sprite;
 
 
@@ -117,10 +124,8 @@ void		handling_event(SDL_Event windowEvent, t_player *player);
 ** draw_sprite.c
 */
 void	draw_sprite(t_map *map, t_player *player, int *pixel, int *img, int sprite_poz, int tile_numb, double *z_buff);
-void	draw_door1(t_map *map, t_player *player, int *pixel, int *img, int sprite_poz, int tile_numb, double *z_buff, t_drawer *drawer);
-void	draw_door2(t_map *map, t_player *player, int *pixel, int *img, int tile_numb, double *z_buff, t_drawer *drawer);
-void	draw_door3(t_map *map, t_player *player, int *pixel, int *img, int sprite_poz, int tile_numb, double *z_buff, t_drawer *drawer);
-
+void	def_spriteparam(t_sprite *sprite, int sprite_poz, t_map *map, t_player *player);
+void	draw_vertline(t_sprite *sprite, int *pixel, int *img, int tile_numb, double *z_buff);
 /*
 ** door_sprite.c
 */
