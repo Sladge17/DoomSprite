@@ -1,0 +1,154 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   wolf3d.h                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/07/24 13:57:39 by jthuy             #+#    #+#             */
+/*   Updated: 2020/09/07 19:58:52 by jthuy            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef WOLF3D_H
+# define WOLF3D_H
+
+# include <fcntl.h>
+# include <sys/types.h>
+# include <sys/uio.h>
+# include <unistd.h>
+# include <stdlib.h>
+# include <math.h>
+
+# include <stdio.h>
+
+# include "SDL.h"
+# include "SDL_image.h"
+# include "SDL_mixer.h"
+
+
+# define WIDTH	2400
+# define HEIGHT	1200
+
+# define PLAYER_ANGLE 0
+
+typedef struct	s_map
+{
+	char		*field;
+	int			width;
+	int			height;
+}				t_map;
+
+typedef struct	s_player
+{
+	double		pos_x;
+	double		pos_y;
+	double		angle;
+	double		ray_depth;
+	int			fov;
+}				t_player;
+
+typedef struct	s_drawer
+{
+	int			cursor_x;
+	int			cursor_y;
+	double		ray_angle;
+	double		ray_sin;
+	double		ray_cos;
+	
+	double		raylen_tmp;
+	double		ray_len;
+	
+	double		barrier_x_f;
+	double		barrier_y_f;
+	double		barrier_x_f_tmp;
+	double		barrier_y_f_tmp;
+	int			barrier_x_d;
+	int			barrier_y_d;
+	
+	// for export to project
+	double		ray_tan[2];
+	double		raylen[2];
+	double		barrier_f[2][2];
+	int			barrier_d[2];
+	double		texel[2];
+	int			mapid;
+	char		wall_tile;
+	int			tex_u;
+	int			athlas_pix;
+	
+
+	double		texel_x;
+	double		texel_y;
+
+	
+	char		wall_part; //need rename
+	char		wall_color;
+	double		ray_alpha;
+	int			wall_up;
+	int			wall_down;
+	int			wall_len;
+	
+}				t_drawer;
+
+typedef struct	s_sprite
+{
+	float		x;
+	float		y;
+	Uint32		color;
+}				t_sprite;
+
+
+/*
+** wolf3d.c
+*/
+t_map		*def_map();
+t_player	*def_player(t_map *map);
+t_drawer	*def_drawer();
+void		drawing(t_map *map, t_player *player, t_drawer *drawer, int *pixel, int *img);
+void		def_wallparams(t_player *player, t_drawer *drawer);
+void		draw_room(t_player *player, t_drawer *drawer, int *pixel, int *img);
+void		draw_wall(t_player *player, t_drawer *drawer, int *pixel, int *img);
+int			shift_tile(t_drawer *drawer, int athlas_width, int tile_width, int u_shift, int v_shift, char inverse);
+int			def_pixel(t_drawer *drawer, int tile_u, int tile_v, char inverse);
+void		handling_event(SDL_Event windowEvent, t_player *player);
+
+/*
+** draw_sprite.c
+*/
+void	draw_sprite(t_map *map, t_player *player, int *pixel, int *img, int sprite_poz, int tile_numb, double *z_buff);
+void	draw_door1(t_map *map, t_player *player, int *pixel, int *img, int sprite_poz, int tile_numb, double *z_buff, t_drawer *drawer);
+void	draw_door2(t_map *map, t_player *player, int *pixel, int *img, int tile_numb, double *z_buff, t_drawer *drawer);
+void	draw_door3(t_map *map, t_player *player, int *pixel, int *img, int sprite_poz, int tile_numb, double *z_buff, t_drawer *drawer);
+
+/*
+** door_sprite.c
+*/
+void	draw_door(t_map *map, t_player *player, int *pixel, int *img, int sprite_poz, int tile_numb, double *z_buff, t_drawer *drawer);
+void	draw_door21(t_map *map, t_player *player, int *pixel, int *img, int sprite_poz, int tile_numb, double *z_buff, t_drawer *drawer);
+
+/*
+** door_sprite.c
+*/
+void	def_raylen(t_map *map, t_player *player, t_drawer *drawer);
+char	check_barrier(t_map *map, t_player *player, t_drawer *drawer);
+double	calc_raylen(t_player *player, t_drawer *drawer, char index);
+void	def_barrierparam(t_player *player, t_drawer *drawer, char n_quad);
+void	def_walltile(t_map *map, t_drawer *drawer);
+void	def_walltile_u(t_drawer *drawer);
+
+/*
+** calc_quads.c
+*/
+void	calc_firstquad(t_map *map, t_player *player, t_drawer *drawer);
+void	calc_secondquad(t_map *map, t_player *player, t_drawer *drawer);
+void	calc_thirdquad(t_map *map, t_player *player, t_drawer *drawer);
+void	calc_fourthquad(t_map *map, t_player *player, t_drawer *drawer);
+
+/*
+** draw_ui.c
+*/
+void	draw_ui(int *pixel, int *img, int tile_u, int tile_v);
+
+
+#endif
