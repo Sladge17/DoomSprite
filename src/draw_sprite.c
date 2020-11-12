@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/11 16:24:05 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/11 20:44:50 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/11/12 19:26:16 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,15 +31,13 @@ void	draw_sprite(t_map *map, t_player *player, int *pixel, int *img, int sprite_
 	// else if (sprite->rotator >= 157.5 * M_PI / 180 && sprite->rotator < -157.5 * M_PI / 180)
 	// 	tile_numb = 160;
 	else if (sprite->rotator >= -157.5 * M_PI / 180 && sprite->rotator < -112.5 * M_PI / 180)
-		tile_numb = tile_numb + 5;
+		tile_numb = tile_numb + 3;
 	else if (sprite->rotator >= -112.5 * M_PI / 180 && sprite->rotator < -67.5 * M_PI / 180)
-		tile_numb = tile_numb + 6;
+		tile_numb = tile_numb + 2;
 	else if (sprite->rotator >= -67.5 * M_PI / 180 && sprite->rotator < -22.5 * M_PI / 180)
-		tile_numb = tile_numb + 7;
+		tile_numb = tile_numb + 1;
 	else
 		tile_numb = tile_numb + 4;
-	
-
 	
 	
 	
@@ -82,8 +80,35 @@ void	def_spriteparam(t_sprite *sprite, int sprite_poz, t_map *map, t_player *pla
 	sprite->v_offset = HEIGHT / 2 - sprite->size / 2;
 }
 
+// void	draw_vertline(t_sprite *sprite, int *pixel, int *img, int tile_numb, double *z_buff)
+// {
+// 	sprite->cursor_y = 0;
+// 	while (sprite->cursor_y < sprite->size)
+// 	{
+// 		if (sprite->v_offset + sprite->cursor_y < 0 || sprite->v_offset + sprite->cursor_y >= HEIGHT)
+// 		{
+// 			sprite->cursor_y += 1;
+// 			continue;
+// 		}
+// 		if (img[(int)(65 * (sprite->cursor_x / (double)sprite->size)) + 1039 * (int)(65 * (sprite->cursor_y / (double)sprite->size)) + tile_numb % 16 * 65 + tile_numb / 16 * 1039 * 65] != 0xFF980088 &&
+// 			(int)(65 * (sprite->cursor_x / (double)sprite->size)) != 64 && (int)(65 * (sprite->cursor_y / (double)sprite->size)) != 64 &&
+// 			sprite->dist < z_buff[sprite->h_offset + sprite->cursor_x + WIDTH * (sprite->v_offset + sprite->cursor_y)])
+// 		{
+// 			pixel[sprite->h_offset + sprite->cursor_x + WIDTH * (sprite->v_offset + sprite->cursor_y)] = img[(int)(65 * (sprite->cursor_x / (double)sprite->size)) + 1039 * (int)(65 * (sprite->cursor_y / (double)sprite->size)) + tile_numb % 16 * 65 + tile_numb / 16 * 1039 * 65];
+// 			z_buff[sprite->h_offset + sprite->cursor_x + WIDTH * (sprite->v_offset + sprite->cursor_y)] = sprite->dist;
+// 		}
+// 		sprite->cursor_y += 1;
+// 	}
+// }
 void	draw_vertline(t_sprite *sprite, int *pixel, int *img, int tile_numb, double *z_buff)
 {
+	int		tile_u;
+	int		tile_v;
+
+	tile_u = tile_numb % 16;
+	tile_v = tile_numb / 16;
+	
+	
 	sprite->cursor_y = 0;
 	while (sprite->cursor_y < sprite->size)
 	{
@@ -92,13 +117,41 @@ void	draw_vertline(t_sprite *sprite, int *pixel, int *img, int tile_numb, double
 			sprite->cursor_y += 1;
 			continue;
 		}
-		if (img[(int)(65 * (sprite->cursor_x / (double)sprite->size)) + 1039 * (int)(65 * (sprite->cursor_y / (double)sprite->size)) + tile_numb % 16 * 65 + tile_numb / 16 * 1039 * 65] != 0xFF980088 &&
-			(int)(65 * (sprite->cursor_x / (double)sprite->size)) != 64 && (int)(65 * (sprite->cursor_y / (double)sprite->size)) != 64 &&
-			sprite->dist < z_buff[sprite->h_offset + sprite->cursor_x + WIDTH * (sprite->v_offset + sprite->cursor_y)])
+		
+		if (sprite->rotator < -22.5 * M_PI / 180 && sprite->rotator > -157.5 * M_PI / 180) // NEED THINK ABOUT LIMITS
 		{
-			pixel[sprite->h_offset + sprite->cursor_x + WIDTH * (sprite->v_offset + sprite->cursor_y)] = img[(int)(65 * (sprite->cursor_x / (double)sprite->size)) + 1039 * (int)(65 * (sprite->cursor_y / (double)sprite->size)) + tile_numb % 16 * 65 + tile_numb / 16 * 1039 * 65];
-			z_buff[sprite->h_offset + sprite->cursor_x + WIDTH * (sprite->v_offset + sprite->cursor_y)] = sprite->dist;
+			if (img[(int)(64 * ((sprite->size - sprite->cursor_x - 1) / (double)sprite->size)) + 1039 * (int)(64 * (sprite->cursor_y / (double)sprite->size)) + tile_u * 65 + tile_v * 1039 * 65] != 0xFF980088 &&
+				sprite->dist < z_buff[sprite->h_offset + sprite->cursor_x + WIDTH * (sprite->v_offset + sprite->cursor_y)])
+			{
+				pixel[sprite->h_offset + sprite->cursor_x + WIDTH * (sprite->v_offset + sprite->cursor_y)] = img[(int)(64 * ((sprite->size - sprite->cursor_x - 1) / (double)sprite->size)) + 1039 * (int)(64 * (sprite->cursor_y / (double)sprite->size)) + tile_u * 65 + tile_v * 1039 * 65];
+				z_buff[sprite->h_offset + sprite->cursor_x + WIDTH * (sprite->v_offset + sprite->cursor_y)] = sprite->dist;
+			}
 		}
+		else
+		{
+			if (img[(int)(64 * (sprite->cursor_x / (double)sprite->size)) + 1039 * (int)(64 * (sprite->cursor_y / (double)sprite->size)) + tile_u * 65 + tile_v * 1039 * 65] != 0xFF980088 &&
+				sprite->dist < z_buff[sprite->h_offset + sprite->cursor_x + WIDTH * (sprite->v_offset + sprite->cursor_y)])
+			{
+				pixel[sprite->h_offset + sprite->cursor_x + WIDTH * (sprite->v_offset + sprite->cursor_y)] = img[(int)(64 * (sprite->cursor_x / (double)sprite->size)) + 1039 * (int)(64 * (sprite->cursor_y / (double)sprite->size)) + tile_u * 65 + tile_v * 1039 * 65];
+				z_buff[sprite->h_offset + sprite->cursor_x + WIDTH * (sprite->v_offset + sprite->cursor_y)] = sprite->dist;
+			}
+		}
+		
 		sprite->cursor_y += 1;
 	}
 }
+
+
+
+
+
+// int		def_pixel(t_drawer *drawer, int tile_u, int tile_v, char inverse)
+// {
+// 	drawer->athlas_pix = 65 * tile_u +
+// 		(63 * (drawer->cursor_y - drawer->wall_up) /
+// 		drawer->wall_len) * 1039 + (67535 * tile_v);
+// 	drawer->athlas_pix = inverse ?
+// 		63 - drawer->tex_u + drawer->athlas_pix :
+// 		drawer->tex_u + drawer->athlas_pix;
+// 	return (drawer->athlas_pix);
+// }

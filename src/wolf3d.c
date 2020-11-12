@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:55:30 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/11 20:47:49 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/11/12 18:27:56 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int		main()
 		SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
 	SDL_Surface	*surface = SDL_GetWindowSurface(window);
 	int			*pixel = (int *)surface->pixels;
-	SDL_Surface	*athlas = IMG_Load("resurses/athlas.png");
+	SDL_Surface	*athlas = IMG_Load("resurses/athlas_test.png");
 	int			*img = (int *)athlas->pixels;
 
 	z_buff = (double *)malloc(sizeof(double) * (WIDTH * HEIGHT));
@@ -174,6 +174,7 @@ void	drawing(t_map *map, t_player *player, t_drawer *drawer, int *pixel, int *im
 	{
 		if (map->field[sprite_pos] == 'B')
 			draw_sprite(map, player, pixel, img, sprite_pos, 156, z_buff);
+			// draw_sprite(map, player, pixel, img, sprite_pos, 124, z_buff);
 		sprite_pos += 1;
 	}
 
@@ -363,16 +364,16 @@ void	draw_wall(t_player *player, t_drawer *drawer, int *pixel, int *img)
 	}
 }
 
-int		shift_tile(t_drawer *drawer, int athlas_width, int tile_width, int u_shift, int v_shift, char inverse)
-{
-	int		shift_tile;
+// int		shift_tile(t_drawer *drawer, int athlas_width, int tile_width, int u_shift, int v_shift, char inverse)
+// {
+// 	int		shift_tile;
 
-	if (inverse)
-		shift_tile = (tile_width - 2) - drawer->tex_u + (tile_width * u_shift) + ((tile_width - 2) * (drawer->cursor_y - drawer->wall_up) / drawer->wall_len) * athlas_width + (athlas_width * tile_width * v_shift);
-	else
-		shift_tile = drawer->tex_u + (tile_width * u_shift) + ((tile_width - 2) * (drawer->cursor_y - drawer->wall_up) / drawer->wall_len) * athlas_width + (athlas_width * tile_width * v_shift);
-	return (shift_tile);
-}
+// 	if (inverse)
+// 		shift_tile = (tile_width - 2) - drawer->tex_u + (tile_width * u_shift) + ((tile_width - 2) * (drawer->cursor_y - drawer->wall_up) / drawer->wall_len) * athlas_width + (athlas_width * tile_width * v_shift);
+// 	else
+// 		shift_tile = drawer->tex_u + (tile_width * u_shift) + ((tile_width - 2) * (drawer->cursor_y - drawer->wall_up) / drawer->wall_len) * athlas_width + (athlas_width * tile_width * v_shift);
+// 	return (shift_tile);
+// }
 
 int		def_pixel(t_drawer *drawer, int tile_u, int tile_v, char inverse)
 {
