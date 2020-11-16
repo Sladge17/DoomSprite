@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:55:30 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/12 18:27:56 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/11/16 20:04:42 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,9 @@ int		main()
 {
 	t_map		*map;
 	t_player	*player;
+	t_enemy		*enemies;
 	t_drawer	*drawer;
+
 
 	if (SDL_Init(SDL_INIT_VIDEO))
 		exit(0);
@@ -31,7 +33,7 @@ int		main()
 		SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
 	SDL_Surface	*surface = SDL_GetWindowSurface(window);
 	int			*pixel = (int *)surface->pixels;
-	SDL_Surface	*athlas = IMG_Load("resurses/athlas_test.png");
+	SDL_Surface	*athlas = IMG_Load("resurses/athlas.png");
 	int			*img = (int *)athlas->pixels;
 
 	z_buff = (double *)malloc(sizeof(double) * (WIDTH * HEIGHT));
@@ -52,6 +54,16 @@ int		main()
 		exit(0);
 	}
 
+	if (!(enemies = def_enemies(map)))
+	{
+		SDL_FreeSurface(athlas);
+		SDL_FreeSurface(surface);
+		SDL_DestroyWindow(window);
+		exit(0);
+	}
+	set_enemies(enemies, player);
+	
+
 	if (!(drawer = def_drawer()))
 	{
 		SDL_FreeSurface(athlas);
@@ -69,8 +81,9 @@ int		main()
 			z_buff[i] = 2147483647;
 			i += 1;
 		}
-		handling_event(windowEvent, player);
-		drawing(map, player, drawer, pixel, img);
+		if (handling_event(windowEvent, player))
+			set_enemies(enemies, player);
+		drawing(map, player, enemies, drawer, pixel, img);
 		SDL_UpdateWindowSurface(window);
 	}
 	return (0);
@@ -108,10 +121,10 @@ t_map		*def_map()
 					"1..............1"\
 					"1..............1"\
 					"1......P.......1"\
-					"1.B............1"\
-					"1...........B..1"\
 					"1..............1"\
-					"1......B.......1"\
+					"1..............1"\
+					"1..E...E...E...1"\
+					"1..............1"\
 					"1..............1"\
 					"1..............1"\
 					"1111111111111111";
@@ -149,7 +162,7 @@ t_drawer	*def_drawer()
 	return (drawer);
 }
 
-void	drawing(t_map *map, t_player *player, t_drawer *drawer, int *pixel, int *img)
+void	drawing(t_map *map, t_player *player, t_enemy *enemies, t_drawer *drawer, int *pixel, int *img)
 {
 	drawer->cursor_x = 0;
 	while (drawer->cursor_x < WIDTH)
@@ -169,14 +182,16 @@ void	drawing(t_map *map, t_player *player, t_drawer *drawer, int *pixel, int *im
 	// draw_door(map, player, pixel, img, door_pos, 98, z_buff, drawer);
 
 	
-	int	sprite_pos = map->width + 1;
-	while (sprite_pos < map->width * map->height)
-	{
-		if (map->field[sprite_pos] == 'B')
-			draw_sprite(map, player, pixel, img, sprite_pos, 156, z_buff);
-			// draw_sprite(map, player, pixel, img, sprite_pos, 124, z_buff);
-		sprite_pos += 1;
-	}
+	// int	sprite_pos = map->width + 1;
+	// while (sprite_pos < map->width * map->height)
+	// {
+	// 	if (map->field[sprite_pos] == 'B')
+	// 		draw_sprite(map, player, pixel, img, sprite_pos, 156, z_buff);
+	// 		// draw_sprite(map, player, pixel, img, sprite_pos, 164, z_buff);
+	// 	sprite_pos += 1;
+	// }
+
+	draw_enemies(player, enemies, pixel, img, z_buff);
 
 	
 	// draw_ui(pixel, img, 0, 33);
@@ -442,14 +457,14 @@ int		def_pixel(t_drawer *drawer, int tile_u, int tile_v, char inverse)
 // 	}
 // }
 
-void	handling_event(SDL_Event windowEvent, t_player *player)
+char	handling_event(SDL_Event windowEvent, t_player *player)
 {
 	if (SDL_PollEvent(&windowEvent))
 	{
 		if (windowEvent.type == SDL_KEYUP)
 		{
 			SDL_FlushEvent(SDL_KEYDOWN);
-			return ;
+			return (1);  //MAYBE NEED RETURT 0
 		}
 		if (windowEvent.type == SDL_QUIT ||
 		(windowEvent.type == SDL_KEYDOWN && windowEvent.key.keysym.sym == SDLK_ESCAPE))
@@ -458,25 +473,25 @@ void	handling_event(SDL_Event windowEvent, t_player *player)
 		{
 			player->pos_x += 0.1 * sin(player->angle + (90 * M_PI / (double)180));
 			player->pos_y += 0.1 * cos(player->angle + (90 * M_PI / (double)180));
-			return ;
+			return (1);
 		}
 		if (windowEvent.type == SDL_KEYDOWN && windowEvent.key.keysym.sym == SDLK_d)
 		{
 			player->pos_x -= 0.1 * sin(player->angle + (90 * M_PI / (double)180));
 			player->pos_y -= 0.1 * cos(player->angle + (90 * M_PI / (double)180));
-			return ;
+			return (1);
 		}
 		if (windowEvent.type == SDL_KEYDOWN && windowEvent.key.keysym.sym == SDLK_w)
 		{
 			player->pos_x += 0.1 * sin(player->angle);
 			player->pos_y += 0.1 * cos(player->angle);
-			return ;
+			return (1);
 		}
 		if (windowEvent.type == SDL_KEYDOWN && windowEvent.key.keysym.sym == SDLK_s)
 		{
 			player->pos_x -= 0.1 * sin(player->angle);
 			player->pos_y -= 0.1 * cos(player->angle);
-			return ;
+			return (1);
 		}
 		if (windowEvent.type == SDL_KEYDOWN && windowEvent.key.keysym.sym == SDLK_q)
 		{
@@ -485,7 +500,7 @@ void	handling_event(SDL_Event windowEvent, t_player *player)
 			// 	player->angle -= 2 * M_PI;
 			if (player->angle >= 2 * M_PI)
 				player->angle -= 2 * M_PI;
-			return ;
+			return (1);
 		}
 		if (windowEvent.type == SDL_KEYDOWN && windowEvent.key.keysym.sym == SDLK_e)
 		{
@@ -494,15 +509,16 @@ void	handling_event(SDL_Event windowEvent, t_player *player)
 			// 	player->angle = 2 * M_PI + player->angle;
 			if (player->angle < 0)
 				player->angle = 2 * M_PI + player->angle;
-			return ;
+			return (1);
 		}
 		if (windowEvent.type == SDL_KEYDOWN && windowEvent.key.keysym.sym == SDLK_z)
 		{
 			player->pos_x = 1; // Координата игрока по оси X
 			player->pos_y = 1; // Координата игрока по оси Y
 			player->angle = 0; // Направление игрока
-			return ;
+			return (1);
 		}
 	}
+	return (0);
 }
 

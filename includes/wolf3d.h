@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:57:39 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/11 20:03:06 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/11/16 18:14:14 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,11 @@ typedef struct	s_sprite
 	double		pos_x;
 	double		pos_y;
 	double		direction;
+	
 	double		rotator;
+	double		dev_coax;
+	double		normal;
+	
 	double		dist;
 	int			size;
 	int			h_offset;
@@ -105,6 +109,35 @@ typedef struct	s_sprite
 	int			cursor_y;
 }				t_sprite;
 
+typedef struct		s_enemy
+{
+	double			pos_x;
+	double			pos_y;
+	double			normal;
+	int				main_tile;
+	
+	int				tile;
+	double			g_dir;
+	double			p_dir;
+	double			dist;
+	int				size;
+	int				shift_x;
+	int				h_offset;
+	int				v_offset;
+	struct s_enemy	*next;
+}					t_enemy;
+
+
+/*
+** enemies.c
+*/
+t_enemy	*def_enemies(t_map *map);
+void	set_enemies(t_enemy *enemies, t_player *player);
+void	draw_enemies(t_player *player, t_enemy *enemies, int *pixel, int *img, double *z_buff);
+void	draw_vertline2(t_enemy *sprite, int *pixel, int *img, double *z_buff, int cursor_x);
+void	print_enemies(t_enemy *enemies);
+
+
 
 /*
 ** wolf3d.c
@@ -112,13 +145,13 @@ typedef struct	s_sprite
 t_map		*def_map();
 t_player	*def_player(t_map *map);
 t_drawer	*def_drawer();
-void		drawing(t_map *map, t_player *player, t_drawer *drawer, int *pixel, int *img);
+void		drawing(t_map *map, t_player *player, t_enemy *enemies, t_drawer *drawer, int *pixel, int *img);
 void		def_wallparams(t_player *player, t_drawer *drawer);
 void		draw_room(t_player *player, t_drawer *drawer, int *pixel, int *img);
 void		draw_wall(t_player *player, t_drawer *drawer, int *pixel, int *img);
 int			shift_tile(t_drawer *drawer, int athlas_width, int tile_width, int u_shift, int v_shift, char inverse);
 int			def_pixel(t_drawer *drawer, int tile_u, int tile_v, char inverse);
-void		handling_event(SDL_Event windowEvent, t_player *player);
+char		handling_event(SDL_Event windowEvent, t_player *player);
 
 /*
 ** draw_sprite.c

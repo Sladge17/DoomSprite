@@ -1,4 +1,4 @@
-NAME = wolf3d
+NAME = sprite_test
 # FLAG = -Wall -Wextra -Werror
 FLAG = -g
 
@@ -10,6 +10,7 @@ SRC_LIST =	wolf3d.c \
 			draw_room.c \
 			calc_quads.c \
 			draw_sprite.c \
+			enemies.c \
 			draw_ui.c \
 			draw_door.c
 # SRC_LIST = wolf2.c
