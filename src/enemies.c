@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/16 12:57:17 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/18 14:39:48 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/11/18 15:59:42 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,48 +51,35 @@ void	set_enemies(t_enemy *enemies, t_player *player)
 {
 	while (enemies)
 	{
-		enemies->g_dir = atan2(enemies->pos_x - player->pos_x, enemies->pos_y - player->pos_y);
+		enemies->p_div = enemies->normal - player->angle;
+		if (enemies->p_div < -180 * M_PI / 180)
+			enemies->p_div = 360 * M_PI / 180 + enemies->p_div;
+		if (enemies->p_div > 180 * M_PI / 180)
+			enemies->p_div = -360 * M_PI / 180 + enemies->p_div;
 
-
-
-		
-		if (fabs(player->angle - enemies->normal) >= 157.5 * M_PI / 180 && fabs(player->angle - enemies->normal) < 202.5 * M_PI / 180)
+		if (fabs(enemies->p_div) >= 157.5 * M_PI / 180)
 			enemies->tile = enemies->main_tile;
-		else if ((fabs(player->angle - enemies->normal) >= 112.5 * M_PI / 180 && fabs(player->angle - enemies->normal) < 157.5 * M_PI / 180) ||
-				(fabs(player->angle - enemies->normal) >= 202.5 * M_PI / 180 && fabs(player->angle - enemies->normal) < 247.5 * M_PI / 180))
+		if (fabs(enemies->p_div) >= 112.5 * M_PI / 180 && fabs(enemies->p_div) < 157.5 * M_PI / 180)
 			enemies->tile = enemies->main_tile + 1;
-		else if ((fabs(player->angle - enemies->normal) >= 67.5 * M_PI / 180 && fabs(player->angle - enemies->normal) < 112.5 * M_PI / 180) ||
-				(fabs(player->angle - enemies->normal) >= 247.5 * M_PI / 180 && fabs(player->angle - enemies->normal) < 292.5 * M_PI / 180))
+		if (fabs(enemies->p_div) >= 67.5 * M_PI / 180 && fabs(enemies->p_div) < 112.5 * M_PI / 180)
 			enemies->tile = enemies->main_tile + 2;
-		else if ((fabs(player->angle - enemies->normal) >= 22.5 * M_PI / 180 && fabs(player->angle - enemies->normal) < 67.5 * M_PI / 180) ||
-				(fabs(player->angle - enemies->normal) >= 292.5 * M_PI / 180 && fabs(player->angle - enemies->normal) < 337.5 * M_PI / 180))
+		if (fabs(enemies->p_div) >= 22.5 * M_PI / 180 && fabs(enemies->p_div) < 67.5 * M_PI / 180)
 			enemies->tile = enemies->main_tile + 3;
-		else
-		{
+		if (fabs(enemies->p_div) < 22.5 * M_PI / 180)
 			enemies->tile = enemies->main_tile + 4;
-		}
-		
-
 	
-
-		enemies->p_dir = enemies->g_dir;
+		enemies->p_dir = atan2(enemies->pos_x - player->pos_x, enemies->pos_y - player->pos_y);
 		if (enemies->p_dir - player->angle > M_PI)
 			enemies->p_dir -= 2 * M_PI; 
 		if (enemies->p_dir - player->angle < -M_PI)
 			enemies->p_dir += 2 * M_PI;
-		enemies->p_dir = enemies->p_dir - player->angle;
+		enemies->p_dir -= player->angle;
+		enemies->shift_x = WIDTH / 2 - (enemies->p_dir * (WIDTH) / (player->fov));
 		
 		enemies->dist = sqrt(pow(enemies->pos_x - player->pos_x, 2) + pow(enemies->pos_y - player->pos_y, 2));
 		enemies->size = (int)(HEIGHT * 2 / enemies->dist);
-		enemies->shift_x = WIDTH / 2 - (enemies->p_dir * (WIDTH) / (player->fov));
 		enemies->h_offset = enemies->shift_x - enemies->size / 2;
 		enemies->v_offset = HEIGHT / 2 - enemies->size / 2;
-
-		enemies->p_div = enemies->normal - player->angle;
-		if (enemies->p_div < -180 * M_PI / 180)
-			enemies->p_div = 360 * M_PI / 180 + enemies->p_div;
-
-		printf("e = %f	p = %f	p_div = %f\n", enemies->normal * 180 / M_PI, player->angle * 180 / M_PI, enemies->g_dir * 180 / M_PI);
 		
 		enemies = enemies->next;
 	}
@@ -112,14 +99,14 @@ void	draw_enemies(t_player *player, t_enemy *enemies, int *pixel, int *img, doub
 				cursor_x += 1;
 				continue;
 			}
-			draw_vertline2(enemies, pixel, img, z_buff, cursor_x, player);
+			draw_vertlenemy(enemies, pixel, img, z_buff, cursor_x, player);
 			cursor_x += 1;
 		}
 		enemies = enemies->next;
 	}
 }
 
-void	draw_vertline2(t_enemy *enemies, int *pixel, int *img, double *z_buff, int cursor_x, t_player *player)
+void	draw_vertlenemy(t_enemy *enemies, int *pixel, int *img, double *z_buff, int cursor_x, t_player *player)
 {
 	int		tile_u;
 	int		tile_v;
@@ -136,8 +123,7 @@ void	draw_vertline2(t_enemy *enemies, int *pixel, int *img, double *z_buff, int 
 			continue;
 		}
 
-		if ((enemies->p_div < 0 * M_PI / 180 || enemies->p_div > 180 * M_PI / 180) &&
-			enemies->tile != enemies->main_tile && enemies->tile != enemies->main_tile + 4)
+		if (enemies->p_div < 0 * M_PI / 180)
 		{
 			if (img[(int)(64 * ((enemies->size - cursor_x - 1) / (double)enemies->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->size)) + tile_u * 65 + tile_v * 1039 * 65] != 0xFF980088 &&
 				enemies->dist < z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)])
