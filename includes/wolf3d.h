@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:57:39 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/16 18:14:14 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/11/18 14:04:40 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,6 +124,9 @@ typedef struct		s_enemy
 	int				shift_x;
 	int				h_offset;
 	int				v_offset;
+
+	double			p_div;
+	
 	struct s_enemy	*next;
 }					t_enemy;
 
@@ -134,7 +137,7 @@ typedef struct		s_enemy
 t_enemy	*def_enemies(t_map *map);
 void	set_enemies(t_enemy *enemies, t_player *player);
 void	draw_enemies(t_player *player, t_enemy *enemies, int *pixel, int *img, double *z_buff);
-void	draw_vertline2(t_enemy *sprite, int *pixel, int *img, double *z_buff, int cursor_x);
+void	draw_vertline2(t_enemy *sprite, int *pixel, int *img, double *z_buff, int cursor_x, t_player *player);
 void	print_enemies(t_enemy *enemies);
 
 
