@@ -6,47 +6,229 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/16 12:57:17 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/18 19:22:32 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/11/19 18:09:23 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "wolf3d.h"
+
+// t_enemy	*def_enemies(t_map *map)
+// {
+// 	t_enemy		*enemies;
+// 	t_enemy		*node;
+// 	t_enemy		*end;
+// 	int			cursor;
+
+// 	enemies = NULL;
+// 	cursor = 0; // MAYBE NEED OPTIMIZE !!!!
+// 	while (cursor < map->width * map->height)
+// 	{
+// 		if (map->field[cursor] == 'E')
+// 		{
+// 			node = (t_enemy *)malloc(sizeof(t_enemy));  // NEED PROTECT
+// 			node->pos_x = cursor % map->width + 0.5;
+// 			node->pos_y = cursor / map->width + 0.5;
+// 			node->normal = 180 * M_PI / 180; // AVALUABLE VALUES: 0, 45, 90, 135, 180, 225, 270, 315
+// 			node->main_tile = 156;
+// 			node->shift_tile = node->main_tile;
+			
+// 			if (!enemies)
+// 			{
+// 				enemies = node;
+// 				end = node;
+// 				cursor += 1;
+// 				continue ;
+// 			}
+// 			end->next = node;
+// 			end = end->next;
+// 		}
+// 		cursor += 1;
+// 	}
+// 	end->next = NULL;
+// 	return(enemies);
+// }
+
+#define ELIMIT 1
 
 t_enemy	*def_enemies(t_map *map)
 {
 	t_enemy		*enemies;
 	t_enemy		*node;
 	t_enemy		*end;
-	int			cursor;
+	int			ecounter;
 
 	enemies = NULL;
-	cursor = 0; // MAYBE NEED OPTIMIZE !!!!
-	while (cursor < map->width * map->height)
+	ecounter = 0; 
+	while (ecounter < ELIMIT)
 	{
-		if (map->field[cursor] == 'E')
+		node = (t_enemy *)malloc(sizeof(t_enemy)); // NEED PROTECT
+		node->path = def_epath(ecounter);
+
+		// print_epath(node->path);
+		// exit(0);
+		
+		// node->pos_x = ecounter % map->width + 0.5;
+		// node->pos_y = ecounter / map->width + 0.5;
+		// node->normal = 180 * M_PI / 180; // AVALUABLE VALUES: 0, 45, 90, 135, 180, 225, 270, 315
+		
+		node->pos_x = node->path->crd_x;
+		node->pos_y = node->path->crd_y;
+		node->normal = node->path->normal; // AVALUABLE VALUES: 0, 45, 90, 135, 180, 225, 270, 315
+
+		
+		
+		node->main_tile = 156;
+		node->shift_tile = node->main_tile;
+		
+		if (!enemies)
 		{
-			node = (t_enemy *)malloc(sizeof(t_enemy));
-			node->pos_x = cursor % map->width + 0.5;
-			node->pos_y = cursor / map->width + 0.5;
-			node->normal = 180 * M_PI / 180;
-			node->main_tile = 156;
-			node->shift_tile = node->main_tile;
-			
-			if (!enemies)
-			{
-				enemies = node;
-				end = node;
-				cursor += 1;
-				continue ;
-			}
-			end->next = node;
-			end = end->next;
+			enemies = node;
+			end = node;
+			ecounter += 1;
+			continue ;
 		}
-		cursor += 1;
+		end->next = node;
+		end = end->next;
+
+		ecounter += 1;
 	}
 	end->next = NULL;
 	return(enemies);
 }
+
+t_epath	*def_epath(int ecounter)
+{
+	t_epath	*epath;
+	t_epath	*node;
+	t_epath	*cursor;
+	char	*field;
+	int		counter;
+	
+	epath = NULL;
+	if (!ecounter)
+		field =	"................"\
+				"................"\
+				"................"\
+				"................"\
+				"................"\
+				"................"\
+				"................"\
+				"................"\
+				"................"\
+				"................"\
+				"................"\
+				"...3...2........"\
+				"................"\
+				"................"\
+				"...4...1........"\
+				"................";
+				
+		// field =	"................"\
+		// 		"................"\
+		// 		"................"\
+		// 		"................"\
+		// 		"..2...1........."\
+		// 		"................"\
+		// 		"................"\
+		// 		"................"\
+		// 		"................"\
+		// 		"................"\
+		// 		"................"\
+		// 		"................"\
+		// 		"................"\
+		// 		"................"\
+		// 		"................"\
+		// 		"................";
+				
+		// field =	"..1......2......"\
+		// 		"................"\
+		// 		"................"\
+		// 		"................"\
+		// 		"..4......3......"\
+		// 		"................"\
+		// 		"................"\
+		// 		"................"\
+		// 		"................"\
+		// 		"................"\
+		// 		"................"\
+		// 		"................"\
+		// 		"................"\
+		// 		"................"\
+		// 		"................"\
+		// 		"................";
+
+	counter = 0;
+	while (*field != '\0')
+	{
+		// if ((int)field > 48 && (int)field < 58)
+		if (*field > '0' && *field <= '9')
+		{
+			node = (t_epath *)malloc(sizeof(t_epath)); // NEED PROTECT
+			node->index = atoi(field); // NEED ft_atoi()
+			node->crd_x = (counter % 16) + 0.5; // 16 is map->width
+			node->crd_y = (counter / 16) + 0.5; // 16 is map->width
+			node->next = NULL;
+			
+			if (!epath)
+				epath = node;
+			else
+			{
+				cursor = epath;
+				if (node->index < cursor->index)
+				{
+					node->next = cursor;
+					epath = node;
+				}
+				else
+				{
+					while(cursor->next && node->index > cursor->next->index)
+						cursor = cursor->next;
+					if (!cursor->next)
+						cursor->next = node;
+					else
+					{
+						node->next = cursor->next;
+						cursor->next = node;
+					}
+					
+				}
+				
+			}
+			
+		}
+		field += 1;
+		counter += 1;
+	}
+	cursor = epath;
+	while (cursor->next)
+	{
+		cursor->normal = atan2(cursor->next->crd_x - cursor->crd_x, cursor->next->crd_y - cursor->crd_y);
+		if (cursor->normal < 0)
+			cursor->normal += 2 * M_PI;
+
+		cursor = cursor->next;
+	}
+	
+
+	return (epath);
+}
+
+void	print_epath(t_epath	*epath)
+{
+	while (epath)
+	{
+		printf("%d\n", epath->index);
+		epath = epath->next;
+	}
+	
+}
+
+
+
+
+
+
+
 
 void	set_enemies(t_enemy *enemies, t_player *player)
 {
