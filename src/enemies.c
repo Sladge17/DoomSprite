@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/16 12:57:17 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/19 18:09:23 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/11/20 19:57:32 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@
 // 	return(enemies);
 // }
 
-#define ELIMIT 1
+#define ELIMIT 2
 
 t_enemy	*def_enemies(t_map *map)
 {
@@ -71,11 +71,13 @@ t_enemy	*def_enemies(t_map *map)
 		// node->pos_y = ecounter / map->width + 0.5;
 		// node->normal = 180 * M_PI / 180; // AVALUABLE VALUES: 0, 45, 90, 135, 180, 225, 270, 315
 		
-		node->pos_x = node->path->crd_x;
-		node->pos_y = node->path->crd_y;
-		node->normal = node->path->normal; // AVALUABLE VALUES: 0, 45, 90, 135, 180, 225, 270, 315
+		node->start = node->path;
+		node->end = node->start->next;
+		node->pos_x = node->start->crd_x;
+		node->pos_y = node->start->crd_y;
+		node->normal = node->start->normal; // AVALUABLE VALUES: 0, 45, 90, 135, 180, 225, 270, 315
 
-		
+		node->phase = 0;
 		
 		node->main_tile = 156;
 		node->shift_tile = node->main_tile;
@@ -117,12 +119,46 @@ t_epath	*def_epath(int ecounter)
 				"................"\
 				"................"\
 				"................"\
-				"...3...2........"\
+				"...3..2........."\
 				"................"\
+				"...4..1........."\
 				"................"\
-				"...4...1........"\
 				"................";
-				
+	if (ecounter == 1)
+		field =	"................"\
+				"................"\
+				"................"\
+				"................"\
+				"................"\
+				"................"\
+				"................"\
+				"................"\
+				"................"\
+				"................"\
+				"................"\
+				".......2..3....."\
+				"................"\
+				".......1..4....."\
+				"................"\
+				"................";
+		
+		// field =	"................"\
+		// 		"................"\
+		// 		"................"\
+		// 		"................"\
+		// 		"................"\
+		// 		"................"\
+		// 		"................"\
+		// 		"................"\
+		// 		"................"\
+		// 		"................"\
+		// 		"................"\
+		// 		"................"\
+		// 		"................"\
+		// 		"........12......"\
+		// 		"................"\
+		// 		"................";
+	
 		// field =	"................"\
 		// 		"................"\
 		// 		"................"\
@@ -208,24 +244,10 @@ t_epath	*def_epath(int ecounter)
 
 		cursor = cursor->next;
 	}
-	
+	cursor->normal = atan2(epath->crd_x - cursor->crd_x, epath->crd_y - cursor->crd_y);
 
 	return (epath);
 }
-
-void	print_epath(t_epath	*epath)
-{
-	while (epath)
-	{
-		printf("%d\n", epath->index);
-		epath = epath->next;
-	}
-	
-}
-
-
-
-
 
 
 
@@ -271,36 +293,71 @@ void	set_enemies(t_enemy *enemies, t_player *player)
 void	set_patrol(t_enemy *enemies, t_player *player)
 {
 	static long	time = 0;
-	static char	phase = 0;
-	static char	reverse = 0;
+	// static char	phase = 0;
+	// t_enemy		*cursor;
+
+	int			dir;
 
 
 	if (time % 50 == 0)
 	{
-		if (enemies->pos_y < 10 || enemies->pos_y > 16 - 2)
+		// printf ("%f %f\n", enemies->pos_x, enemies->end->crd_x);
+		// if (enemies->pos_x != enemies->end->crd_x)
+		
+		while (enemies)
 		{
-			reverse ^= 1;
-			enemies->normal = reverse == 0 ? 180 * M_PI / 180 : 0;
-		}
 			
-		if (phase == 0)
-			enemies->shift_tile = enemies->main_tile + 8;
-		if (phase == 1)
-			enemies->shift_tile = enemies->main_tile + 16;
-		if (phase == 2)
-			enemies->shift_tile = enemies->main_tile + 24;
-		if (phase == 3)
-			enemies->shift_tile = enemies->main_tile + 32;
-		
-		if (!reverse)
-			enemies->pos_y -= 0.1;
-		else
-			enemies->pos_y += 0.1;
-		set_enemies(enemies, player);
-		phase += 1;
-		if (phase == 4)
-			phase = 0;
-		
+			if (fabs(enemies->pos_x - enemies->end->crd_x) > 0.1 || fabs(enemies->pos_y - enemies->end->crd_y) > 0.1)
+			{
+				if (fabs(enemies->pos_x - enemies->end->crd_x) > 0.1)
+				{
+					dir = enemies->end->crd_x - enemies->start->crd_x > 0 ? 1 : -1;
+					enemies->pos_x = enemies->pos_x + 0.1 * dir;
+				}
+				if (fabs(enemies->pos_y - enemies->end->crd_y) > 0.1)
+				{
+					dir = enemies->end->crd_y - enemies->start->crd_y > 0 ? 1 : -1;
+					enemies->pos_y = enemies->pos_y + 0.1 * dir;
+				}
+			}
+			else
+			{
+				if (!enemies->end->next)
+				{
+					enemies->start = enemies->end;
+					enemies->end = enemies->path;
+					enemies->pos_x = enemies->start->crd_x;
+					enemies->pos_y = enemies->start->crd_y;
+					enemies->normal = enemies->start->normal;
+				}
+				else
+				{
+					enemies->start = enemies->end;
+					enemies->end = enemies->start->next;
+					enemies->pos_x = enemies->start->crd_x;
+					enemies->pos_y = enemies->start->crd_y;
+					enemies->normal = enemies->start->normal;
+				}
+			}
+			
+			
+			if (enemies->phase == 0)
+				enemies->shift_tile = enemies->main_tile + 8;
+			if (enemies->phase == 1)
+				enemies->shift_tile = enemies->main_tile + 16;
+			if (enemies->phase == 2)
+				enemies->shift_tile = enemies->main_tile + 24;
+			if (enemies->phase == 3)
+				enemies->shift_tile = enemies->main_tile + 32;
+			
+			// enemies->pos_y -= 0.1;
+			set_enemies(enemies, player);
+			enemies->phase += 1;
+			if (enemies->phase == 4)
+				enemies->phase = 0;
+				
+		enemies = enemies->next;
+		}
 	}
 	time += 1;
 }
@@ -376,6 +433,25 @@ void	print_enemies(t_enemy *enemies)
 	while(cursor)
 	{
 		printf("%f, %f\n", cursor->pos_x, cursor->pos_y);
+		cursor = cursor->next;
+	}
+}
+
+// TMP FUNC
+void	print_epath(t_enemy *enemies)
+{
+	t_enemy	*cursor;
+	t_epath	*epath;
+
+	cursor = enemies;
+	while(cursor)
+	{
+		epath = cursor->path;
+		while (epath)
+		{
+			printf("%f\n", epath->normal * 180 / M_PI);
+			epath = epath->next;
+		}
 		cursor = cursor->next;
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:57:39 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/19 16:34:27 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/11/20 19:55:48 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,6 +121,8 @@ typedef struct		s_epath
 typedef struct		s_enemy
 {
 	t_epath			*path;
+	t_epath			*start;
+	t_epath			*end;
 	double			pos_x;
 	double			pos_y;
 	double			normal;
@@ -136,6 +138,8 @@ typedef struct		s_enemy
 	int				h_offset;
 	int				v_offset;
 
+	char			phase;
+
 	
 	struct s_enemy	*next;
 }					t_enemy;
@@ -146,12 +150,12 @@ typedef struct		s_enemy
 */
 t_enemy	*def_enemies(t_map *map);
 t_epath	*def_epath(int ecounter);
-void	print_epath(t_epath	*epath);
 void	set_enemies(t_enemy *enemies, t_player *player);
 void	set_patrol(t_enemy *enemies, t_player *player);
 void	draw_enemies(t_player *player, t_enemy *enemies, int *pixel, int *img, double *z_buff);
 void	draw_vertlenemy(t_enemy *sprite, int *pixel, int *img, double *z_buff, int cursor_x, t_player *player);
 void	print_enemies(t_enemy *enemies);
+void	print_epath(t_enemy *enemies);
 
 
 

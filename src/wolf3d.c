@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:55:30 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/19 17:25:48 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/11/20 15:43:51 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,10 @@ int		main()
 		SDL_DestroyWindow(window);
 		exit(0);
 	}
+	// print_epath(enemies);
+	// exit(0);
+
+	
 	set_enemies(enemies, player); // not need with patrol animation
 	
 
@@ -84,7 +88,7 @@ int		main()
 		if (handling_event(windowEvent, player))
 			set_enemies(enemies, player);
 
-		// set_patrol(enemies, player);
+		set_patrol(enemies, player);
 		
 		drawing(map, player, enemies, drawer, pixel, img);
 		SDL_UpdateWindowSurface(window);
