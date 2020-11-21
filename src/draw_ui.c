@@ -6,25 +6,11 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/07 17:42:32 by jthuy             #+#    #+#             */
-/*   Updated: 2020/09/09 12:27:18 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/11/21 14:25:29 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "wolf3d.h"
-
-// void	draw_ui(int *pixel, int *img)
-// {
-// 	int		tex_shift_x = 0;
-// 	int		tex_shift_y = 33;
-// 	int		i = 0;
-// 	// // for athlas.png
-// 	while (i < 65 * 65)
-// 	{
-// 		if (img[i % 65 + 1039 * (i / 65) + (65 * tex_shift_x) + (1039 * 65 * tex_shift_y)] != 0xFF980088)
-// 			pixel[i % 65 + WIDTH * (i / 65)] = img[i % 65 + 1039 * (i / 65) + (65 * tex_shift_x) + (1039 * 65 * tex_shift_y)];
-// 		i += 1;
-// 	}
-// }
 
 void	draw_ui(int *pixel, int *img, int tile_u, int tile_v)
 {
@@ -51,22 +37,33 @@ void	draw_ui(int *pixel, int *img, int tile_u, int tile_v)
 	}
 }
 
-// void	draw_ui(int *pixel, int *img, int tile_u, int tile_v)
-// {
-// 	int		i;
-// 	int		j;
-// 	int		u;
-// 	int		v;
-// 	i = 0;
-// 	while (i < (HEIGHT - 100) * (HEIGHT - 100))
-// 	{
+void	draw_cross(int *pixel, t_enemy *enemies)
+{
+	int		i;
+	int		ontarget;
 
-// 		u = (i / (double)(HEIGHT - 100)) * 65;
-// 		v = (j / (double)(HEIGHT - 100)) * 65;
-// 		if (img[u + 1039 * v + (65 * tile_u) + (1039 * 65 * tile_v)] != 0xFF980088 &&
-// 			u != 64 && v != 64)
-// 			pixel[i + WIDTH / 4 + 50 + WIDTH * (j + 120)] = img[u + 1039 * v + (65 * tile_u) + (1039 * 65 * tile_v)];
-// 		i += 1;
-// 	}
-
-// }
+	while (enemies)
+	{
+		if (fabs(enemies->p_dir) < 0.02)
+		{
+			ontarget = 0xFF0000;
+			break ;
+		}
+		else
+			ontarget = 0xFF;
+		enemies = enemies->next;
+	}
+	
+	i = WIDTH / 2 + WIDTH * 300;
+	while (i < WIDTH * HEIGHT - WIDTH * 300)
+	{
+		pixel[i] = ontarget;
+		i += WIDTH;
+	}
+	i = WIDTH * HEIGHT / 2 + 700;
+	while (i < WIDTH * HEIGHT / 2 + WIDTH - 700)
+	{
+		pixel[i] = ontarget;
+		i += 1;
+	}
+}

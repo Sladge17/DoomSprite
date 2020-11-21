@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:55:30 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/20 15:43:51 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/11/21 14:23:20 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ int		main()
 		if (handling_event(windowEvent, player))
 			set_enemies(enemies, player);
 
-		set_patrol(enemies, player);
+		set_patrol(enemies, player); //NEED TO ANIMATION
 		
 		drawing(map, player, enemies, drawer, pixel, img);
 		SDL_UpdateWindowSurface(window);
@@ -199,7 +199,7 @@ void	drawing(t_map *map, t_player *player, t_enemy *enemies, t_drawer *drawer, i
 	// }
 
 	draw_enemies(player, enemies, pixel, img, z_buff);
-
+	draw_cross(pixel, enemies);
 	
 	// draw_ui(pixel, img, 0, 33);
 }

@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:57:39 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/20 19:55:48 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/11/21 13:53:07 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,6 +157,10 @@ void	draw_vertlenemy(t_enemy *sprite, int *pixel, int *img, double *z_buff, int 
 void	print_enemies(t_enemy *enemies);
 void	print_epath(t_enemy *enemies);
 
+/*
+** gui.c
+*/
+void	draw_gui(int *pixel);
 
 
 /*
@@ -207,6 +211,7 @@ void	calc_fourthquad(t_map *map, t_player *player, t_drawer *drawer);
 ** draw_ui.c
 */
 void	draw_ui(int *pixel, int *img, int tile_u, int tile_v);
+void	draw_cross(int *pixel, t_enemy *enemies);
 
 
 #endif
