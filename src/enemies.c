@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/16 12:57:17 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/21 14:23:12 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/11/23 13:40:20 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,7 @@ t_enemy	*def_enemies(t_map *map)
 		node->normal = node->start->normal; // AVALUABLE VALUES: 0, 45, 90, 135, 180, 225, 270, 315
 
 		node->phase = 0;
+		node->health = 1;
 		
 		node->main_tile = 156;
 		node->shift_tile = node->main_tile;
@@ -258,22 +259,30 @@ void	set_enemies(t_enemy *enemies, t_player *player)
 {
 	while (enemies)
 	{
-		enemies->p_div = enemies->normal - player->angle;
-		if (enemies->p_div < -180 * M_PI / 180)
-			enemies->p_div = 360 * M_PI / 180 + enemies->p_div;
-		if (enemies->p_div > 180 * M_PI / 180)
-			enemies->p_div = -360 * M_PI / 180 + enemies->p_div;
+		if (enemies->health)
+		{
+			enemies->p_div = enemies->normal - player->angle;
+			if (enemies->p_div < -180 * M_PI / 180)
+				enemies->p_div = 360 * M_PI / 180 + enemies->p_div;
+			if (enemies->p_div > 180 * M_PI / 180)
+				enemies->p_div = -360 * M_PI / 180 + enemies->p_div;
 
-		if (fabs(enemies->p_div) >= 157.5 * M_PI / 180)
+			if (fabs(enemies->p_div) >= 157.5 * M_PI / 180)
+				enemies->tile = enemies->shift_tile;
+			if (fabs(enemies->p_div) >= 112.5 * M_PI / 180 && fabs(enemies->p_div) < 157.5 * M_PI / 180)
+				enemies->tile = enemies->shift_tile + 1;
+			if (fabs(enemies->p_div) >= 67.5 * M_PI / 180 && fabs(enemies->p_div) < 112.5 * M_PI / 180)
+				enemies->tile = enemies->shift_tile + 2;
+			if (fabs(enemies->p_div) >= 22.5 * M_PI / 180 && fabs(enemies->p_div) < 67.5 * M_PI / 180)
+				enemies->tile = enemies->shift_tile + 3;
+			if (fabs(enemies->p_div) < 22.5 * M_PI / 180)
+				enemies->tile = enemies->shift_tile + 4;
+		}
+		else
+		{
 			enemies->tile = enemies->shift_tile;
-		if (fabs(enemies->p_div) >= 112.5 * M_PI / 180 && fabs(enemies->p_div) < 157.5 * M_PI / 180)
-			enemies->tile = enemies->shift_tile + 1;
-		if (fabs(enemies->p_div) >= 67.5 * M_PI / 180 && fabs(enemies->p_div) < 112.5 * M_PI / 180)
-			enemies->tile = enemies->shift_tile + 2;
-		if (fabs(enemies->p_div) >= 22.5 * M_PI / 180 && fabs(enemies->p_div) < 67.5 * M_PI / 180)
-			enemies->tile = enemies->shift_tile + 3;
-		if (fabs(enemies->p_div) < 22.5 * M_PI / 180)
-			enemies->tile = enemies->shift_tile + 4;
+		}
+		
 	
 		enemies->p_dir = atan2(enemies->pos_x - player->pos_x, enemies->pos_y - player->pos_y);
 		if (enemies->p_dir - player->angle > M_PI)
@@ -308,6 +317,13 @@ void	set_patrol(t_enemy *enemies, t_player *player)
 		
 		while (enemies)
 		{
+			if (!enemies->health)
+			{
+				kill_enemies(player, enemies);
+				set_enemies(enemies, player);
+				enemies = enemies->next;
+				continue ;
+			}
 			
 			if (fabs(enemies->pos_x - enemies->end->crd_x) > 0.1 || fabs(enemies->pos_y - enemies->end->crd_y) > 0.1)
 			{
@@ -364,6 +380,19 @@ void	set_patrol(t_enemy *enemies, t_player *player)
 	time += 1;
 }
 
+void	kill_enemies(t_player *player, t_enemy *enemies)
+{
+	if (enemies->phase < 3)
+	{
+		enemies->shift_tile += 1;
+		enemies->phase += 1;
+	}
+	else
+		enemies->shift_tile = 201;
+		
+	// printf("%d\n", );
+}
+
 void	draw_enemies(t_player *player, t_enemy *enemies, int *pixel, int *img, double *z_buff)
 {
 	int		cursor_x;
@@ -402,10 +431,30 @@ void	draw_vertlenemy(t_enemy *enemies, int *pixel, int *img, double *z_buff, int
 			continue;
 		}
 
+		// //WITH ALPHA
+		// if (enemies->p_div < 0 * M_PI / 180 && enemies->tile != enemies->shift_tile && enemies->tile != enemies->shift_tile + 4)
+		// {
+		// 	if (img[(int)(64 * ((enemies->size - cursor_x - 1) / (double)enemies->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->size)) + tile_u * 65 + tile_v * 1039 * 65] != 0xFF980088 &&
+		// 		enemies->dist < z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)])
+		// 	{
+		// 		pixel[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = img[(int)(64 * ((enemies->size - cursor_x - 1) / (double)enemies->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->size)) + tile_u * 65 + tile_v * 1039 * 65];
+		// 		z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = enemies->dist;
+		// 	}
+		// }
+		// else
+		// {
+		// 	if (img[(int)(64 * (cursor_x / (double)enemies->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->size)) + tile_u * 65 + tile_v * 1039 * 65] != 0xFF980088 &&
+		// 		enemies->dist < z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)])
+		// 	{
+		// 		pixel[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = img[(int)(64 * (cursor_x / (double)enemies->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->size)) + tile_u * 65 + tile_v * 1039 * 65];
+		// 		z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = enemies->dist;
+		// 	}
+		// }	
+		
+		// WITHOUT ALPHA
 		if (enemies->p_div < 0 * M_PI / 180 && enemies->tile != enemies->shift_tile && enemies->tile != enemies->shift_tile + 4)
 		{
-			if (img[(int)(64 * ((enemies->size - cursor_x - 1) / (double)enemies->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->size)) + tile_u * 65 + tile_v * 1039 * 65] != 0xFF980088 &&
-				enemies->dist < z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)])
+			if (enemies->dist < z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)])
 			{
 				pixel[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = img[(int)(64 * ((enemies->size - cursor_x - 1) / (double)enemies->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->size)) + tile_u * 65 + tile_v * 1039 * 65];
 				z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = enemies->dist;
@@ -413,8 +462,7 @@ void	draw_vertlenemy(t_enemy *enemies, int *pixel, int *img, double *z_buff, int
 		}
 		else
 		{
-			if (img[(int)(64 * (cursor_x / (double)enemies->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->size)) + tile_u * 65 + tile_v * 1039 * 65] != 0xFF980088 &&
-				enemies->dist < z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)])
+			if (enemies->dist < z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)])
 			{
 				pixel[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = img[(int)(64 * (cursor_x / (double)enemies->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->size)) + tile_u * 65 + tile_v * 1039 * 65];
 				z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = enemies->dist;
@@ -422,6 +470,21 @@ void	draw_vertlenemy(t_enemy *enemies, int *pixel, int *img, double *z_buff, int
 		}	
 		cursor_y += 1;
 	}
+}
+
+void	shooting(t_enemy *enemies)
+{
+	while (enemies)
+	{
+		if (enemies->health && abs(WIDTH / 2 - enemies->shift_x) < enemies->size / 2)
+		{
+			enemies->health = 0;
+			enemies->shift_tile = enemies->main_tile + 40;
+			enemies->phase = 0;
+		}
+		enemies = enemies->next;
+	}
+	
 }
 
 

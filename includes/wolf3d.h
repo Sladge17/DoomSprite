@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:57:39 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/21 13:53:07 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/11/23 12:57:22 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,6 +139,7 @@ typedef struct		s_enemy
 	int				v_offset;
 
 	char			phase;
+	char			health;
 
 	
 	struct s_enemy	*next;
@@ -152,8 +153,10 @@ t_enemy	*def_enemies(t_map *map);
 t_epath	*def_epath(int ecounter);
 void	set_enemies(t_enemy *enemies, t_player *player);
 void	set_patrol(t_enemy *enemies, t_player *player);
+void	kill_enemies(t_player *player, t_enemy *enemies);
 void	draw_enemies(t_player *player, t_enemy *enemies, int *pixel, int *img, double *z_buff);
 void	draw_vertlenemy(t_enemy *sprite, int *pixel, int *img, double *z_buff, int cursor_x, t_player *player);
+void	shooting(t_enemy *enemies);
 void	print_enemies(t_enemy *enemies);
 void	print_epath(t_enemy *enemies);
 
@@ -175,7 +178,7 @@ void		draw_room(t_player *player, t_drawer *drawer, int *pixel, int *img);
 void		draw_wall(t_player *player, t_drawer *drawer, int *pixel, int *img);
 int			shift_tile(t_drawer *drawer, int athlas_width, int tile_width, int u_shift, int v_shift, char inverse);
 int			def_pixel(t_drawer *drawer, int tile_u, int tile_v, char inverse);
-char		handling_event(SDL_Event windowEvent, t_player *player);
+char		handling_event(SDL_Event windowEvent, t_player *player, t_enemy *enemies);
 
 /*
 ** draw_sprite.c

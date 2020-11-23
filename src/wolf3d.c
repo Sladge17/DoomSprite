@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:55:30 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/21 14:23:20 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/11/21 20:04:20 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,10 +85,10 @@ int		main()
 			z_buff[i] = 2147483647;
 			i += 1;
 		}
-		if (handling_event(windowEvent, player))
+		if (handling_event(windowEvent, player, enemies))
 			set_enemies(enemies, player);
 
-		set_patrol(enemies, player); //NEED TO ANIMATION
+		set_patrol(enemies, player); //NEED FOR ANIMATION
 		
 		drawing(map, player, enemies, drawer, pixel, img);
 		SDL_UpdateWindowSurface(window);
@@ -464,7 +464,7 @@ int		def_pixel(t_drawer *drawer, int tile_u, int tile_v, char inverse)
 // 	}
 // }
 
-char	handling_event(SDL_Event windowEvent, t_player *player)
+char	handling_event(SDL_Event windowEvent, t_player *player, t_enemy *enemies)
 {
 	if (SDL_PollEvent(&windowEvent))
 	{
@@ -523,6 +523,11 @@ char	handling_event(SDL_Event windowEvent, t_player *player)
 			player->pos_x = 1; // Координата игрока по оси X
 			player->pos_y = 1; // Координата игрока по оси Y
 			player->angle = 0; // Направление игрока
+			return (1);
+		}
+		if (windowEvent.type == SDL_KEYDOWN && windowEvent.key.keysym.sym == SDLK_SPACE)
+		{
+			shooting(enemies);
 			return (1);
 		}
 	}
