@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:57:39 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/23 12:57:22 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/11/25 16:21:27 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,6 +132,9 @@ typedef struct		s_enemy
 	double			p_div;
 	int				tile;
 	double			p_dir;
+
+	double			p_dir2;	
+	
 	double			dist;
 	int				size;
 	int				shift_x;
@@ -140,6 +143,7 @@ typedef struct		s_enemy
 
 	char			phase;
 	char			health;
+	char			punch;
 
 	
 	struct s_enemy	*next;
@@ -152,6 +156,7 @@ typedef struct		s_enemy
 t_enemy	*def_enemies(t_map *map);
 t_epath	*def_epath(int ecounter);
 void	set_enemies(t_enemy *enemies, t_player *player);
+void	set_enemies2(t_enemy *enemies, t_player *player);
 void	set_patrol(t_enemy *enemies, t_player *player);
 void	kill_enemies(t_player *player, t_enemy *enemies);
 void	draw_enemies(t_player *player, t_enemy *enemies, int *pixel, int *img, double *z_buff);

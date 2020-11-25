@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:55:30 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/21 20:04:20 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/11/25 16:50:09 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,8 +85,17 @@ int		main()
 			z_buff[i] = 2147483647;
 			i += 1;
 		}
+		// handling_event(windowEvent, player, enemies);
 		if (handling_event(windowEvent, player, enemies))
-			set_enemies(enemies, player);
+		{
+			// printf("in\n");
+			// printf("p_div = %f	p_dir = %f	p_dir2 = %f\n", enemies->p_div * 180 / M_PI, enemies->p_dir * 180 / M_PI, enemies->p_dir2 * 180 / M_PI);
+			set_enemies2(enemies, player);
+			drawing(map, player, enemies, drawer, pixel, img);
+			SDL_UpdateWindowSurface(window);
+			continue ;
+		}
+		// printf("out\n");
 
 		set_patrol(enemies, player); //NEED FOR ANIMATION
 		
@@ -197,6 +206,15 @@ void	drawing(t_map *map, t_player *player, t_enemy *enemies, t_drawer *drawer, i
 	// 		// draw_sprite(map, player, pixel, img, sprite_pos, 164, z_buff);
 	// 	sprite_pos += 1;
 	// }
+
+	// // CLEAR SCREEN
+	// int		i = 0;
+	// while (i < WIDTH * HEIGHT)
+	// {
+	// 	pixel[i] = 0;
+	// 	i += 1;
+	// }
+	
 
 	draw_enemies(player, enemies, pixel, img, z_buff);
 	draw_cross(pixel, enemies);
@@ -466,13 +484,16 @@ int		def_pixel(t_drawer *drawer, int tile_u, int tile_v, char inverse)
 
 char	handling_event(SDL_Event windowEvent, t_player *player, t_enemy *enemies)
 {
+	static char		condition = 1;
+	
 	if (SDL_PollEvent(&windowEvent))
 	{
-		if (windowEvent.type == SDL_KEYUP)
-		{
-			SDL_FlushEvent(SDL_KEYDOWN);
-			return (1);  //MAYBE NEED RETURT 0
-		}
+		// // WHAT IS IT ???
+		// if (windowEvent.type == SDL_KEYUP)
+		// {
+		// 	SDL_FlushEvent(SDL_KEYDOWN);
+		// 	return (1);  //MAYBE NEED RETURT 0
+		// }
 		if (windowEvent.type == SDL_QUIT ||
 		(windowEvent.type == SDL_KEYDOWN && windowEvent.key.keysym.sym == SDLK_ESCAPE))
 			exit(0);
@@ -527,8 +548,16 @@ char	handling_event(SDL_Event windowEvent, t_player *player, t_enemy *enemies)
 		}
 		if (windowEvent.type == SDL_KEYDOWN && windowEvent.key.keysym.sym == SDLK_SPACE)
 		{
+			if (!condition)
+				return (0);
+			condition = 0;
 			shooting(enemies);
 			return (1);
+		}
+		if (windowEvent.type == SDL_KEYUP && windowEvent.key.keysym.sym == SDLK_SPACE)
+		{
+			condition = 1;
+			return (0);
 		}
 	}
 	return (0);
