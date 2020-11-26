@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/16 12:57:17 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/25 19:54:07 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/11/26 13:33:49 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,13 +76,10 @@ t_enemy	*def_enemies(t_map *map)
 		node->pos_x = node->start->crd_x;
 		node->pos_y = node->start->crd_y;
 		node->normal = node->start->normal; // AVALUABLE VALUES: 0, 45, 90, 135, 180, 225, 270, 315
-
-		node->phase = 0;
-		node->health = 100;
-		node->punch = 0;
-		
 		node->main_tile = 156;
-		node->shift_tile = node->main_tile;
+		node->health = 100;
+		node->condition = 0b1;
+		node->phase = 0;
 		
 		if (!enemies)
 		{
@@ -253,7 +250,126 @@ t_epath	*def_epath(int ecounter)
 	return (epath);
 }
 
+void	set_sequence(t_enemy *enemies, t_player *player)
+{
+	while (enemies)
+	{
+		if (enemies->condition == 0b1)
+		{
+			set_walk(enemies, player);
+			enemies = enemies->next;
+			continue ;
+		}
+		enemies = enemies->next;
+	}
+	
+}
 
+void	set_walk(t_enemy *enemies, t_player *player)
+{
+	set_position(enemies);
+	set_rotation(enemies, player);
+	set_walkphase(enemies);
+	set_spriteparam(enemies, player);
+}
+
+void	set_position(t_enemy *enemies)
+{
+	int		increment;
+	
+	if (fabs(enemies->pos_x - enemies->end->crd_x) > 0.1 || fabs(enemies->pos_y - enemies->end->crd_y) > 0.1)
+	{
+		if (fabs(enemies->pos_x - enemies->end->crd_x) > 0.1)
+		{
+			increment = enemies->end->crd_x - enemies->start->crd_x > 0 ? 1 : -1;
+			enemies->pos_x = enemies->pos_x + 0.1 * increment;
+		}
+		if (fabs(enemies->pos_y - enemies->end->crd_y) > 0.1)
+		{
+			increment = enemies->end->crd_y - enemies->start->crd_y > 0 ? 1 : -1;
+			enemies->pos_y = enemies->pos_y + 0.1 * increment;
+		}
+	}
+	else
+	{
+		if (!enemies->end->next)
+		{
+			enemies->start = enemies->end;
+			enemies->end = enemies->path;
+			enemies->pos_x = enemies->start->crd_x;
+			enemies->pos_y = enemies->start->crd_y;
+			enemies->normal = enemies->start->normal;
+		}
+		else
+		{
+			enemies->start = enemies->end;
+			enemies->end = enemies->start->next;
+			enemies->pos_x = enemies->start->crd_x;
+			enemies->pos_y = enemies->start->crd_y;
+			enemies->normal = enemies->start->normal;
+		}
+	}
+}
+
+void	set_rotation(t_enemy *enemies, t_player *player)
+{
+	enemies->p_div = enemies->normal - player->angle;
+	if (enemies->p_div < -180 * M_PI / 180)
+		enemies->p_div = 360 * M_PI / 180 + enemies->p_div;
+	if (enemies->p_div > 180 * M_PI / 180)
+		enemies->p_div = -360 * M_PI / 180 + enemies->p_div;
+
+	if (fabs(enemies->p_div) >= 157.5 * M_PI / 180)
+		enemies->shift_tile = enemies->main_tile;
+	if (fabs(enemies->p_div) >= 112.5 * M_PI / 180 && fabs(enemies->p_div) < 157.5 * M_PI / 180)
+		enemies->shift_tile = enemies->main_tile + 1;
+	if (fabs(enemies->p_div) >= 67.5 * M_PI / 180 && fabs(enemies->p_div) < 112.5 * M_PI / 180)
+		enemies->shift_tile = enemies->main_tile + 2;
+	if (fabs(enemies->p_div) >= 22.5 * M_PI / 180 && fabs(enemies->p_div) < 67.5 * M_PI / 180)
+		enemies->shift_tile = enemies->main_tile + 3;
+	if (fabs(enemies->p_div) < 22.5 * M_PI / 180)
+		enemies->shift_tile = enemies->main_tile + 4;
+}
+
+void	set_walkphase(t_enemy *enemies)
+{
+	if (enemies->phase == 0)
+		enemies->tile = enemies->shift_tile + 8;
+	if (enemies->phase == 1)
+		enemies->tile = enemies->shift_tile + 16;
+	if (enemies->phase == 2)
+		enemies->tile = enemies->shift_tile + 24;
+	if (enemies->phase == 3)
+		enemies->tile = enemies->shift_tile + 32;
+	enemies->phase += 1;
+	if (enemies->phase == 4)
+		enemies->phase = 0;
+}
+
+void	set_spritesparam(t_enemy *enemies, t_player *player)
+{
+	while (enemies)
+	{
+		set_spriteparam(enemies, player);
+		enemies = enemies->next;
+	}
+}
+
+void	set_spriteparam(t_enemy *enemies, t_player *player)
+{
+	enemies->p_dir = atan2(enemies->pos_x - player->pos_x, enemies->pos_y - player->pos_y);
+	if (enemies->p_dir - player->angle > M_PI)
+		enemies->p_dir -= 2 * M_PI; 
+	if (enemies->p_dir - player->angle < -M_PI)
+		enemies->p_dir += 2 * M_PI;
+	enemies->p_dir -= player->angle;
+	enemies->shift_x = WIDTH / 2 - (enemies->p_dir * (WIDTH) / (player->fov));
+	
+	enemies->dist = sqrt(pow(enemies->pos_x - player->pos_x, 2) + pow(enemies->pos_y - player->pos_y, 2));
+	enemies->size = (int)(HEIGHT * 2 / enemies->dist);
+	enemies->h_offset = enemies->shift_x - enemies->size / 2;
+	enemies->v_offset = HEIGHT / 2 - enemies->size / 2;
+}
 
 
 void	set_enemies(t_enemy *enemies, t_player *player)
@@ -355,125 +471,137 @@ void	set_enemies2(t_enemy *enemies, t_player *player)
 	}
 }
 
+// void	set_patrol(t_enemy *enemies, t_player *player)
+// {
+// 	static long	time = 0;
+// 	// static char	phase = 0;
+// 	// t_enemy		*cursor;
+
+// 	int			dir;
+
+
+// 	if (time % 50 == 0)
+// 	{
+// 		// printf ("%f %f\n", enemies->pos_x, enemies->end->crd_x);
+// 		// if (enemies->pos_x != enemies->end->crd_x)
+		
+// 		while (enemies)
+// 		{
+// 			if (!enemies->health)
+// 			{
+// 				kill_enemies(player, enemies);
+// 				set_enemies(enemies, player);
+// 				enemies = enemies->next;
+// 				continue ;
+// 			}
+
+// 			if (fabs(enemies->hfov) < 5 * M_PI / 180 && enemies->dist < 5)
+// 			{
+// 				static int	phase = 46;
+// 				// enemies->phase = 0;
+// 				enemies->shift_tile = enemies->main_tile + phase;
+// 				set_enemies(enemies, player);
+// 				phase += 1;
+// 				if (phase > 48)
+// 					phase = 47;
+// 				enemies = enemies->next;
+// 				continue ;
+// 			}
+
+// 			// printf("%f\n", enemies->p_dir * 180 / M_PI);
+// 			// printf("%f\n", enemies->p_div);
+// 			// if (fabs(enemies->p_dir) <= 5 * M_PI / 180 && enemies->p_div > 0)
+// 			// {
+// 			// 	enemies->shift_tile = 204;
+// 			// 	set_enemies(enemies, player);
+// 			// 	enemies = enemies->next;
+// 			// 	continue ;
+// 			// }
+			
+// 			if (fabs(enemies->pos_x - enemies->end->crd_x) > 0.1 || fabs(enemies->pos_y - enemies->end->crd_y) > 0.1)
+// 			{
+// 				if (fabs(enemies->pos_x - enemies->end->crd_x) > 0.1)
+// 				{
+// 					dir = enemies->end->crd_x - enemies->start->crd_x > 0 ? 1 : -1;
+// 					enemies->pos_x = enemies->pos_x + 0.1 * dir;
+// 				}
+// 				if (fabs(enemies->pos_y - enemies->end->crd_y) > 0.1)
+// 				{
+// 					dir = enemies->end->crd_y - enemies->start->crd_y > 0 ? 1 : -1;
+// 					enemies->pos_y = enemies->pos_y + 0.1 * dir;
+// 				}
+// 			}
+// 			else
+// 			{
+// 				if (!enemies->end->next)
+// 				{
+// 					enemies->start = enemies->end;
+// 					enemies->end = enemies->path;
+// 					enemies->pos_x = enemies->start->crd_x;
+// 					enemies->pos_y = enemies->start->crd_y;
+// 					enemies->normal = enemies->start->normal;
+// 				}
+// 				else
+// 				{
+// 					enemies->start = enemies->end;
+// 					enemies->end = enemies->start->next;
+// 					enemies->pos_x = enemies->start->crd_x;
+// 					enemies->pos_y = enemies->start->crd_y;
+// 					enemies->normal = enemies->start->normal;
+// 				}
+// 			}
+			
+
+// 			// if (enemies->punch)
+// 			// {
+// 			// 	set_enemies(enemies, player);
+// 			// 	enemies->punch = 0;
+// 			// }
+// 			// else
+// 			// {
+// 			// 	if (enemies->phase == 0)
+// 			// 		enemies->shift_tile = enemies->main_tile + 8;
+// 			// 	if (enemies->phase == 1)
+// 			// 		enemies->shift_tile = enemies->main_tile + 16;
+// 			// 	if (enemies->phase == 2)
+// 			// 		enemies->shift_tile = enemies->main_tile + 24;
+// 			// 	if (enemies->phase == 3)
+// 			// 		enemies->shift_tile = enemies->main_tile + 32;
+				
+// 			// 	// enemies->pos_y -= 0.1;
+// 			// 	set_enemies(enemies, player);
+// 			// 	enemies->phase += 1;
+// 			// 	if (enemies->phase == 4)
+// 			// 		enemies->phase = 0;
+// 			// }
+
+// 		if (enemies->phase == 0)
+// 			enemies->shift_tile = enemies->main_tile + 8;
+// 		if (enemies->phase == 1)
+// 			enemies->shift_tile = enemies->main_tile + 16;
+// 		if (enemies->phase == 2)
+// 			enemies->shift_tile = enemies->main_tile + 24;
+// 		if (enemies->phase == 3)
+// 			enemies->shift_tile = enemies->main_tile + 32;
+// 		set_enemies(enemies, player);
+// 		enemies->phase += 1;
+// 		if (enemies->phase == 4)
+// 			enemies->phase = 0;
+
+// 		enemies = enemies->next;
+// 		}
+// 	}
+// 	time += 1;
+// }
+
+
 void	set_patrol(t_enemy *enemies, t_player *player)
 {
 	static long	time = 0;
-	// static char	phase = 0;
-	// t_enemy		*cursor;
-
-	int			dir;
-
 
 	if (time % 50 == 0)
 	{
-		// printf ("%f %f\n", enemies->pos_x, enemies->end->crd_x);
-		// if (enemies->pos_x != enemies->end->crd_x)
-		
-		while (enemies)
-		{
-			if (!enemies->health)
-			{
-				kill_enemies(player, enemies);
-				set_enemies(enemies, player);
-				enemies = enemies->next;
-				continue ;
-			}
-
-			if (fabs(enemies->hfov) < 5 * M_PI / 180 && enemies->dist < 5)
-			{
-				static int	phase = 46;
-				// enemies->phase = 0;
-				enemies->shift_tile = enemies->main_tile + phase;
-				set_enemies(enemies, player);
-				phase += 1;
-				if (phase > 48)
-					phase = 47;
-				enemies = enemies->next;
-				continue ;
-			}
-
-			// printf("%f\n", enemies->p_dir * 180 / M_PI);
-			// printf("%f\n", enemies->p_div);
-			// if (fabs(enemies->p_dir) <= 5 * M_PI / 180 && enemies->p_div > 0)
-			// {
-			// 	enemies->shift_tile = 204;
-			// 	set_enemies(enemies, player);
-			// 	enemies = enemies->next;
-			// 	continue ;
-			// }
-			
-			if (fabs(enemies->pos_x - enemies->end->crd_x) > 0.1 || fabs(enemies->pos_y - enemies->end->crd_y) > 0.1)
-			{
-				if (fabs(enemies->pos_x - enemies->end->crd_x) > 0.1)
-				{
-					dir = enemies->end->crd_x - enemies->start->crd_x > 0 ? 1 : -1;
-					enemies->pos_x = enemies->pos_x + 0.1 * dir;
-				}
-				if (fabs(enemies->pos_y - enemies->end->crd_y) > 0.1)
-				{
-					dir = enemies->end->crd_y - enemies->start->crd_y > 0 ? 1 : -1;
-					enemies->pos_y = enemies->pos_y + 0.1 * dir;
-				}
-			}
-			else
-			{
-				if (!enemies->end->next)
-				{
-					enemies->start = enemies->end;
-					enemies->end = enemies->path;
-					enemies->pos_x = enemies->start->crd_x;
-					enemies->pos_y = enemies->start->crd_y;
-					enemies->normal = enemies->start->normal;
-				}
-				else
-				{
-					enemies->start = enemies->end;
-					enemies->end = enemies->start->next;
-					enemies->pos_x = enemies->start->crd_x;
-					enemies->pos_y = enemies->start->crd_y;
-					enemies->normal = enemies->start->normal;
-				}
-			}
-			
-
-			// if (enemies->punch)
-			// {
-			// 	set_enemies(enemies, player);
-			// 	enemies->punch = 0;
-			// }
-			// else
-			// {
-			// 	if (enemies->phase == 0)
-			// 		enemies->shift_tile = enemies->main_tile + 8;
-			// 	if (enemies->phase == 1)
-			// 		enemies->shift_tile = enemies->main_tile + 16;
-			// 	if (enemies->phase == 2)
-			// 		enemies->shift_tile = enemies->main_tile + 24;
-			// 	if (enemies->phase == 3)
-			// 		enemies->shift_tile = enemies->main_tile + 32;
-				
-			// 	// enemies->pos_y -= 0.1;
-			// 	set_enemies(enemies, player);
-			// 	enemies->phase += 1;
-			// 	if (enemies->phase == 4)
-			// 		enemies->phase = 0;
-			// }
-
-		if (enemies->phase == 0)
-			enemies->shift_tile = enemies->main_tile + 8;
-		if (enemies->phase == 1)
-			enemies->shift_tile = enemies->main_tile + 16;
-		if (enemies->phase == 2)
-			enemies->shift_tile = enemies->main_tile + 24;
-		if (enemies->phase == 3)
-			enemies->shift_tile = enemies->main_tile + 32;
-		set_enemies(enemies, player);
-		enemies->phase += 1;
-		if (enemies->phase == 4)
-			enemies->phase = 0;
-
-		enemies = enemies->next;
-		}
+		set_sequence(enemies, player);
 	}
 	time += 1;
 }

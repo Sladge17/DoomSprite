@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:57:39 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/25 18:25:59 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/11/26 13:32:47 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,8 +127,11 @@ typedef struct		s_enemy
 	double			pos_y;
 	double			normal;
 	int				main_tile;
-	int				shift_tile;
+	char			health;
+	char			condition;
+	char			phase;
 	
+	int				shift_tile;
 	double			p_div;
 	int				tile;
 	double			p_dir;
@@ -141,8 +144,6 @@ typedef struct		s_enemy
 	int				h_offset;
 	int				v_offset;
 
-	char			phase;
-	char			health;
 	char			punch;
 
 	
@@ -155,6 +156,16 @@ typedef struct		s_enemy
 */
 t_enemy	*def_enemies(t_map *map);
 t_epath	*def_epath(int ecounter);
+void	set_sequence(t_enemy *enemies, t_player *player);
+void	set_walk(t_enemy *enemies, t_player *player);
+void	set_position(t_enemy *enemies);
+void	set_rotation(t_enemy *enemies, t_player *player);
+void	set_walkphase(t_enemy *enemies);
+void	set_spritesparam(t_enemy *enemies, t_player *player);
+void	set_spriteparam(t_enemy *enemies, t_player *player);
+
+
+
 void	set_enemies(t_enemy *enemies, t_player *player);
 void	set_enemies2(t_enemy *enemies, t_player *player);
 void	set_patrol(t_enemy *enemies, t_player *player);
