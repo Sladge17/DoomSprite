@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/16 12:57:17 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/26 13:33:49 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/11/26 13:51:20 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -289,26 +289,22 @@ void	set_position(t_enemy *enemies)
 			increment = enemies->end->crd_y - enemies->start->crd_y > 0 ? 1 : -1;
 			enemies->pos_y = enemies->pos_y + 0.1 * increment;
 		}
+		return ;
 	}
-	else
+	if (!enemies->end->next)
 	{
-		if (!enemies->end->next)
-		{
-			enemies->start = enemies->end;
-			enemies->end = enemies->path;
-			enemies->pos_x = enemies->start->crd_x;
-			enemies->pos_y = enemies->start->crd_y;
-			enemies->normal = enemies->start->normal;
-		}
-		else
-		{
-			enemies->start = enemies->end;
-			enemies->end = enemies->start->next;
-			enemies->pos_x = enemies->start->crd_x;
-			enemies->pos_y = enemies->start->crd_y;
-			enemies->normal = enemies->start->normal;
-		}
+		enemies->start = enemies->end;
+		enemies->end = enemies->path;
+		enemies->pos_x = enemies->start->crd_x;
+		enemies->pos_y = enemies->start->crd_y;
+		enemies->normal = enemies->start->normal;
+		return ;
 	}
+	enemies->start = enemies->end;
+	enemies->end = enemies->start->next;
+	enemies->pos_x = enemies->start->crd_x;
+	enemies->pos_y = enemies->start->crd_y;
+	enemies->normal = enemies->start->normal;
 }
 
 void	set_rotation(t_enemy *enemies, t_player *player)
@@ -316,30 +312,41 @@ void	set_rotation(t_enemy *enemies, t_player *player)
 	enemies->p_div = enemies->normal - player->angle;
 	if (enemies->p_div < -180 * M_PI / 180)
 		enemies->p_div = 360 * M_PI / 180 + enemies->p_div;
-	if (enemies->p_div > 180 * M_PI / 180)
+	else if (enemies->p_div > 180 * M_PI / 180)
 		enemies->p_div = -360 * M_PI / 180 + enemies->p_div;
 
 	if (fabs(enemies->p_div) >= 157.5 * M_PI / 180)
+	{
 		enemies->shift_tile = enemies->main_tile;
-	if (fabs(enemies->p_div) >= 112.5 * M_PI / 180 && fabs(enemies->p_div) < 157.5 * M_PI / 180)
-		enemies->shift_tile = enemies->main_tile + 1;
-	if (fabs(enemies->p_div) >= 67.5 * M_PI / 180 && fabs(enemies->p_div) < 112.5 * M_PI / 180)
-		enemies->shift_tile = enemies->main_tile + 2;
-	if (fabs(enemies->p_div) >= 22.5 * M_PI / 180 && fabs(enemies->p_div) < 67.5 * M_PI / 180)
-		enemies->shift_tile = enemies->main_tile + 3;
+		return ;
+	}
 	if (fabs(enemies->p_div) < 22.5 * M_PI / 180)
+	{
 		enemies->shift_tile = enemies->main_tile + 4;
+		return ;
+	}
+	if (fabs(enemies->p_div) >= 112.5 * M_PI / 180 && fabs(enemies->p_div) < 157.5 * M_PI / 180)
+	{
+		enemies->shift_tile = enemies->main_tile + 1;
+		return ;
+	}
+	if (fabs(enemies->p_div) >= 67.5 * M_PI / 180 && fabs(enemies->p_div) < 112.5 * M_PI / 180)
+	{
+		enemies->shift_tile = enemies->main_tile + 2;
+		return ;
+	}
+	enemies->shift_tile = enemies->main_tile + 3;
 }
 
 void	set_walkphase(t_enemy *enemies)
 {
 	if (enemies->phase == 0)
 		enemies->tile = enemies->shift_tile + 8;
-	if (enemies->phase == 1)
+	else if (enemies->phase == 1)
 		enemies->tile = enemies->shift_tile + 16;
-	if (enemies->phase == 2)
+	else if (enemies->phase == 2)
 		enemies->tile = enemies->shift_tile + 24;
-	if (enemies->phase == 3)
+	else // enemies->phase == 3
 		enemies->tile = enemies->shift_tile + 32;
 	enemies->phase += 1;
 	if (enemies->phase == 4)
@@ -360,7 +367,7 @@ void	set_spriteparam(t_enemy *enemies, t_player *player)
 	enemies->p_dir = atan2(enemies->pos_x - player->pos_x, enemies->pos_y - player->pos_y);
 	if (enemies->p_dir - player->angle > M_PI)
 		enemies->p_dir -= 2 * M_PI; 
-	if (enemies->p_dir - player->angle < -M_PI)
+	else if (enemies->p_dir - player->angle < -M_PI)
 		enemies->p_dir += 2 * M_PI;
 	enemies->p_dir -= player->angle;
 	enemies->shift_x = WIDTH / 2 - (enemies->p_dir * (WIDTH) / (player->fov));
