@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/16 12:57:17 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/26 15:15:48 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/11/26 15:57:15 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -254,10 +254,15 @@ void	set_sequence(t_enemy *enemies, t_player *player)
 {
 	while (enemies)
 	{
+		if (!enemies->condition)
+		{
+			set_dead(enemies, player);
+			enemies = enemies->next;
+			continue ;
+		}
 		if (enemies->condition == 0b10)
 		{
 			set_punch(enemies, player);
-			printf("%d\n", enemies->health); //TMP
 			enemies = enemies->next;
 			continue ;
 		}
@@ -272,11 +277,31 @@ void	set_sequence(t_enemy *enemies, t_player *player)
 	
 }
 
+void	set_dead(t_enemy *enemies, t_player *player)
+{
+	if (enemies->phase == 3)
+	{
+		enemies->tile = enemies->main_tile + 45;
+		return ;
+	}
+	enemies->shift_tile = enemies->main_tile + 41;
+	enemies->tile = enemies->shift_tile + enemies->phase;
+	enemies->phase += 1;
+}
+
 void	set_punch(t_enemy *enemies, t_player *player)
 {
 	enemies->tile = enemies->main_tile + 40;
-	enemies->health -= 20;
+	enemies->health -= 40;
+	// printf("%d\n", enemies->health);
+	if (enemies->health <= 0)
+	{
+		enemies->condition = 0;
+		enemies->phase = 0;
+		return ;
+	}
 	enemies->condition = 0b1;
+	enemies->phase = 0;
 }
 
 void	set_walk(t_enemy *enemies, t_player *player)
@@ -681,7 +706,7 @@ void	draw_vertlenemy(t_enemy *enemies, int *pixel, int *img, double *z_buff, int
 		}
 
 		//WITH ALPHA
-		if (enemies->p_div < 0 * M_PI / 180 && enemies->tile != enemies->shift_tile && enemies->tile != enemies->shift_tile + 4)
+		if (enemies->p_div < 0 * M_PI / 180 && enemies->shift_tile != enemies->main_tile && enemies->shift_tile != enemies->main_tile + 4)
 		{
 			if (img[(int)(64 * ((enemies->size - cursor_x - 1) / (double)enemies->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->size)) + tile_u * 65 + tile_v * 1039 * 65] != 0xFF980088 &&
 				enemies->dist < z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)])
@@ -747,7 +772,7 @@ void	shooting(t_enemy *enemies)
 {
 	while (enemies)
 	{
-		if (abs(WIDTH / 2 - enemies->shift_x) < enemies->size / 2)
+		if (enemies->health > 0 && abs(WIDTH / 2 - enemies->shift_x) < enemies->size / 2)
 		{
 			// enemies->health -= 20;
 			// if (enemies->health < 0)

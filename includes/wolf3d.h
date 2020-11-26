@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:57:39 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/26 15:17:12 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/11/26 15:24:39 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,6 +157,7 @@ typedef struct		s_enemy
 t_enemy	*def_enemies(t_map *map);
 t_epath	*def_epath(int ecounter);
 void	set_sequence(t_enemy *enemies, t_player *player);
+void	set_dead(t_enemy *enemies, t_player *player);
 void	set_punch(t_enemy *enemies, t_player *player);
 void	set_walk(t_enemy *enemies, t_player *player);
 void	set_position(t_enemy *enemies);
