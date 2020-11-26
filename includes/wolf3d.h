@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:57:39 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/26 15:24:39 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/11/26 19:46:42 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ typedef struct	s_player
 	double		angle;
 	double		ray_depth;
 	int			fov;
+	int			health;
 }				t_player;
 
 typedef struct	s_drawer
@@ -156,7 +157,9 @@ typedef struct		s_enemy
 */
 t_enemy	*def_enemies(t_map *map);
 t_epath	*def_epath(int ecounter);
-void	set_sequence(t_enemy *enemies, t_player *player);
+void	set_condition(t_enemy *enemies, t_player *player);
+void	set_shoot(t_enemy *enemies, t_player *player);
+void	set_detect(t_enemy *enemies, t_player *player);
 void	set_dead(t_enemy *enemies, t_player *player);
 void	set_punch(t_enemy *enemies, t_player *player);
 void	set_walk(t_enemy *enemies, t_player *player);
@@ -168,13 +171,13 @@ void	set_spriteparam(t_enemy *enemies, t_player *player);
 
 
 
-void	set_enemies(t_enemy *enemies, t_player *player);
-void	set_enemies2(t_enemy *enemies, t_player *player);
+// void	set_enemies(t_enemy *enemies, t_player *player);
+// void	set_enemies2(t_enemy *enemies, t_player *player);
 void	set_patrol(t_enemy *enemies, t_player *player);
-void	kill_enemies(t_player *player, t_enemy *enemies);
+// void	kill_enemies(t_player *player, t_enemy *enemies);
 void	draw_enemies(t_player *player, t_enemy *enemies, int *pixel, int *img, double *z_buff);
 void	draw_vertlenemy(t_enemy *sprite, int *pixel, int *img, double *z_buff, int cursor_x, t_player *player);
-void	shooting(t_enemy *enemies);
+void	shoot_player(t_enemy *enemies);
 void	print_enemies(t_enemy *enemies);
 void	print_epath(t_enemy *enemies);
 

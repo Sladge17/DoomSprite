@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/16 12:57:17 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/26 15:57:15 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/11/26 19:46:29 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -250,10 +250,22 @@ t_epath	*def_epath(int ecounter)
 	return (epath);
 }
 
-void	set_sequence(t_enemy *enemies, t_player *player)
+void	set_condition(t_enemy *enemies, t_player *player)
 {
 	while (enemies)
 	{
+		if (enemies->condition == 0b1000)
+		{
+			set_shoot(enemies, player);
+			enemies = enemies->next;
+			continue ;
+		}
+		if (enemies->condition == 0b100)
+		{
+			set_detect(enemies, player);
+			enemies = enemies->next;
+			continue ;
+		}
 		if (!enemies->condition)
 		{
 			set_dead(enemies, player);
@@ -274,7 +286,41 @@ void	set_sequence(t_enemy *enemies, t_player *player)
 		}
 		enemies = enemies->next;
 	}
-	
+}
+
+void	set_shoot(t_enemy *enemies, t_player *player)
+{
+	enemies->shift_tile = enemies->main_tile + 47;
+	enemies->tile = enemies->shift_tile + enemies->phase;
+	// if (fabs(enemies->hfov) < (45 / 2) * M_PI / 180 && enemies->dist < 5)
+	if (enemies->dist < 8)
+	{
+		///
+		enemies->normal = atan2(enemies->pos_x - player->pos_x, enemies->pos_y - player->pos_y);
+		if (enemies->normal < 0)
+			enemies->normal += M_PI;
+		///
+		enemies->phase ^= 1;
+		if (enemies->phase == 0) // MAYBEE NEEED enemies->phase == 1
+			player->health -= 10;
+		enemies->condition = 0b1000;
+		return ;
+	}
+	enemies->normal = enemies->start->normal;
+	enemies->phase = 0;
+	enemies->condition = 0b1;
+}
+
+void	set_detect(t_enemy *enemies, t_player *player)
+{
+	enemies->tile = enemies->main_tile + 46;
+	enemies->phase = 0;
+	if (fabs(enemies->hfov) < (45 / 2) * M_PI / 180 && enemies->dist < 5)
+	{
+		enemies->condition = 0b1000;
+		return ;
+	}
+	enemies->condition = 0b1;
 }
 
 void	set_dead(t_enemy *enemies, t_player *player)
@@ -300,7 +346,13 @@ void	set_punch(t_enemy *enemies, t_player *player)
 		enemies->phase = 0;
 		return ;
 	}
-	enemies->condition = 0b1;
+	// enemies->condition = 0b1;
+	/// NEED CHECK
+	enemies->normal = atan2(enemies->pos_x - player->pos_x, enemies->pos_y - player->pos_y);
+	if (enemies->normal < 0)
+		enemies->normal += M_PI;
+	/// ///
+	enemies->condition = 0b1000;
 	enemies->phase = 0;
 }
 
@@ -310,6 +362,8 @@ void	set_walk(t_enemy *enemies, t_player *player)
 	set_rotation(enemies, player);
 	set_walkphase(enemies);
 	set_spriteparam(enemies, player);
+	if (fabs(enemies->hfov) < (45 / 2) * M_PI / 180 && enemies->dist < 5)
+		enemies->condition = 0b100;
 }
 
 void	set_position(t_enemy *enemies)
@@ -406,6 +460,11 @@ void	set_spritesparam(t_enemy *enemies, t_player *player)
 void	set_spriteparam(t_enemy *enemies, t_player *player)
 {
 	enemies->p_dir = atan2(enemies->pos_x - player->pos_x, enemies->pos_y - player->pos_y);
+	
+	enemies->hfov = enemies->p_dir + M_PI - enemies->normal;
+	if (enemies->hfov > M_PI)
+		enemies->hfov -= 2 * M_PI;
+
 	if (enemies->p_dir - player->angle > M_PI)
 		enemies->p_dir -= 2 * M_PI; 
 	else if (enemies->p_dir - player->angle < -M_PI)
@@ -649,23 +708,23 @@ void	set_patrol(t_enemy *enemies, t_player *player)
 
 	if (time % 50 == 0)
 	{
-		set_sequence(enemies, player);
+		set_condition(enemies, player);
 	}
 	time += 1;
 }
 
-void	kill_enemies(t_player *player, t_enemy *enemies)
-{
-	if (enemies->phase < 3)
-	{
-		enemies->shift_tile += 1;
-		enemies->phase += 1;
-	}
-	else
-		enemies->shift_tile = 201;
+// void	kill_enemies(t_player *player, t_enemy *enemies)
+// {
+// 	if (enemies->phase < 3)
+// 	{
+// 		enemies->shift_tile += 1;
+// 		enemies->phase += 1;
+// 	}
+// 	else
+// 		enemies->shift_tile = 201;
 		
-	// printf("%d\n", );
-}
+// 	// printf("%d\n", );
+// }
 
 void	draw_enemies(t_player *player, t_enemy *enemies, int *pixel, int *img, double *z_buff)
 {
@@ -768,7 +827,7 @@ void	draw_vertlenemy(t_enemy *enemies, int *pixel, int *img, double *z_buff, int
 	}
 }
 
-void	shooting(t_enemy *enemies)
+void	shoot_player(t_enemy *enemies)
 {
 	while (enemies)
 	{

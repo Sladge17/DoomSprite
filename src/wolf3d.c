@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:55:30 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/26 13:55:26 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/11/26 19:14:11 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,6 +165,7 @@ t_player	*def_player(t_map *map)
 	player->angle = PLAYER_ANGLE * M_PI / 180;
 	player->ray_depth = 30;
 	player->fov = 90 * M_PI / 180;
+	player->health = 100;
 	return (player);
 }
 
@@ -550,7 +551,7 @@ char	handling_event(SDL_Event windowEvent, t_player *player, t_enemy *enemies)
 			if (!condition)
 				return (0);
 			condition = 0;
-			shooting(enemies);
+			shoot_player(enemies);
 			return (1);
 		}
 		if (windowEvent.type == SDL_KEYUP && windowEvent.key.keysym.sym == SDLK_SPACE)
