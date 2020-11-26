@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/16 12:57:17 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/25 18:03:20 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/11/25 19:54:07 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,9 +156,9 @@ t_epath	*def_epath(int ecounter)
 	// 			"................"\
 	// 			"................"\
 	// 			"................"\
-	// 			"......2........."\
 	// 			"................"\
-	// 			"......1........."\
+	// 			".......2........"\
+	// 			".......1........"\
 	// 			"................"\
 	// 			"................";
 
@@ -259,7 +259,8 @@ t_epath	*def_epath(int ecounter)
 void	set_enemies(t_enemy *enemies, t_player *player)
 {
 
-	if (enemies->health && !enemies->punch)
+	if (enemies->health && !enemies->punch
+		&& fabs(enemies->hfov) >= 5 * M_PI / 180 && enemies->dist >= 5)
 	{
 		enemies->p_div = enemies->normal - player->angle;
 		if (enemies->p_div < -180 * M_PI / 180)
@@ -332,7 +333,9 @@ void	set_enemies2(t_enemy *enemies, t_player *player)
 	
 		enemies->p_dir = atan2(enemies->pos_x - player->pos_x, enemies->pos_y - player->pos_y);
 
-		enemies->p_dir2 = enemies->p_dir;
+		enemies->hfov = enemies->p_dir + M_PI - enemies->normal;
+		if (enemies->hfov > M_PI)
+			enemies->hfov -= 2 * M_PI;
 
 		if (enemies->p_dir - player->angle > M_PI)
 			enemies->p_dir -= 2 * M_PI; 
@@ -372,6 +375,19 @@ void	set_patrol(t_enemy *enemies, t_player *player)
 			{
 				kill_enemies(player, enemies);
 				set_enemies(enemies, player);
+				enemies = enemies->next;
+				continue ;
+			}
+
+			if (fabs(enemies->hfov) < 5 * M_PI / 180 && enemies->dist < 5)
+			{
+				static int	phase = 46;
+				// enemies->phase = 0;
+				enemies->shift_tile = enemies->main_tile + phase;
+				set_enemies(enemies, player);
+				phase += 1;
+				if (phase > 48)
+					phase = 47;
 				enemies = enemies->next;
 				continue ;
 			}
@@ -513,30 +529,11 @@ void	draw_vertlenemy(t_enemy *enemies, int *pixel, int *img, double *z_buff, int
 			continue;
 		}
 
-		// //WITH ALPHA
-		// if (enemies->p_div < 0 * M_PI / 180 && enemies->tile != enemies->shift_tile && enemies->tile != enemies->shift_tile + 4)
-		// {
-		// 	if (img[(int)(64 * ((enemies->size - cursor_x - 1) / (double)enemies->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->size)) + tile_u * 65 + tile_v * 1039 * 65] != 0xFF980088 &&
-		// 		enemies->dist < z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)])
-		// 	{
-		// 		pixel[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = img[(int)(64 * ((enemies->size - cursor_x - 1) / (double)enemies->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->size)) + tile_u * 65 + tile_v * 1039 * 65];
-		// 		z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = enemies->dist;
-		// 	}
-		// }
-		// else
-		// {
-		// 	if (img[(int)(64 * (cursor_x / (double)enemies->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->size)) + tile_u * 65 + tile_v * 1039 * 65] != 0xFF980088 &&
-		// 		enemies->dist < z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)])
-		// 	{
-		// 		pixel[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = img[(int)(64 * (cursor_x / (double)enemies->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->size)) + tile_u * 65 + tile_v * 1039 * 65];
-		// 		z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = enemies->dist;
-		// 	}
-		// }	
-		
-		// WITHOUT ALPHA
+		//WITH ALPHA
 		if (enemies->p_div < 0 * M_PI / 180 && enemies->tile != enemies->shift_tile && enemies->tile != enemies->shift_tile + 4)
 		{
-			if (enemies->dist < z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)])
+			if (img[(int)(64 * ((enemies->size - cursor_x - 1) / (double)enemies->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->size)) + tile_u * 65 + tile_v * 1039 * 65] != 0xFF980088 &&
+				enemies->dist < z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)])
 			{
 				pixel[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = img[(int)(64 * ((enemies->size - cursor_x - 1) / (double)enemies->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->size)) + tile_u * 65 + tile_v * 1039 * 65];
 				z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = enemies->dist;
@@ -544,12 +541,31 @@ void	draw_vertlenemy(t_enemy *enemies, int *pixel, int *img, double *z_buff, int
 		}
 		else
 		{
-			if (enemies->dist < z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)])
+			if (img[(int)(64 * (cursor_x / (double)enemies->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->size)) + tile_u * 65 + tile_v * 1039 * 65] != 0xFF980088 &&
+				enemies->dist < z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)])
 			{
 				pixel[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = img[(int)(64 * (cursor_x / (double)enemies->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->size)) + tile_u * 65 + tile_v * 1039 * 65];
 				z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = enemies->dist;
 			}
 		}	
+		
+		// // WITHOUT ALPHA
+		// if (enemies->p_div < 0 * M_PI / 180 && enemies->tile != enemies->shift_tile && enemies->tile != enemies->shift_tile + 4)
+		// {
+		// 	if (enemies->dist < z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)])
+		// 	{
+		// 		pixel[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = img[(int)(64 * ((enemies->size - cursor_x - 1) / (double)enemies->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->size)) + tile_u * 65 + tile_v * 1039 * 65];
+		// 		z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = enemies->dist;
+		// 	}
+		// }
+		// else
+		// {
+		// 	if (enemies->dist < z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)])
+		// 	{
+		// 		pixel[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = img[(int)(64 * (cursor_x / (double)enemies->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->size)) + tile_u * 65 + tile_v * 1039 * 65];
+		// 		z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = enemies->dist;
+		// 	}
+		// }	
 		
 	
 		// // ENEMY_MASK

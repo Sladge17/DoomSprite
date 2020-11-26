@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:55:30 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/25 16:50:09 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/11/26 12:09:52 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ int		main()
 	// exit(0);
 
 	
-	set_enemies(enemies, player); // not need with patrol animation
+	// set_enemies(enemies, player); // not need with patrol animation
 	
 
 	if (!(drawer = def_drawer()))
@@ -89,7 +89,10 @@ int		main()
 		if (handling_event(windowEvent, player, enemies))
 		{
 			// printf("in\n");
-			// printf("p_div = %f	p_dir = %f	p_dir2 = %f\n", enemies->p_div * 180 / M_PI, enemies->p_dir * 180 / M_PI, enemies->p_dir2 * 180 / M_PI);
+			// printf("p_div = %f	p_dir = %f	p_dir2 = %f\n", enemies->p_div * 180 / M_PI, enemies->p_dir * 180 / M_PI, enemies->hfov * 180 / M_PI);
+			// printf("%f %f\n", fabs(enemies->hfov), 1 * M_PI / 180);
+			
+			
 			set_enemies2(enemies, player);
 			drawing(map, player, enemies, drawer, pixel, img);
 			SDL_UpdateWindowSurface(window);

@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:57:39 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/25 16:21:27 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/11/25 18:25:59 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,7 +133,7 @@ typedef struct		s_enemy
 	int				tile;
 	double			p_dir;
 
-	double			p_dir2;	
+	double			hfov;	
 	
 	double			dist;
 	int				size;
