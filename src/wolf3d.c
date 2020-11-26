@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:55:30 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/26 13:37:00 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/11/26 13:55:26 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,20 +89,14 @@ int		main()
 		if (handling_event(windowEvent, player, enemies))
 		{
 			set_spritesparam(enemies, player);
-			// printf("in\n");
-		// 	// printf("p_div = %f	p_dir = %f	p_dir2 = %f\n", enemies->p_div * 180 / M_PI, enemies->p_dir * 180 / M_PI, enemies->hfov * 180 / M_PI);
-		// 	// printf("%f %f\n", fabs(enemies->hfov), 1 * M_PI / 180);
-			
-			
-		// 	set_enemies2(enemies, player);
-		// 	drawing(map, player, enemies, drawer, pixel, img);
-		// 	SDL_UpdateWindowSurface(window);
-		// 	continue ;
+			drawing(map, player, enemies, drawer, pixel, img);
+			SDL_UpdateWindowSurface(window);
+			continue ;
 		}
 		// // printf("out\n");
 
 		// set_sequence(enemies, player);
-		set_patrol(enemies, player); //NEED FOR ANIMATION
+		set_patrol(enemies, player); //NEED FOR ANIMATION, NEED RENAME
 		
 		drawing(map, player, enemies, drawer, pixel, img);
 		SDL_UpdateWindowSurface(window);
