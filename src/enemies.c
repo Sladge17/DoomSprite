@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/16 12:57:17 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/27 18:48:55 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/11/27 20:04:14 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -293,12 +293,12 @@ void	set_pshoot(t_player *player, t_enemy *enemies)
 		return ;
 	}
 
-	// if (player->phase == 4)
-	// {
-	// 	player->tile = player->main_tile;
-	// 	// player->phase += 1;
-	// 	return ;
-	// }
+	if (player->phase > 4 && player->shoot)
+	{
+		player->phase = 2;
+		// player->phase += 1;
+		return ;
+	}
 
 
 	if (player->phase > 4)
@@ -540,7 +540,7 @@ void	set_timer(t_enemy *enemies, t_player *player)
 {
 	static long	time = 0;
 
-	if (time % 10 == 0)
+	if (time % 50 == 0)
 	{
 		// player->tile = player->tile_weapon + player->phase;
 		// player->phase += 1;

@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:57:39 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/27 15:58:42 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/11/27 20:04:31 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,8 @@ typedef struct	s_player
 	int			health;
 	
 	char		condition;
+
+	char		shoot;
 	
 	char		bitweapons;
 	char		weapon;

@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:55:30 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/27 18:52:16 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/11/27 20:04:27 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,6 +166,8 @@ t_player	*def_player(t_map *map)
 	player->health = 100;
 	
 	player->condition = 0;
+
+	player->shoot = 0;
 	
 	player->bitweapons = 0b1;
 	player->weapon = 1;
@@ -558,14 +560,17 @@ char	handling_event(SDL_Event windowEvent, t_player *player, t_enemy *enemies)
 			// if (!condition)
 			// 	return (0);
 			// condition = 0;
+			player->shoot = 1;
 			shoot_player(player, enemies);
 			return (1);
 		}
-		// if (windowEvent.type == SDL_KEYUP && windowEvent.key.keysym.sym == SDLK_SPACE)
-		// {
-		// 	condition = 1;
-		// 	return (1);
-		// }
+		if (windowEvent.type == SDL_KEYUP && windowEvent.key.keysym.sym == SDLK_SPACE)
+		{
+			player->shoot = 0;
+			shoot_player(player, enemies);
+			// condition = 1;
+			return (1);
+		}
 	}
 	return (0);
 }
