@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:55:30 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/26 19:14:11 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/11/27 15:06:57 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,9 +94,7 @@ int		main()
 			continue ;
 		}
 		// // printf("out\n");
-
-		// set_sequence(enemies, player);
-		set_patrol(enemies, player); //NEED FOR ANIMATION, NEED RENAME
+		set_timer(enemies, player);
 		
 		drawing(map, player, enemies, drawer, pixel, img);
 		SDL_UpdateWindowSurface(window);
@@ -166,6 +164,13 @@ t_player	*def_player(t_map *map)
 	player->ray_depth = 30;
 	player->fov = 90 * M_PI / 180;
 	player->health = 100;
+	
+	player->condition = 0;
+	
+	player->bitweapons = 0b1;
+	player->weapon = 1;
+	player->main_tile = 527;
+	// player->phase = 0;
 	return (player);
 }
 
@@ -220,6 +225,8 @@ void	drawing(t_map *map, t_player *player, t_enemy *enemies, t_drawer *drawer, i
 	draw_cross(pixel, enemies);
 	
 	// draw_ui(pixel, img, 0, 33);
+	// draw_ui(pixel, img, 527);
+	draw_ui(pixel, img, player->tile);
 }
 
 void	def_wallparams(t_player *player, t_drawer *drawer)
@@ -551,7 +558,7 @@ char	handling_event(SDL_Event windowEvent, t_player *player, t_enemy *enemies)
 			if (!condition)
 				return (0);
 			condition = 0;
-			shoot_player(enemies);
+			shoot_player(player, enemies);
 			return (1);
 		}
 		if (windowEvent.type == SDL_KEYUP && windowEvent.key.keysym.sym == SDLK_SPACE)

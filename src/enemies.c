@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/16 12:57:17 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/26 19:46:29 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/11/27 15:30:58 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ t_enemy	*def_enemies(t_map *map)
 		node->main_tile = 156;
 		node->health = 100;
 		node->condition = 0b1;
-		node->phase = 0;
+		node->phase = 0; //maybe not need
 		
 		if (!enemies)
 		{
@@ -250,7 +250,37 @@ t_epath	*def_epath(int ecounter)
 	return (epath);
 }
 
-void	set_condition(t_enemy *enemies, t_player *player)
+void	set_pcondition(t_player *player)
+{
+	if (!player->condition)
+	{
+		set_stay(player);
+		return ;
+	}
+	if (player->condition == 0b1)
+	{
+		set_pshoot(player);
+		return ;
+	}
+}
+
+void	set_stay(t_player *player)
+{
+	player->tile = player->main_tile;
+}
+
+void	set_pshoot(t_player *player)
+{
+	player->tile = player->main_tile + player->phase;
+	player->phase += 1;
+	if (player->phase > 4)
+	{
+		player->condition = 0;
+		player->phase = 0;
+	}
+}
+
+void	set_econdition(t_enemy *enemies, t_player *player)
 {
 	while (enemies)
 	{
@@ -478,253 +508,21 @@ void	set_spriteparam(t_enemy *enemies, t_player *player)
 	enemies->v_offset = HEIGHT / 2 - enemies->size / 2;
 }
 
-
-// void	set_enemies(t_enemy *enemies, t_player *player)
-// {
-
-// 	if (enemies->health && !enemies->punch
-// 		&& fabs(enemies->hfov) >= 5 * M_PI / 180 && enemies->dist >= 5)
-// 	{
-// 		enemies->p_div = enemies->normal - player->angle;
-// 		if (enemies->p_div < -180 * M_PI / 180)
-// 			enemies->p_div = 360 * M_PI / 180 + enemies->p_div;
-// 		if (enemies->p_div > 180 * M_PI / 180)
-// 			enemies->p_div = -360 * M_PI / 180 + enemies->p_div;
-
-// 		if (fabs(enemies->p_div) >= 157.5 * M_PI / 180)
-// 			enemies->tile = enemies->shift_tile;
-// 		if (fabs(enemies->p_div) >= 112.5 * M_PI / 180 && fabs(enemies->p_div) < 157.5 * M_PI / 180)
-// 			enemies->tile = enemies->shift_tile + 1;
-// 		if (fabs(enemies->p_div) >= 67.5 * M_PI / 180 && fabs(enemies->p_div) < 112.5 * M_PI / 180)
-// 			enemies->tile = enemies->shift_tile + 2;
-// 		if (fabs(enemies->p_div) >= 22.5 * M_PI / 180 && fabs(enemies->p_div) < 67.5 * M_PI / 180)
-// 			enemies->tile = enemies->shift_tile + 3;
-// 		if (fabs(enemies->p_div) < 22.5 * M_PI / 180)
-// 			enemies->tile = enemies->shift_tile + 4;
-// 	}
-// 	else
-// 	{
-// 		enemies->tile = enemies->shift_tile;
-// 		// enemies->tile = enemies->main_tile + 40;
-// 	}
-	
-
-// 	enemies->p_dir = atan2(enemies->pos_x - player->pos_x, enemies->pos_y - player->pos_y);
-// 	if (enemies->p_dir - player->angle > M_PI)
-// 		enemies->p_dir -= 2 * M_PI; 
-// 	if (enemies->p_dir - player->angle < -M_PI)
-// 		enemies->p_dir += 2 * M_PI;
-// 	enemies->p_dir -= player->angle;
-// 	enemies->shift_x = WIDTH / 2 - (enemies->p_dir * (WIDTH) / (player->fov));
-	
-// 	enemies->dist = sqrt(pow(enemies->pos_x - player->pos_x, 2) + pow(enemies->pos_y - player->pos_y, 2));
-// 	enemies->size = (int)(HEIGHT * 2 / enemies->dist);
-// 	enemies->h_offset = enemies->shift_x - enemies->size / 2;
-// 	enemies->v_offset = HEIGHT / 2 - enemies->size / 2;
-
-// 	// enemies->punch = 0;
-// }
-
-// void	set_enemies2(t_enemy *enemies, t_player *player)
-// {
-// 	while (enemies)
-// 	{
-// 		if (enemies->health && !enemies->punch)
-// 		{
-// 			enemies->p_div = enemies->normal - player->angle;
-// 			if (enemies->p_div < -180 * M_PI / 180)
-// 				enemies->p_div = 360 * M_PI / 180 + enemies->p_div;
-// 			if (enemies->p_div > 180 * M_PI / 180)
-// 				enemies->p_div = -360 * M_PI / 180 + enemies->p_div;
-
-// 			if (fabs(enemies->p_div) >= 157.5 * M_PI / 180)
-// 				enemies->tile = enemies->shift_tile;
-// 			if (fabs(enemies->p_div) >= 112.5 * M_PI / 180 && fabs(enemies->p_div) < 157.5 * M_PI / 180)
-// 				enemies->tile = enemies->shift_tile + 1;
-// 			if (fabs(enemies->p_div) >= 67.5 * M_PI / 180 && fabs(enemies->p_div) < 112.5 * M_PI / 180)
-// 				enemies->tile = enemies->shift_tile + 2;
-// 			if (fabs(enemies->p_div) >= 22.5 * M_PI / 180 && fabs(enemies->p_div) < 67.5 * M_PI / 180)
-// 				enemies->tile = enemies->shift_tile + 3;
-// 			if (fabs(enemies->p_div) < 22.5 * M_PI / 180)
-// 				enemies->tile = enemies->shift_tile + 4;
-// 		}
-// 		else
-// 		{
-// 			enemies->tile = enemies->shift_tile;
-// 		}
-		
-	
-// 		enemies->p_dir = atan2(enemies->pos_x - player->pos_x, enemies->pos_y - player->pos_y);
-
-// 		enemies->hfov = enemies->p_dir + M_PI - enemies->normal;
-// 		if (enemies->hfov > M_PI)
-// 			enemies->hfov -= 2 * M_PI;
-
-// 		if (enemies->p_dir - player->angle > M_PI)
-// 			enemies->p_dir -= 2 * M_PI; 
-// 		if (enemies->p_dir - player->angle < -M_PI)
-// 			enemies->p_dir += 2 * M_PI;
-// 		enemies->p_dir -= player->angle;
-// 		enemies->shift_x = WIDTH / 2 - (enemies->p_dir * (WIDTH) / (player->fov));
-		
-// 		enemies->dist = sqrt(pow(enemies->pos_x - player->pos_x, 2) + pow(enemies->pos_y - player->pos_y, 2));
-// 		enemies->size = (int)(HEIGHT * 2 / enemies->dist);
-// 		enemies->h_offset = enemies->shift_x - enemies->size / 2;
-// 		enemies->v_offset = HEIGHT / 2 - enemies->size / 2;
-
-// 		enemies->punch = 0;
-		
-// 		enemies = enemies->next;
-// 	}
-// }
-
-// void	set_patrol(t_enemy *enemies, t_player *player)
-// {
-// 	static long	time = 0;
-// 	// static char	phase = 0;
-// 	// t_enemy		*cursor;
-
-// 	int			dir;
-
-
-// 	if (time % 50 == 0)
-// 	{
-// 		// printf ("%f %f\n", enemies->pos_x, enemies->end->crd_x);
-// 		// if (enemies->pos_x != enemies->end->crd_x)
-		
-// 		while (enemies)
-// 		{
-// 			if (!enemies->health)
-// 			{
-// 				kill_enemies(player, enemies);
-// 				set_enemies(enemies, player);
-// 				enemies = enemies->next;
-// 				continue ;
-// 			}
-
-// 			if (fabs(enemies->hfov) < 5 * M_PI / 180 && enemies->dist < 5)
-// 			{
-// 				static int	phase = 46;
-// 				// enemies->phase = 0;
-// 				enemies->shift_tile = enemies->main_tile + phase;
-// 				set_enemies(enemies, player);
-// 				phase += 1;
-// 				if (phase > 48)
-// 					phase = 47;
-// 				enemies = enemies->next;
-// 				continue ;
-// 			}
-
-// 			// printf("%f\n", enemies->p_dir * 180 / M_PI);
-// 			// printf("%f\n", enemies->p_div);
-// 			// if (fabs(enemies->p_dir) <= 5 * M_PI / 180 && enemies->p_div > 0)
-// 			// {
-// 			// 	enemies->shift_tile = 204;
-// 			// 	set_enemies(enemies, player);
-// 			// 	enemies = enemies->next;
-// 			// 	continue ;
-// 			// }
-			
-// 			if (fabs(enemies->pos_x - enemies->end->crd_x) > 0.1 || fabs(enemies->pos_y - enemies->end->crd_y) > 0.1)
-// 			{
-// 				if (fabs(enemies->pos_x - enemies->end->crd_x) > 0.1)
-// 				{
-// 					dir = enemies->end->crd_x - enemies->start->crd_x > 0 ? 1 : -1;
-// 					enemies->pos_x = enemies->pos_x + 0.1 * dir;
-// 				}
-// 				if (fabs(enemies->pos_y - enemies->end->crd_y) > 0.1)
-// 				{
-// 					dir = enemies->end->crd_y - enemies->start->crd_y > 0 ? 1 : -1;
-// 					enemies->pos_y = enemies->pos_y + 0.1 * dir;
-// 				}
-// 			}
-// 			else
-// 			{
-// 				if (!enemies->end->next)
-// 				{
-// 					enemies->start = enemies->end;
-// 					enemies->end = enemies->path;
-// 					enemies->pos_x = enemies->start->crd_x;
-// 					enemies->pos_y = enemies->start->crd_y;
-// 					enemies->normal = enemies->start->normal;
-// 				}
-// 				else
-// 				{
-// 					enemies->start = enemies->end;
-// 					enemies->end = enemies->start->next;
-// 					enemies->pos_x = enemies->start->crd_x;
-// 					enemies->pos_y = enemies->start->crd_y;
-// 					enemies->normal = enemies->start->normal;
-// 				}
-// 			}
-			
-
-// 			// if (enemies->punch)
-// 			// {
-// 			// 	set_enemies(enemies, player);
-// 			// 	enemies->punch = 0;
-// 			// }
-// 			// else
-// 			// {
-// 			// 	if (enemies->phase == 0)
-// 			// 		enemies->shift_tile = enemies->main_tile + 8;
-// 			// 	if (enemies->phase == 1)
-// 			// 		enemies->shift_tile = enemies->main_tile + 16;
-// 			// 	if (enemies->phase == 2)
-// 			// 		enemies->shift_tile = enemies->main_tile + 24;
-// 			// 	if (enemies->phase == 3)
-// 			// 		enemies->shift_tile = enemies->main_tile + 32;
-				
-// 			// 	// enemies->pos_y -= 0.1;
-// 			// 	set_enemies(enemies, player);
-// 			// 	enemies->phase += 1;
-// 			// 	if (enemies->phase == 4)
-// 			// 		enemies->phase = 0;
-// 			// }
-
-// 		if (enemies->phase == 0)
-// 			enemies->shift_tile = enemies->main_tile + 8;
-// 		if (enemies->phase == 1)
-// 			enemies->shift_tile = enemies->main_tile + 16;
-// 		if (enemies->phase == 2)
-// 			enemies->shift_tile = enemies->main_tile + 24;
-// 		if (enemies->phase == 3)
-// 			enemies->shift_tile = enemies->main_tile + 32;
-// 		set_enemies(enemies, player);
-// 		enemies->phase += 1;
-// 		if (enemies->phase == 4)
-// 			enemies->phase = 0;
-
-// 		enemies = enemies->next;
-// 		}
-// 	}
-// 	time += 1;
-// }
-
-
-void	set_patrol(t_enemy *enemies, t_player *player)
+void	set_timer(t_enemy *enemies, t_player *player)
 {
 	static long	time = 0;
 
 	if (time % 50 == 0)
 	{
-		set_condition(enemies, player);
+		// player->tile = player->tile_weapon + player->phase;
+		// player->phase += 1;
+		// if (player->phase > 4)
+		// 	player->phase = 0;
+		set_pcondition(player);
+		set_econdition(enemies, player);
 	}
 	time += 1;
 }
-
-// void	kill_enemies(t_player *player, t_enemy *enemies)
-// {
-// 	if (enemies->phase < 3)
-// 	{
-// 		enemies->shift_tile += 1;
-// 		enemies->phase += 1;
-// 	}
-// 	else
-// 		enemies->shift_tile = 201;
-		
-// 	// printf("%d\n", );
-// }
 
 void	draw_enemies(t_player *player, t_enemy *enemies, int *pixel, int *img, double *z_buff)
 {
@@ -827,10 +625,19 @@ void	draw_vertlenemy(t_enemy *enemies, int *pixel, int *img, double *z_buff, int
 	}
 }
 
-void	shoot_player(t_enemy *enemies)
+void	shoot_player(t_player *player, t_enemy *enemies)
 {
+	// if (player->armweapon == 1)
+	// 	player->tile_weapon = 527;
+	// player->tile = player->tile_weapon;
+	// player->phase += 1;
+
+	player->condition = 0b1;
+	player->phase = 1;
+	
 	while (enemies)
 	{
+		
 		if (enemies->health > 0 && abs(WIDTH / 2 - enemies->shift_x) < enemies->size / 2)
 		{
 			// enemies->health -= 20;
