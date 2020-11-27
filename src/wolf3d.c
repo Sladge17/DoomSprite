@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:55:30 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/27 15:06:57 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/11/27 18:52:16 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -555,17 +555,17 @@ char	handling_event(SDL_Event windowEvent, t_player *player, t_enemy *enemies)
 		}
 		if (windowEvent.type == SDL_KEYDOWN && windowEvent.key.keysym.sym == SDLK_SPACE)
 		{
-			if (!condition)
-				return (0);
-			condition = 0;
+			// if (!condition)
+			// 	return (0);
+			// condition = 0;
 			shoot_player(player, enemies);
 			return (1);
 		}
-		if (windowEvent.type == SDL_KEYUP && windowEvent.key.keysym.sym == SDLK_SPACE)
-		{
-			condition = 1;
-			return (0);
-		}
+		// if (windowEvent.type == SDL_KEYUP && windowEvent.key.keysym.sym == SDLK_SPACE)
+		// {
+		// 	condition = 1;
+		// 	return (1);
+		// }
 	}
 	return (0);
 }
