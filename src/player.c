@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/30 12:57:03 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/30 13:01:39 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/11/30 13:35:07 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ t_player	*def_player(t_map *map)
 	
 	player->condition = 0;
 
-	player->shoot = 0;
+	// player->shoot = 0;
 	
 	player->bitweapons = 0b1;
 	player->weapon = 1;
@@ -49,7 +49,7 @@ void	set_pcondition(t_player *player, t_enemy *enemies)
 		set_stay(player);
 		return ;
 	}
-	if (player->condition == 0b1)
+	if (player->condition & 0b10)
 	{
 		set_pshoot(player, enemies);
 		return ;
@@ -85,7 +85,7 @@ void	set_pshoot(t_player *player, t_enemy *enemies)
 		return ;
 	}
 
-	if (player->phase > 4 && player->shoot)
+	if (player->condition & 0b1 && player->phase > 4)
 	{
 		player->phase = 2;
 		// player->phase += 1;
@@ -107,9 +107,10 @@ void	shoot_player(t_player *player, t_enemy *enemies)
 	// player->tile = player->tile_weapon;
 	// player->phase += 1;
 
-	if (player->condition != 0b1)
+	// if (player->condition != 0b1)
+	if (!(player->condition & 0b10))
 	{
-		player->condition = 0b1;
+		player->condition |= 0b10;
 		player->phase = 1;
 	}
 	// player->condition = 0b1;

@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:57:39 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/30 13:07:03 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/11/30 13:28:59 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ typedef struct	s_player
 	
 	char		condition;
 
-	char		shoot; //including to condition
+	// char		shoot; //including to condition
 	
 	char		bitweapons;
 	char		weapon;
