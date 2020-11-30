@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:55:30 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/30 13:37:10 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/11/30 18:14:32 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ int		main()
 	t_map		*map;
 	t_player	*player;
 	t_enemy		*enemies;
+	t_props		*props;
 	t_drawer	*drawer;
 
 
@@ -61,7 +62,15 @@ int		main()
 		SDL_DestroyWindow(window);
 		exit(0);
 	}
-	// print_epath(enemies);
+	
+	if (!(props = def_props(map)))
+	{
+		SDL_FreeSurface(athlas);
+		SDL_FreeSurface(surface);
+		SDL_DestroyWindow(window);
+		exit(0);
+	}
+	// print_props(props);
 	// exit(0);
 
 	
@@ -76,6 +85,8 @@ int		main()
 		exit(0);
 	}
 
+	set_propsparam(props, player);
+	
 	SDL_Event	windowEvent;
 	while (1)
 	{
@@ -89,14 +100,15 @@ int		main()
 		if (handling_event(windowEvent, player, enemies))
 		{
 			set_spritesparam(enemies, player);
-			drawing(map, player, enemies, drawer, pixel, img);
+			set_propsparam(props, player);
+			drawing(map, player, enemies, props, drawer, pixel, img);
 			SDL_UpdateWindowSurface(window);
 			continue ;
 		}
 		// // printf("out\n");
 		set_timer(enemies, player);
 		
-		drawing(map, player, enemies, drawer, pixel, img);
+		drawing(map, player, enemies, props, drawer, pixel, img);
 		SDL_UpdateWindowSurface(window);
 	}
 	return (0);
@@ -151,8 +163,8 @@ t_map		*def_map()
 					"1..............1"\
 					"1......P.......1"\
 					"1..............1"\
-					"1..............1"\
-					"1......E.......1"\
+					"1...H......H...1"\
+					"1......A.......1"\
 					"1..............1"\
 					"1..............1"\
 					"1..............1"\
@@ -171,7 +183,7 @@ t_drawer	*def_drawer()
 	return (drawer);
 }
 
-void	drawing(t_map *map, t_player *player, t_enemy *enemies, t_drawer *drawer, int *pixel, int *img)
+void	drawing(t_map *map, t_player *player, t_enemy *enemies, t_props *props, t_drawer *drawer, int *pixel, int *img)
 {
 	drawer->cursor_x = 0;
 	while (drawer->cursor_x < WIDTH)
@@ -210,6 +222,7 @@ void	drawing(t_map *map, t_player *player, t_enemy *enemies, t_drawer *drawer, i
 	
 
 	draw_enemies(player, enemies, pixel, img, z_buff);
+	draw_props(player, props, pixel, img, z_buff);
 	draw_cross(pixel, enemies);
 	
 	// draw_ui(pixel, img, 0, 33);

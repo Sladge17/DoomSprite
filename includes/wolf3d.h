@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:57:39 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/30 16:11:47 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/11/30 18:06:44 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,12 +154,36 @@ typedef struct		s_enemy
 	int				shift_x;
 	int				h_offset;
 	int				v_offset;
-
-	// char			punch; // <--- need dell
-
 	
 	struct s_enemy	*next;
 }					t_enemy;
+
+typedef struct		s_props
+{
+	double			pos_x;
+	double			pos_y;
+	int				tile;
+	
+	double			p_dir;
+	double			dist;
+	int				size;
+	int				shift_x;
+	int				h_offset;
+	int				v_offset;
+	
+	struct s_props	*next;
+}					t_props;
+
+
+
+/*
+** props.c
+*/
+t_props	*def_props(t_map *map);
+void	set_propsparam(t_props *props, t_player *player);
+void	print_props(t_props *props);
+void	draw_props(t_player *player, t_props *props, int *pixel, int *img, double *z_buff);
+void	draw_vertlprops(t_props *props, int *pixel, int *img, double *z_buff, int cursor_x, t_player *player);
 
 /*
 ** player.c
@@ -202,7 +226,7 @@ void	print_epath(t_enemy *enemies);
 void		set_timer(t_enemy *enemies, t_player *player);
 t_map		*def_map();
 t_drawer	*def_drawer();
-void		drawing(t_map *map, t_player *player, t_enemy *enemies, t_drawer *drawer, int *pixel, int *img);
+void		drawing(t_map *map, t_player *player, t_enemy *enemies, t_props *props, t_drawer *drawer, int *pixel, int *img);
 void		def_wallparams(t_player *player, t_drawer *drawer);
 void		draw_room(t_player *player, t_drawer *drawer, int *pixel, int *img);
 void		draw_wall(t_player *player, t_drawer *drawer, int *pixel, int *img);

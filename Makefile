@@ -12,6 +12,7 @@ SRC_LIST =	wolf3d.c \
 			draw_sprite.c \
 			player.c \
 			enemies.c \
+			props.c \
 			draw_ui.c \
 			draw_door.c
 # SRC_LIST = wolf2.c
