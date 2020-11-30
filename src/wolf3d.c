@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:55:30 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/30 18:14:32 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/11/30 20:36:06 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@ int		main()
 	t_enemy		*enemies;
 	t_props		*props;
 	t_drawer	*drawer;
-
-
+	t_wad		*wad;
+	
 	if (SDL_Init(SDL_INIT_VIDEO))
 		exit(0);
 
@@ -86,7 +86,11 @@ int		main()
 	}
 
 	set_propsparam(props, player);
-	
+	wad = (t_wad *)ft_memalloc(sizeof(t_wad));
+	wad_loader(wad, "map.wad");
+	wad_reader(wad);
+
+	t_sprite *sprite = 	sprite_create(wad, "POSSE1");
 	SDL_Event	windowEvent;
 	while (1)
 	{
@@ -102,6 +106,7 @@ int		main()
 			set_spritesparam(enemies, player);
 			set_propsparam(props, player);
 			drawing(map, player, enemies, props, drawer, pixel, img);
+			blit_sprite_scale(sprite, surface, &((t_rect){enemies->h_offset, enemies->v_offset, enemies->size / 2, enemies->size / 2, false}));
 			SDL_UpdateWindowSurface(window);
 			continue ;
 		}
@@ -109,6 +114,8 @@ int		main()
 		set_timer(enemies, player);
 		
 		drawing(map, player, enemies, props, drawer, pixel, img);
+		blit_sprite_scale(sprite, surface, &((t_rect){enemies->h_offset, enemies->v_offset, enemies->size / 2, enemies->size / 2, false}));
+
 		SDL_UpdateWindowSurface(window);
 	}
 	return (0);
@@ -220,7 +227,7 @@ void	drawing(t_map *map, t_player *player, t_enemy *enemies, t_props *props, t_d
 	// 	i += 1;
 	// }
 	
-
+	
 	draw_enemies(player, enemies, pixel, img, z_buff);
 	draw_props(player, props, pixel, img, z_buff);
 	draw_cross(pixel, enemies);

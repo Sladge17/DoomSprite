@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:57:39 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/30 18:06:44 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/11/30 19:51:02 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,11 @@
 # include <unistd.h>
 # include <stdlib.h>
 # include <math.h>
+# include "libft.h"
 
 # include <stdio.h>
 
+# include "wad.h"
 # include "SDL.h"
 # include "SDL_image.h"
 # include "SDL_mixer.h"
@@ -102,23 +104,23 @@ typedef struct	s_drawer
 	
 }				t_drawer;
 
-typedef struct	s_sprite
-{
-	double		pos_x;
-	double		pos_y;
-	double		direction;
+// typedef struct	s_sprite
+// {
+// 	double		pos_x;
+// 	double		pos_y;
+// 	double		direction;
 	
-	double		rotator;
-	double		dev_coax;
-	double		normal;
+// 	double		rotator;
+// 	double		dev_coax;
+// 	double		normal;
 	
-	double		dist;
-	int			size;
-	int			h_offset;
-	int			v_offset;
-	int			cursor_x;
-	int			cursor_y;
-}				t_sprite;
+// 	double		dist;
+// 	int			size;
+// 	int			h_offset;
+// 	int			v_offset;
+// 	int			cursor_x;
+// 	int			cursor_y;
+// }				t_sprite;
 
 typedef struct		s_epath
 {
@@ -237,7 +239,7 @@ char		handling_event(SDL_Event windowEvent, t_player *player, t_enemy *enemies);
 /*
 ** draw_sprite.c
 */
-void	draw_sprite(t_map *map, t_player *player, int *pixel, int *img, int sprite_poz, int tile_numb, double *z_buff);
+// void	draw_sprite(t_map *map, t_player *player, int *pixel, int *img, int sprite_poz, int tile_numb, double *z_buff);
 void	def_spriteparam(t_sprite *sprite, int sprite_poz, t_map *map, t_player *player);
 void	draw_vertline(t_sprite *sprite, int *pixel, int *img, int tile_numb, double *z_buff);
 /*
