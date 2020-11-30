@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/16 12:57:17 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/30 13:02:08 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/11/30 16:12:35 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -256,31 +256,31 @@ void	set_econdition(t_enemy *enemies, t_player *player)
 	{
 		if (enemies->condition == 0b1000)
 		{
-			set_shoot(enemies, player);
+			set_eshoot(enemies, player);
 			enemies = enemies->next;
 			continue ;
 		}
 		if (enemies->condition == 0b100)
 		{
-			set_detect(enemies, player);
+			set_edetect(enemies, player);
 			enemies = enemies->next;
 			continue ;
 		}
 		if (!enemies->condition)
 		{
-			set_dead(enemies, player);
+			set_edead(enemies, player);
 			enemies = enemies->next;
 			continue ;
 		}
 		if (enemies->condition == 0b10)
 		{
-			set_punch(enemies, player);
+			set_epunch(enemies, player);
 			enemies = enemies->next;
 			continue ;
 		}
 		if (enemies->condition == 0b1)
 		{
-			set_walk(enemies, player);
+			set_ewalk(enemies, player);
 			enemies = enemies->next;
 			continue ;
 		}
@@ -288,7 +288,7 @@ void	set_econdition(t_enemy *enemies, t_player *player)
 	}
 }
 
-void	set_shoot(t_enemy *enemies, t_player *player)
+void	set_eshoot(t_enemy *enemies, t_player *player)
 {
 	enemies->shift_tile = enemies->main_tile + 47;
 	enemies->tile = enemies->shift_tile + enemies->phase;
@@ -311,7 +311,7 @@ void	set_shoot(t_enemy *enemies, t_player *player)
 	enemies->condition = 0b1;
 }
 
-void	set_detect(t_enemy *enemies, t_player *player)
+void	set_edetect(t_enemy *enemies, t_player *player)
 {
 	enemies->tile = enemies->main_tile + 46;
 	enemies->phase = 0;
@@ -323,7 +323,7 @@ void	set_detect(t_enemy *enemies, t_player *player)
 	enemies->condition = 0b1;
 }
 
-void	set_dead(t_enemy *enemies, t_player *player)
+void	set_edead(t_enemy *enemies, t_player *player)
 {
 	if (enemies->phase == 3)
 	{
@@ -335,7 +335,7 @@ void	set_dead(t_enemy *enemies, t_player *player)
 	enemies->phase += 1;
 }
 
-void	set_punch(t_enemy *enemies, t_player *player)
+void	set_epunch(t_enemy *enemies, t_player *player)
 {
 	enemies->tile = enemies->main_tile + 40;
 	enemies->health -= 40;
@@ -356,17 +356,17 @@ void	set_punch(t_enemy *enemies, t_player *player)
 	enemies->phase = 0;
 }
 
-void	set_walk(t_enemy *enemies, t_player *player)
+void	set_ewalk(t_enemy *enemies, t_player *player)
 {
-	set_position(enemies);
-	set_rotation(enemies, player);
-	set_walkphase(enemies);
+	set_eposition(enemies);
+	set_erotation(enemies, player);
+	set_ewalkphase(enemies);
 	set_spriteparam(enemies, player);
 	if (fabs(enemies->hfov) < (45 / 2) * M_PI / 180 && enemies->dist < 5)
 		enemies->condition = 0b100;
 }
 
-void	set_position(t_enemy *enemies)
+void	set_eposition(t_enemy *enemies)
 {
 	int		increment;
 	
@@ -400,7 +400,7 @@ void	set_position(t_enemy *enemies)
 	enemies->normal = enemies->start->normal;
 }
 
-void	set_rotation(t_enemy *enemies, t_player *player)
+void	set_erotation(t_enemy *enemies, t_player *player)
 {
 	enemies->p_div = enemies->normal - player->angle;
 	if (enemies->p_div < -180 * M_PI / 180)
@@ -431,7 +431,7 @@ void	set_rotation(t_enemy *enemies, t_player *player)
 	enemies->shift_tile = enemies->main_tile + 3;
 }
 
-void	set_walkphase(t_enemy *enemies)
+void	set_ewalkphase(t_enemy *enemies)
 {
 	if (enemies->phase == 0)
 		enemies->tile = enemies->shift_tile + 8;

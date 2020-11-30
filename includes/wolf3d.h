@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:57:39 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/30 13:28:59 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/11/30 16:11:47 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,7 +166,7 @@ typedef struct		s_enemy
 */
 t_player	*def_player(t_map *map);
 void		set_pcondition(t_player *player, t_enemy *enemies);
-void		set_stay(t_player *player);
+void		set_pstay(t_player *player);
 void		set_pshoot(t_player *player, t_enemy *enemies);
 void		shoot_player(t_player *player, t_enemy *enemies);
 
@@ -178,14 +178,14 @@ t_enemy	*def_enemies(t_map *map);
 t_epath	*def_epath(int ecounter);
 
 void	set_econdition(t_enemy *enemies, t_player *player);
-void	set_shoot(t_enemy *enemies, t_player *player);
-void	set_detect(t_enemy *enemies, t_player *player);
-void	set_dead(t_enemy *enemies, t_player *player);
-void	set_punch(t_enemy *enemies, t_player *player);
-void	set_walk(t_enemy *enemies, t_player *player);
-void	set_position(t_enemy *enemies);
-void	set_rotation(t_enemy *enemies, t_player *player);
-void	set_walkphase(t_enemy *enemies);
+void	set_eshoot(t_enemy *enemies, t_player *player);
+void	set_edetect(t_enemy *enemies, t_player *player);
+void	set_edead(t_enemy *enemies, t_player *player);
+void	set_epunch(t_enemy *enemies, t_player *player);
+void	set_ewalk(t_enemy *enemies, t_player *player);
+void	set_eposition(t_enemy *enemies);
+void	set_erotation(t_enemy *enemies, t_player *player);
+void	set_ewalkphase(t_enemy *enemies);
 void	set_spritesparam(t_enemy *enemies, t_player *player);
 void	set_spriteparam(t_enemy *enemies, t_player *player);
 

@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/30 12:57:03 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/30 13:35:07 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/11/30 16:11:20 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void	set_pcondition(t_player *player, t_enemy *enemies)
 {
 	if (!player->condition)
 	{
-		set_stay(player);
+		set_pstay(player);
 		return ;
 	}
 	if (player->condition & 0b10)
@@ -56,7 +56,7 @@ void	set_pcondition(t_player *player, t_enemy *enemies)
 	}
 }
 
-void	set_stay(t_player *player)
+void	set_pstay(t_player *player)
 {
 	player->tile = player->main_tile;
 }
