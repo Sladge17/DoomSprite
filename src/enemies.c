@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/16 12:57:17 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/27 20:04:14 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/11/30 13:02:08 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -250,64 +250,6 @@ t_epath	*def_epath(int ecounter)
 	return (epath);
 }
 
-void	set_pcondition(t_player *player, t_enemy *enemies)
-{
-	if (!player->condition)
-	{
-		set_stay(player);
-		return ;
-	}
-	if (player->condition == 0b1)
-	{
-		set_pshoot(player, enemies);
-		return ;
-	}
-}
-
-void	set_stay(t_player *player)
-{
-	player->tile = player->main_tile;
-}
-
-void	set_pshoot(t_player *player, t_enemy *enemies)
-{
-	player->tile = player->main_tile + player->phase;
-	player->phase += 1;
-
-	if (player->phase == 3)
-	{
-		while (enemies)
-		{
-			if (enemies->health > 0 && abs(WIDTH / 2 - enemies->shift_x) < enemies->size / 2)
-			{
-				// enemies->health -= 20;
-				// if (enemies->health < 0)
-				// 	enemies->health = 0;
-				// enemies->shift_tile = enemies->main_tile + 40;
-				// enemies->phase = 0;
-				// enemies->punch = 1;
-				enemies->condition = 0b10;
-			}
-			enemies = enemies->next;
-		}
-		return ;
-	}
-
-	if (player->phase > 4 && player->shoot)
-	{
-		player->phase = 2;
-		// player->phase += 1;
-		return ;
-	}
-
-
-	if (player->phase > 4)
-	{
-		player->condition = 0;
-		player->phase = 0;
-	}
-}
-
 void	set_econdition(t_enemy *enemies, t_player *player)
 {
 	while (enemies)
@@ -536,22 +478,6 @@ void	set_spriteparam(t_enemy *enemies, t_player *player)
 	enemies->v_offset = HEIGHT / 2 - enemies->size / 2;
 }
 
-void	set_timer(t_enemy *enemies, t_player *player)
-{
-	static long	time = 0;
-
-	if (time % 50 == 0)
-	{
-		// player->tile = player->tile_weapon + player->phase;
-		// player->phase += 1;
-		// if (player->phase > 4)
-		// 	player->phase = 0;
-		set_pcondition(player, enemies);
-		set_econdition(enemies, player);
-	}
-	time += 1;
-}
-
 void	draw_enemies(t_player *player, t_enemy *enemies, int *pixel, int *img, double *z_buff)
 {
 	int		cursor_x;
@@ -652,41 +578,6 @@ void	draw_vertlenemy(t_enemy *enemies, int *pixel, int *img, double *z_buff, int
 		cursor_y += 1;
 	}
 }
-
-void	shoot_player(t_player *player, t_enemy *enemies)
-{
-	// if (player->armweapon == 1)
-	// 	player->tile_weapon = 527;
-	// player->tile = player->tile_weapon;
-	// player->phase += 1;
-
-	if (player->condition != 0b1)
-	{
-		player->condition = 0b1;
-		player->phase = 1;
-	}
-	// player->condition = 0b1;
-	// player->phase = 1;
-	
-	// while (enemies)
-	// {
-		
-	// 	if (enemies->health > 0 && abs(WIDTH / 2 - enemies->shift_x) < enemies->size / 2)
-	// 	{
-	// 		// enemies->health -= 20;
-	// 		// if (enemies->health < 0)
-	// 		// 	enemies->health = 0;
-	// 		// enemies->shift_tile = enemies->main_tile + 40;
-	// 		// enemies->phase = 0;
-	// 		// enemies->punch = 1;
-	// 		enemies->condition = 0b10;
-	// 	}
-	// 	enemies = enemies->next;
-	// }
-	
-}
-
-
 
 // TMP FUNC
 void	print_enemies(t_enemy *enemies)

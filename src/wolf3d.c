@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:55:30 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/27 20:04:27 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/11/30 13:02:50 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,6 +102,22 @@ int		main()
 	return (0);
 }
 
+void	set_timer(t_enemy *enemies, t_player *player)
+{
+	static long	time = 0;
+
+	if (time % 50 == 0)
+	{
+		// player->tile = player->tile_weapon + player->phase;
+		// player->phase += 1;
+		// if (player->phase > 4)
+		// 	player->phase = 0;
+		set_pcondition(player, enemies);
+		set_econdition(enemies, player);
+	}
+	time += 1;
+}
+
 t_map		*def_map()
 {
 	t_map	*map;
@@ -144,36 +160,6 @@ t_map		*def_map()
 	map->width = 16;
 	map->height = 16;
 	return (map);
-}
-
-t_player	*def_player(t_map *map)
-{
-	t_player	*player;
-	char		*player_searcher;
-	int			pos_player;
-
-	if (!(player = (t_player *)malloc(sizeof(t_player))))
-		return (NULL);
-	pos_player = map->width + 1;
-	player_searcher = map->field;
-	while (player_searcher[pos_player] != 'P')
-		pos_player += 1;
-	player->pos_x = pos_player % map->width;
-	player->pos_y = pos_player / map->width;
-	player->angle = PLAYER_ANGLE * M_PI / 180;
-	player->ray_depth = 30;
-	player->fov = 90 * M_PI / 180;
-	player->health = 100;
-	
-	player->condition = 0;
-
-	player->shoot = 0;
-	
-	player->bitweapons = 0b1;
-	player->weapon = 1;
-	player->main_tile = 527;
-	// player->phase = 0;
-	return (player);
 }
 
 t_drawer	*def_drawer()

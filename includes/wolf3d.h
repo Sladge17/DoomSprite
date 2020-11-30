@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:57:39 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/27 20:04:31 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/11/30 13:07:03 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ typedef struct	s_player
 	
 	char		condition;
 
-	char		shoot;
+	char		shoot; //including to condition
 	
 	char		bitweapons;
 	char		weapon;
@@ -161,18 +161,21 @@ typedef struct		s_enemy
 	struct s_enemy	*next;
 }					t_enemy;
 
+/*
+** player.c
+*/
+t_player	*def_player(t_map *map);
+void		set_pcondition(t_player *player, t_enemy *enemies);
+void		set_stay(t_player *player);
+void		set_pshoot(t_player *player, t_enemy *enemies);
+void		shoot_player(t_player *player, t_enemy *enemies);
+
 
 /*
 ** enemies.c
 */
 t_enemy	*def_enemies(t_map *map);
 t_epath	*def_epath(int ecounter);
-
-void	set_pcondition(t_player *player, t_enemy *enemies);
-void	set_stay(t_player *player);
-void	set_pshoot(t_player *player, t_enemy *enemies);
-
-
 
 void	set_econdition(t_enemy *enemies, t_player *player);
 void	set_shoot(t_enemy *enemies, t_player *player);
@@ -188,18 +191,16 @@ void	set_spriteparam(t_enemy *enemies, t_player *player);
 
 
 
-void	set_timer(t_enemy *enemies, t_player *player);
 void	draw_enemies(t_player *player, t_enemy *enemies, int *pixel, int *img, double *z_buff);
 void	draw_vertlenemy(t_enemy *sprite, int *pixel, int *img, double *z_buff, int cursor_x, t_player *player);
-void	shoot_player(t_player *player, t_enemy *enemies);
 void	print_enemies(t_enemy *enemies);
 void	print_epath(t_enemy *enemies);
 
 /*
 ** wolf3d.c
 */
+void		set_timer(t_enemy *enemies, t_player *player);
 t_map		*def_map();
-t_player	*def_player(t_map *map);
 t_drawer	*def_drawer();
 void		drawing(t_map *map, t_player *player, t_enemy *enemies, t_drawer *drawer, int *pixel, int *img);
 void		def_wallparams(t_player *player, t_drawer *drawer);

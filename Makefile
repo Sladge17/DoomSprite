@@ -10,6 +10,7 @@ SRC_LIST =	wolf3d.c \
 			draw_room.c \
 			calc_quads.c \
 			draw_sprite.c \
+			player.c \
 			enemies.c \
 			draw_ui.c \
 			draw_door.c
