@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:57:39 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/30 18:06:44 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/12/01 12:36:56 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,6 +163,7 @@ typedef struct		s_props
 	double			pos_x;
 	double			pos_y;
 	int				tile;
+	char			condition;
 	
 	double			p_dir;
 	double			dist;

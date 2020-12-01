@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/30 17:04:46 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/30 18:15:17 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/12/01 13:00:01 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ t_props	*def_props(t_map *map)
 			node->pos_x = index % map->width;
 			node->pos_y = index / map->width;
 			node->tile = 133;
+			node->condition = 0b1;
 			if (!props)
 			{
 				props = node;
@@ -45,6 +46,7 @@ t_props	*def_props(t_map *map)
 			node->pos_x = index % map->width;
 			node->pos_y = index / map->width;
 			node->tile = 134;
+			node->condition = 0b1;
 			if (!props)
 			{
 				props = node;
@@ -66,6 +68,26 @@ void	set_propsparam(t_props *props, t_player *player)
 {
 	while (props)
 	{
+		if (props->condition == 0)
+		{
+			props = props->next;
+			continue ;
+		}
+		
+		props->dist = sqrt(pow(props->pos_x - player->pos_x, 2) + pow(props->pos_y - player->pos_y, 2));
+		if (props->dist < 0.2 && props->condition == 0b1 && props->tile == 133)
+		{
+			if (player->health < 100)
+			{
+				player->health += 40;
+				if (player->health > 100)
+					player->health = 100;
+				props->condition = 0b0;
+			}
+			props = props->next;
+			continue ;
+		}
+		
 		props->p_dir = atan2(props->pos_x - player->pos_x, props->pos_y - player->pos_y);
 		if (props->p_dir - player->angle > M_PI)
 			props->p_dir -= 2 * M_PI; 
@@ -74,7 +96,6 @@ void	set_propsparam(t_props *props, t_player *player)
 		props->p_dir -= player->angle;
 		props->shift_x = WIDTH / 2 - (props->p_dir * (WIDTH) / (player->fov));
 		
-		props->dist = sqrt(pow(props->pos_x - player->pos_x, 2) + pow(props->pos_y - player->pos_y, 2));
 		props->size = (int)(HEIGHT * 2 / props->dist);
 		props->h_offset = props->shift_x - props->size / 2;
 		props->v_offset = HEIGHT / 2 - props->size / 2;
@@ -88,6 +109,11 @@ void	draw_props(t_player *player, t_props *props, int *pixel, int *img, double *
 	
 	while (props)
 	{
+		if (props->condition == 0)
+		{
+			props = props->next;
+			continue ;
+		}
 		cursor_x = 0;
 		while (cursor_x < props->size)
 		{

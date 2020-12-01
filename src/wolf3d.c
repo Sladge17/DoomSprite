@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:55:30 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/30 18:14:32 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/12/01 12:52:36 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,7 @@ int		main()
 	SDL_Event	windowEvent;
 	while (1)
 	{
+		printf("%d\n", player->health);
 		int		i = 0;
 		while (i < WIDTH * HEIGHT)
 		{
