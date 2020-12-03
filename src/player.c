@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/30 12:57:03 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/30 16:11:20 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/12/03 15:42:14 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ void	set_pshoot(t_player *player, t_enemy *enemies)
 	{
 		while (enemies)
 		{
-			if (enemies->health > 0 && abs(WIDTH / 2 - enemies->shift_x) < enemies->size / 2)
+			if (enemies->health > 0 && abs(WIDTH / 2 - enemies->sprite->shift_x) < enemies->sprite->size / 2)
 			{
 				// enemies->health -= 20;
 				// if (enemies->health < 0)

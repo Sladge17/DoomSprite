@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:57:39 by jthuy             #+#    #+#             */
-/*   Updated: 2020/12/03 13:26:38 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/12/03 17:22:05 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
 
 # include <stdio.h>
 
-# include "wad.h"
+// # include "wad.h"
 # include "SDL.h"
 # include "SDL_image.h"
 # include "SDL_mixer.h"
@@ -108,57 +108,61 @@ typedef struct	s_sprite
 {
 	double		pos_x;
 	double		pos_y;
-	double		direction;
+	int			main_tile;
 	
-	double		rotator;
-	double		dev_coax;
-	double		normal;
 	
+	double		p_dirx;
+	double		p_diry;
+	double		p_dir;
 	double		dist;
 	int			size;
+	int			shift_x;
 	int			h_offset;
 	int			v_offset;
-	int			cursor_x;
-	int			cursor_y;
+	// int			cursor_x;
+	// int			cursor_y;
 }				t_sprite;
 
-// typedef struct		s_epath
-// {
-// 	int				index;
-// 	double			crd_x;
-// 	double			crd_y;
-// 	double			normal;
-// 	struct s_epath	*next;
-// }					t_epath;
+typedef struct		s_epath
+{
+	int				index;
+	double			crd_x;
+	double			crd_y;
+	double			normal;
+	struct s_epath	*next;
+}					t_epath;
 
-// typedef struct		s_enemy
-// {
-// 	t_epath			*path;
-// 	t_epath			*start;
-// 	t_epath			*end;
-// 	double			pos_x;
-// 	double			pos_y;
-// 	double			normal;
-// 	int				main_tile;
-// 	char			health;
-// 	char			condition;
-// 	char			phase;
+typedef struct		s_enemy
+{
+	t_epath			*path;
+	t_epath			*start;
+	t_epath			*end;
 	
-// 	int				shift_tile;
-// 	double			p_div;
-// 	int				tile;
-// 	double			p_dir;
+	t_sprite		*sprite;
+	// double			pos_x;
+	// double			pos_y;
+	// int				main_tile;
+	
+	double			normal;
+	char			health;
+	char			condition;
+	char			phase;
+	
+	int				shift_tile;
+	double			p_div;
+	int				tile;
+	// double			p_dir;
 
-// 	double			hfov;	
+	double			hfov;	
 	
-// 	double			dist;
-// 	int				size;
-// 	int				shift_x;
-// 	int				h_offset;
-// 	int				v_offset;
+	// double			dist;
+	// int				size;
+	// int				shift_x;
+	// int				h_offset;
+	// int				v_offset;
 	
-// 	struct s_enemy	*next;
-// }					t_enemy;
+	struct s_enemy	*next;
+}					t_enemy;
 
 typedef struct		s_props
 {

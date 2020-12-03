@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/16 12:57:17 by jthuy             #+#    #+#             */
-/*   Updated: 2020/12/02 18:27:36 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/12/03 17:21:55 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@
 // 	return(enemies);
 // }
 
-#define ELIMIT 1
+#define ELIMIT 2
 
 t_enemy	*def_enemies(t_map *map)
 {
@@ -63,20 +63,15 @@ t_enemy	*def_enemies(t_map *map)
 	{
 		node = (t_enemy *)malloc(sizeof(t_enemy)); // NEED PROTECT
 		node->path = def_epath(ecounter);
-
-		// print_epath(node->path);
-		// exit(0);
-		
-		// node->pos_x = ecounter % map->width + 0.5;
-		// node->pos_y = ecounter / map->width + 0.5;
-		// node->normal = 180 * M_PI / 180; // AVALUABLE VALUES: 0, 45, 90, 135, 180, 225, 270, 315
-		
 		node->start = node->path;
 		node->end = node->start->next;
-		node->pos_x = node->start->crd_x;
-		node->pos_y = node->start->crd_y;
+
+		node->sprite = (t_sprite *)malloc(sizeof(t_sprite)); // NEED PROTECT
+		node->sprite->pos_x = node->start->crd_x;
+		node->sprite->pos_y = node->start->crd_y;
+		node->sprite->main_tile = 156;
+		
 		node->normal = node->start->normal; // AVALUABLE VALUES: 0, 45, 90, 135, 180, 225, 270, 315
-		node->main_tile = 156;
 		node->health = 100;
 		node->condition = 0b1;
 		node->phase = 0; //maybe not need
@@ -123,23 +118,23 @@ t_epath	*def_epath(int ecounter)
 				"...4..1........."\
 				"................"\
 				"................";
-	// if (ecounter == 1)
-	// 	field =	"................"\
-	// 			"................"\
-	// 			"................"\
-	// 			"................"\
-	// 			"................"\
-	// 			"................"\
-	// 			"................"\
-	// 			"................"\
-	// 			"................"\
-	// 			"................"\
-	// 			"................"\
-	// 			".......2..3....."\
-	// 			"................"\
-	// 			".......1..4....."\
-	// 			"................"\
-	// 			"................";
+	if (ecounter == 1)
+		field =	"................"\
+				"................"\
+				"................"\
+				"................"\
+				"................"\
+				"................"\
+				"................"\
+				"................"\
+				"................"\
+				"................"\
+				"................"\
+				".......2..3....."\
+				"................"\
+				".......1..4....."\
+				"................"\
+				"................";
 		
 	// if (!ecounter)
 	// 	field =	"................"\
@@ -290,13 +285,13 @@ void	set_econdition(t_enemy *enemies, t_player *player)
 
 void	set_eshoot(t_enemy *enemies, t_player *player)
 {
-	enemies->shift_tile = enemies->main_tile + 47;
+	enemies->shift_tile = enemies->sprite->main_tile + 47;
 	enemies->tile = enemies->shift_tile + enemies->phase;
 	// if (fabs(enemies->hfov) < (45 / 2) * M_PI / 180 && enemies->dist < 5)
-	if (enemies->dist < 8)
+	if (enemies->sprite->dist < 8)
 	{
 		///
-		enemies->normal = atan2(enemies->pos_x - player->pos_x, enemies->pos_y - player->pos_y);
+		enemies->normal = atan2(enemies->sprite->p_dirx, enemies->sprite->p_diry);
 		if (enemies->normal < 0)
 			enemies->normal += M_PI;
 		///
@@ -313,9 +308,9 @@ void	set_eshoot(t_enemy *enemies, t_player *player)
 
 void	set_edetect(t_enemy *enemies, t_player *player)
 {
-	enemies->tile = enemies->main_tile + 46;
+	enemies->tile = enemies->sprite->main_tile + 46;
 	enemies->phase = 0;
-	if (fabs(enemies->hfov) < (45 / 2) * M_PI / 180 && enemies->dist < 5)
+	if (fabs(enemies->hfov) < (45 / 2) * M_PI / 180 && enemies->sprite->dist < 5)
 	{
 		enemies->condition = 0b1000;
 		return ;
@@ -327,17 +322,17 @@ void	set_edead(t_enemy *enemies, t_player *player)
 {
 	if (enemies->phase == 3)
 	{
-		enemies->tile = enemies->main_tile + 45;
+		enemies->tile = enemies->sprite->main_tile + 45;
 		return ;
 	}
-	enemies->shift_tile = enemies->main_tile + 41;
+	enemies->shift_tile = enemies->sprite->main_tile + 41;
 	enemies->tile = enemies->shift_tile + enemies->phase;
 	enemies->phase += 1;
 }
 
 void	set_epunch(t_enemy *enemies, t_player *player)
 {
-	enemies->tile = enemies->main_tile + 40;
+	enemies->tile = enemies->sprite->main_tile + 40;
 	enemies->health -= 40;
 	// printf("%d\n", enemies->health);
 	if (enemies->health <= 0)
@@ -348,7 +343,7 @@ void	set_epunch(t_enemy *enemies, t_player *player)
 	}
 	// enemies->condition = 0b1;
 	/// NEED CHECK
-	enemies->normal = atan2(enemies->pos_x - player->pos_x, enemies->pos_y - player->pos_y);
+	enemies->normal = atan2(enemies->sprite->p_dirx, enemies->sprite->p_diry);
 	if (enemies->normal < 0)
 		enemies->normal += M_PI;
 	/// ///
@@ -362,7 +357,7 @@ void	set_ewalk(t_enemy *enemies, t_player *player)
 	set_erotation(enemies, player);
 	set_ewalkphase(enemies);
 	set_spriteparam(enemies, player);
-	if (fabs(enemies->hfov) < (45 / 2) * M_PI / 180 && enemies->dist < 5)
+	if (fabs(enemies->hfov) < (45 / 2) * M_PI / 180 && enemies->sprite->dist < 5)
 		enemies->condition = 0b100;
 }
 
@@ -370,17 +365,17 @@ void	set_eposition(t_enemy *enemies)
 {
 	int		increment;
 	
-	if (fabs(enemies->pos_x - enemies->end->crd_x) > 0.1 || fabs(enemies->pos_y - enemies->end->crd_y) > 0.1)
+	if (fabs(enemies->sprite->pos_x - enemies->end->crd_x) > 0.1 || fabs(enemies->sprite->pos_y - enemies->end->crd_y) > 0.1)
 	{
-		if (fabs(enemies->pos_x - enemies->end->crd_x) > 0.1)
+		if (fabs(enemies->sprite->pos_x - enemies->end->crd_x) > 0.1)
 		{
 			increment = enemies->end->crd_x - enemies->start->crd_x > 0 ? 1 : -1;
-			enemies->pos_x = enemies->pos_x + 0.1 * increment;
+			enemies->sprite->pos_x = enemies->sprite->pos_x + 0.1 * increment;
 		}
-		if (fabs(enemies->pos_y - enemies->end->crd_y) > 0.1)
+		if (fabs(enemies->sprite->pos_y - enemies->end->crd_y) > 0.1)
 		{
 			increment = enemies->end->crd_y - enemies->start->crd_y > 0 ? 1 : -1;
-			enemies->pos_y = enemies->pos_y + 0.1 * increment;
+			enemies->sprite->pos_y = enemies->sprite->pos_y + 0.1 * increment;
 		}
 		return ;
 	}
@@ -388,15 +383,15 @@ void	set_eposition(t_enemy *enemies)
 	{
 		enemies->start = enemies->end;
 		enemies->end = enemies->path;
-		enemies->pos_x = enemies->start->crd_x;
-		enemies->pos_y = enemies->start->crd_y;
+		enemies->sprite->pos_x = enemies->start->crd_x;
+		enemies->sprite->pos_y = enemies->start->crd_y;
 		enemies->normal = enemies->start->normal;
 		return ;
 	}
 	enemies->start = enemies->end;
 	enemies->end = enemies->start->next;
-	enemies->pos_x = enemies->start->crd_x;
-	enemies->pos_y = enemies->start->crd_y;
+	enemies->sprite->pos_x = enemies->start->crd_x;
+	enemies->sprite->pos_y = enemies->start->crd_y;
 	enemies->normal = enemies->start->normal;
 }
 
@@ -410,25 +405,25 @@ void	set_erotation(t_enemy *enemies, t_player *player)
 
 	if (fabs(enemies->p_div) >= 157.5 * M_PI / 180)
 	{
-		enemies->shift_tile = enemies->main_tile;
+		enemies->shift_tile = enemies->sprite->main_tile;
 		return ;
 	}
 	if (fabs(enemies->p_div) < 22.5 * M_PI / 180)
 	{
-		enemies->shift_tile = enemies->main_tile + 4;
+		enemies->shift_tile = enemies->sprite->main_tile + 4;
 		return ;
 	}
 	if (fabs(enemies->p_div) >= 112.5 * M_PI / 180 && fabs(enemies->p_div) < 157.5 * M_PI / 180)
 	{
-		enemies->shift_tile = enemies->main_tile + 1;
+		enemies->shift_tile = enemies->sprite->main_tile + 1;
 		return ;
 	}
 	if (fabs(enemies->p_div) >= 67.5 * M_PI / 180 && fabs(enemies->p_div) < 112.5 * M_PI / 180)
 	{
-		enemies->shift_tile = enemies->main_tile + 2;
+		enemies->shift_tile = enemies->sprite->main_tile + 2;
 		return ;
 	}
-	enemies->shift_tile = enemies->main_tile + 3;
+	enemies->shift_tile = enemies->sprite->main_tile + 3;
 }
 
 void	set_ewalkphase(t_enemy *enemies)
@@ -459,23 +454,26 @@ void	set_spritesparam(t_enemy *enemies, t_player *player)
 
 void	set_spriteparam(t_enemy *enemies, t_player *player)
 {
-	enemies->p_dir = atan2(enemies->pos_x - player->pos_x, enemies->pos_y - player->pos_y);
+	enemies->sprite->p_dirx = enemies->sprite->pos_x - player->pos_x;
+	enemies->sprite->p_diry = enemies->sprite->pos_y - player->pos_y;
+	enemies->sprite->p_dir = atan2(enemies->sprite->p_dirx, enemies->sprite->p_diry);
+	if (enemies->sprite->p_dir - player->angle > M_PI)
+		enemies->sprite->p_dir -= 2 * M_PI; 
+	else if (enemies->sprite->p_dir - player->angle < -M_PI)
+		enemies->sprite->p_dir += 2 * M_PI;
+	enemies->sprite->p_dir -= player->angle;
 	
-	enemies->hfov = enemies->p_dir + M_PI - enemies->normal;
+	// NEED OPIMIZE
+	enemies->hfov = atan2(enemies->sprite->p_dirx, enemies->sprite->p_diry) + M_PI - enemies->normal;
 	if (enemies->hfov > M_PI)
 		enemies->hfov -= 2 * M_PI;
 
-	if (enemies->p_dir - player->angle > M_PI)
-		enemies->p_dir -= 2 * M_PI; 
-	else if (enemies->p_dir - player->angle < -M_PI)
-		enemies->p_dir += 2 * M_PI;
-	enemies->p_dir -= player->angle;
-	enemies->shift_x = WIDTH / 2 - (enemies->p_dir * (WIDTH) / (player->fov));
+	enemies->sprite->shift_x = WIDTH / 2 - (enemies->sprite->p_dir * (WIDTH) / (player->fov));
 	
-	enemies->dist = sqrt(pow(enemies->pos_x - player->pos_x, 2) + pow(enemies->pos_y - player->pos_y, 2));
-	enemies->size = (int)(HEIGHT * 2 / enemies->dist);
-	enemies->h_offset = enemies->shift_x - enemies->size / 2;
-	enemies->v_offset = HEIGHT / 2 - enemies->size / 2;
+	enemies->sprite->dist = sqrt(pow(enemies->sprite->p_dirx, 2) + pow(enemies->sprite->p_diry, 2));
+	enemies->sprite->size = (int)(HEIGHT * 2 / enemies->sprite->dist);
+	enemies->sprite->h_offset = enemies->sprite->shift_x - enemies->sprite->size / 2;
+	enemies->sprite->v_offset = HEIGHT / 2 - enemies->sprite->size / 2;
 }
 
 void	draw_enemies(t_player *player, t_enemy *enemies, int *pixel, int *img, double *z_buff)
@@ -485,9 +483,9 @@ void	draw_enemies(t_player *player, t_enemy *enemies, int *pixel, int *img, doub
 	while (enemies)
 	{
 		cursor_x = 0;
-		while (cursor_x < enemies->size)
+		while (cursor_x < enemies->sprite->size)
 		{
-			if (enemies->h_offset + cursor_x < 0 || enemies->h_offset + cursor_x >= WIDTH)
+			if (enemies->sprite->h_offset + cursor_x < 0 || enemies->sprite->h_offset + cursor_x >= WIDTH)
 			{
 				cursor_x += 1;
 				continue;
@@ -508,9 +506,9 @@ void	draw_vertlenemy(t_enemy *enemies, int *pixel, int *img, double *z_buff, int
 	tile_u = enemies->tile % 16;
 	tile_v = enemies->tile / 16;
 	cursor_y = 0;
-	while (cursor_y < enemies->size)
+	while (cursor_y < enemies->sprite->size)
 	{
-		if (enemies->v_offset + cursor_y < 0 || enemies->v_offset + cursor_y >= HEIGHT)
+		if (enemies->sprite->v_offset + cursor_y < 0 || enemies->sprite->v_offset + cursor_y >= HEIGHT)
 		{
 			cursor_y += 1;
 			continue;
@@ -537,22 +535,22 @@ void	draw_vertlenemy(t_enemy *enemies, int *pixel, int *img, double *z_buff, int
 		// }	
 		
 		//WITHOUT ALPHA
-		if (enemies->p_div < 0 * M_PI / 180 && enemies->shift_tile != enemies->main_tile && enemies->shift_tile != enemies->main_tile + 4)
+		if (enemies->p_div < 0 * M_PI / 180 && enemies->shift_tile != enemies->sprite->main_tile && enemies->shift_tile != enemies->sprite->main_tile + 4)
 		{
-			if (img[(int)(64 * ((enemies->size - cursor_x - 1) / (double)enemies->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->size)) + tile_u * 65 + tile_v * 1039 * 65] != 0xffffffff &&
-				enemies->dist < z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)])
+			if (img[(int)(64 * ((enemies->sprite->size - cursor_x - 1) / (double)enemies->sprite->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->sprite->size)) + tile_u * 65 + tile_v * 1039 * 65] != 0xffffffff &&
+				enemies->sprite->dist < z_buff[enemies->sprite->h_offset + cursor_x + WIDTH * (enemies->sprite->v_offset + cursor_y)])
 			{
-				pixel[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = img[(int)(64 * ((enemies->size - cursor_x - 1) / (double)enemies->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->size)) + tile_u * 65 + tile_v * 1039 * 65];
-				z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = enemies->dist;
+				pixel[enemies->sprite->h_offset + cursor_x + WIDTH * (enemies->sprite->v_offset + cursor_y)] = img[(int)(64 * ((enemies->sprite->size - cursor_x - 1) / (double)enemies->sprite->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->sprite->size)) + tile_u * 65 + tile_v * 1039 * 65];
+				z_buff[enemies->sprite->h_offset + cursor_x + WIDTH * (enemies->sprite->v_offset + cursor_y)] = enemies->sprite->dist;
 			}
 		}
 		else
 		{
-			if (img[(int)(64 * (cursor_x / (double)enemies->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->size)) + tile_u * 65 + tile_v * 1039 * 65] != 0xFFffffff &&
-				enemies->dist < z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)])
+			if (img[(int)(64 * (cursor_x / (double)enemies->sprite->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->sprite->size)) + tile_u * 65 + tile_v * 1039 * 65] != 0xFFffffff &&
+				enemies->sprite->dist < z_buff[enemies->sprite->h_offset + cursor_x + WIDTH * (enemies->sprite->v_offset + cursor_y)])
 			{
-				pixel[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = img[(int)(64 * (cursor_x / (double)enemies->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->size)) + tile_u * 65 + tile_v * 1039 * 65];
-				z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = enemies->dist;
+				pixel[enemies->sprite->h_offset + cursor_x + WIDTH * (enemies->sprite->v_offset + cursor_y)] = img[(int)(64 * (cursor_x / (double)enemies->sprite->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->sprite->size)) + tile_u * 65 + tile_v * 1039 * 65];
+				z_buff[enemies->sprite->h_offset + cursor_x + WIDTH * (enemies->sprite->v_offset + cursor_y)] = enemies->sprite->dist;
 			}
 		}	
 		
@@ -607,7 +605,7 @@ void	print_enemies(t_enemy *enemies)
 	cursor = enemies;
 	while(cursor)
 	{
-		printf("%f, %f\n", cursor->pos_x, cursor->pos_y);
+		printf("%f, %f\n", cursor->sprite->pos_x, cursor->sprite->pos_y);
 		cursor = cursor->next;
 	}
 }

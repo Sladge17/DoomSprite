@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/07 17:42:32 by jthuy             #+#    #+#             */
-/*   Updated: 2020/12/02 14:35:52 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/12/03 15:46:11 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ void	draw_cross(int *pixel, t_enemy *enemies)
 	
 	while (enemies)
 	{
-		if (abs(WIDTH / 2 - enemies->shift_x) < enemies->size / 2)
+		if (abs(WIDTH / 2 - enemies->sprite->shift_x) < enemies->sprite->size / 2)
 		{
 			ontarget = 0xFF0000;
 			break ;

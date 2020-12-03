@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:55:30 by jthuy             #+#    #+#             */
-/*   Updated: 2020/12/03 13:27:10 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/12/03 17:21:02 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ int		main()
 	t_enemy		*enemies;
 	t_props		*props;
 	t_drawer	*drawer;
-	t_wad		*wad;
+	// t_wad		*wad;
 	
 	if (SDL_Init(SDL_INIT_VIDEO))
 		exit(0);
@@ -113,9 +113,10 @@ int		main()
 	}
 
 	set_propsparam(props, player);
-	wad = (t_wad *)ft_memalloc(sizeof(t_wad));
-	wad_loader(wad, "map.wad");
-	wad_reader(wad);
+	
+	// wad = (t_wad *)ft_memalloc(sizeof(t_wad));
+	// wad_loader(wad, "map.wad");
+	// wad_reader(wad);
 
 	// LOAD WADSPRITES
 	// t_sprite **sprite;
