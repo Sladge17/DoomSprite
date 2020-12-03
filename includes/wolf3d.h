@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:57:39 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/30 19:51:02 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/12/03 13:26:38 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,61 +104,61 @@ typedef struct	s_drawer
 	
 }				t_drawer;
 
-// typedef struct	s_sprite
+typedef struct	s_sprite
+{
+	double		pos_x;
+	double		pos_y;
+	double		direction;
+	
+	double		rotator;
+	double		dev_coax;
+	double		normal;
+	
+	double		dist;
+	int			size;
+	int			h_offset;
+	int			v_offset;
+	int			cursor_x;
+	int			cursor_y;
+}				t_sprite;
+
+// typedef struct		s_epath
 // {
-// 	double		pos_x;
-// 	double		pos_y;
-// 	double		direction;
-	
-// 	double		rotator;
-// 	double		dev_coax;
-// 	double		normal;
-	
-// 	double		dist;
-// 	int			size;
-// 	int			h_offset;
-// 	int			v_offset;
-// 	int			cursor_x;
-// 	int			cursor_y;
-// }				t_sprite;
+// 	int				index;
+// 	double			crd_x;
+// 	double			crd_y;
+// 	double			normal;
+// 	struct s_epath	*next;
+// }					t_epath;
 
-typedef struct		s_epath
-{
-	int				index;
-	double			crd_x;
-	double			crd_y;
-	double			normal;
-	struct s_epath	*next;
-}					t_epath;
+// typedef struct		s_enemy
+// {
+// 	t_epath			*path;
+// 	t_epath			*start;
+// 	t_epath			*end;
+// 	double			pos_x;
+// 	double			pos_y;
+// 	double			normal;
+// 	int				main_tile;
+// 	char			health;
+// 	char			condition;
+// 	char			phase;
+	
+// 	int				shift_tile;
+// 	double			p_div;
+// 	int				tile;
+// 	double			p_dir;
 
-typedef struct		s_enemy
-{
-	t_epath			*path;
-	t_epath			*start;
-	t_epath			*end;
-	double			pos_x;
-	double			pos_y;
-	double			normal;
-	int				main_tile;
-	char			health;
-	char			condition;
-	char			phase;
+// 	double			hfov;	
 	
-	int				shift_tile;
-	double			p_div;
-	int				tile;
-	double			p_dir;
-
-	double			hfov;	
+// 	double			dist;
+// 	int				size;
+// 	int				shift_x;
+// 	int				h_offset;
+// 	int				v_offset;
 	
-	double			dist;
-	int				size;
-	int				shift_x;
-	int				h_offset;
-	int				v_offset;
-	
-	struct s_enemy	*next;
-}					t_enemy;
+// 	struct s_enemy	*next;
+// }					t_enemy;
 
 typedef struct		s_props
 {
@@ -229,6 +229,7 @@ void		set_timer(t_enemy *enemies, t_player *player);
 t_map		*def_map();
 t_drawer	*def_drawer();
 void		drawing(t_map *map, t_player *player, t_enemy *enemies, t_props *props, t_drawer *drawer, int *pixel, int *img);
+// void		drawing(t_map *map, t_player *player, t_enemy *enemies, t_props *props, t_drawer *drawer, int *pixel, int *img, t_sprite **, SDL_Surface *);
 void		def_wallparams(t_player *player, t_drawer *drawer);
 void		draw_room(t_player *player, t_drawer *drawer, int *pixel, int *img);
 void		draw_wall(t_player *player, t_drawer *drawer, int *pixel, int *img);

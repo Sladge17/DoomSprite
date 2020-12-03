@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/18 18:10:36 by bdrinkin          #+#    #+#             */
-/*   Updated: 2020/11/30 19:10:41 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/12/03 13:17:47 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ Uint32				get_pixel(SDL_Surface *surface, int x, int y)
 	return (0);
 }
 
-uint32_t			get_pixel_sprite(t_sprite *sprite, int x, int y)
+uint32_t			get_pixel_sprite(t_watsprite *sprite, int x, int y)
 {
 	return (sprite->pixel[y * sprite->w + x]);
 }
@@ -45,7 +45,7 @@ void				putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
 	int				bpp;
 	Uint8			*p;
 
-	if (x > 0 && x <= WIDTH && y > 0 && y < HEIGHT)
+	if (x >= 0 && x < WIDTH && y > 0 && y < HEIGHT)
 	{
 		bpp = surface->format->BytesPerPixel;
 		p = (Uint8 *)surface->pixels + y * surface->pitch + x * bpp;

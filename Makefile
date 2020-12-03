@@ -1,6 +1,6 @@
 NAME = sprite_test
 # FLAG = -Wall -Wextra -Werror
-FLAG = -g -O2
+FLAG = -g -O0
 
 HEADER_DIR = includes/
 HEADER_DIR_WAD = src/wad/$(HEADER_WAD)

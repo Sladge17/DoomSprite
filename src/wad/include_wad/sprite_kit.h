@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   sprite_kit.h                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bdrinkin <bdrinkin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:37:12 by bdrinkin          #+#    #+#             */
-/*   Updated: 2020/11/28 13:39:03 by bdrinkin         ###   ########.fr       */
+/*   Updated: 2020/12/03 13:16:11 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@
 # include <stdint.h>
 # include "rect.h"
 
-typedef struct		s_sprite
+typedef struct		s_watsprite
 {
 	char			*name;
 	uint32_t		*pixel;
@@ -72,21 +72,21 @@ typedef struct		s_sprite
 	int32_t			h;
 	int32_t			left_offset;
 	int32_t			top_offset;
-}					t_sprite;
+}					t_watsprite;
 
 typedef struct		s_hud
 {
 	t_limit			health;
 	t_limit			shield;
 	t_limit			ammo;
-	t_sprite		*gun;
+	t_watsprite		*gun;
 }					t_hud;
 
-uint32_t			get_pixel_sprite(t_sprite *surface, int x, int y);
-void				blit_sprite_scaled(t_sprite *src, t_rect *rsrc,
+uint32_t			get_pixel_sprite(t_watsprite *surface, int x, int y);
+void				blit_sprite_scaled(t_watsprite *src, t_rect *rsrc,
 						SDL_Surface *dst, t_rect *rdst);
-void				blit_gan_scaled(t_sprite *src, SDL_Surface *dst);
-void				blit_hud_scaled(t_sprite *src, SDL_Surface *dst,
+void				blit_gan_scaled(t_watsprite *src, SDL_Surface *dst);
+void				blit_hud_scaled(t_watsprite *src, SDL_Surface *dst,
 						t_hud *status);
 
 #endif

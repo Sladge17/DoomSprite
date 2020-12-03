@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/15 06:55:31 by bdrinkin          #+#    #+#             */
-/*   Updated: 2020/11/30 19:47:44 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/12/03 13:20:28 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ void				wad_destroy_patch(t_patch patch)
 }
 
 static void				put_column(t_wad *wad, uint32_t offset,
-							int x, t_sprite *sprite)
+							int x, t_watsprite *sprite)
 {
 	uint16_t			iter;
 	uint16_t			col;
@@ -80,7 +80,7 @@ static void				put_column(t_wad *wad, uint32_t offset,
 	}
 }
 
-void				draw_sprite(t_sprite *sprite, SDL_Surface *screen,
+void				draw_sprite(t_watsprite *sprite, SDL_Surface *screen,
 						t_rect rect)
 {
 	int				x;
@@ -108,14 +108,14 @@ void				draw_sprite(t_sprite *sprite, SDL_Surface *screen,
 	}
 }
 
-t_sprite			*sprite_create(t_wad *wad, char *name)
+t_watsprite			*sprite_create(t_wad *wad, char *name)
 {
-	t_sprite		*sprite;
+	t_watsprite		*sprite;
 	t_patch			patch;
 	uint32_t		offset;
 	int				x;
 
-	if (!(sprite = (t_sprite *)ft_memalloc(sizeof(t_sprite))))
+	if (!(sprite = (t_watsprite *)ft_memalloc(sizeof(t_watsprite))))
 		return (NULL);
 	offset = find_offset_lump(wad->dir, name, NULL);
 	patch = wad_get_patch_info(wad->map, offset);
@@ -126,7 +126,7 @@ t_sprite			*sprite_create(t_wad *wad, char *name)
 	sprite->top_offset = patch.top_offset;
 	sprite->pixel = (uint32_t *)malloc(sizeof(uint32_t) *
 		(sprite->w * sprite->h));
-	sprite->pixel = ft_memset(sprite->pixel, 0xFFFFFFFF,
+	sprite->pixel = (uint32_t *)ft_memset(sprite->pixel, 0xFFFFFFFF,
 		sizeof(uint32_t) * sprite->w * sprite->h);
 	x = -1;
 	while (++x < patch.width)
@@ -159,7 +159,7 @@ t_sprite			*sprite_create(t_wad *wad, char *name)
 // 		wad->bright = 0;
 // 		// texture = wad_draw_texture(doom, fill_point(0, 0), av[2]);
 
-// 		t_sprite	**sprites;
+// 		t_watsprite	**sprites;
 // 		char		**name;
 // 		int			i = 0;
 
@@ -172,10 +172,10 @@ t_sprite			*sprite_create(t_wad *wad, char *name)
 // 		name[0] = "SAWGC0";
 // 		name[1] = "SAWGD0";
 // 		i = 0;
-// 		sprites = (t_sprite **)ft_memalloc(sizeof(t_sprite *));
+// 		sprites = (t_watsprite **)ft_memalloc(sizeof(t_watsprite *));
 // 		while (i <= SAW)
 // 		{
-// 			sprites[i] = (t_sprite *)ft_memalloc(sizeof(t_sprite));
+// 			sprites[i] = (t_watsprite *)ft_memalloc(sizeof(t_watsprite));
 // 			++i;
 // 		}
 
@@ -184,7 +184,7 @@ t_sprite			*sprite_create(t_wad *wad, char *name)
 // 			(sprites[i] = sprite_create(doom, name[i])) && ++i;
 // 		sprites[i] = NULL;
 
-// 		// t_sprite *hud = sprite_create(doom, "STBAR");
+// 		// t_watsprite *hud = sprite_create(doom, "STBAR");
 
 // 		timer_start(&tim->);
 // 		while (qui-> == false)

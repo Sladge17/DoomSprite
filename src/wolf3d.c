@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:55:30 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/30 20:36:06 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/12/03 13:27:10 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,33 @@
 # define COLOR_3 0xFF0000
 
 double		*z_buff;
+
+void			name_big_digit(char **name)
+{
+	int			i;
+	i = -1;
+	while (++i < 6)
+		name[i] = (char *)ft_memalloc(sizeof(char) * 9);
+	// name[0] = "SARGA1";
+	// name[1] = "SARGB1";
+	// name[2] = "SARGC1";
+	// name[3] = "SARGD1";
+	// name[4] = "SARGE1";
+	
+	// name[0] = "BOSSA1";
+	// name[1] = "BOSSB1";
+	// name[2] = "BOSSC1";
+	// name[3] = "BOSSD1";
+	// name[4] = "BOSSE1";
+	
+	name[0] = "POSSA1";
+	name[1] = "POSSB1";
+	name[2] = "POSSC1";
+	name[3] = "POSSD1";
+	name[4] = "POSSE1";
+
+	name[5] = NULL;
+}
 
 int		main()
 {
@@ -90,7 +117,17 @@ int		main()
 	wad_loader(wad, "map.wad");
 	wad_reader(wad);
 
-	t_sprite *sprite = 	sprite_create(wad, "POSSE1");
+	// LOAD WADSPRITES
+	// t_sprite **sprite;
+	// int m = -1;
+	// char **name;
+
+	// name = (char **)ft_memalloc(sizeof(char *) * 6);
+	// name_big_digit(name);
+	// sprite = (t_sprite **)ft_memalloc(sizeof(t_sprite *) * 6);
+	// while (++m < 5)
+	// 	sprite[m] = sprite_create(wad, name[m]);
+		
 	SDL_Event	windowEvent;
 	while (1)
 	{
@@ -106,7 +143,8 @@ int		main()
 			set_spritesparam(enemies, player);
 			set_propsparam(props, player);
 			drawing(map, player, enemies, props, drawer, pixel, img);
-			blit_sprite_scale(sprite, surface, &((t_rect){enemies->h_offset, enemies->v_offset, enemies->size / 2, enemies->size / 2, false}));
+			// drawing(map, player, enemies, props, drawer, pixel, img, sprite, surface);
+			// blit_sprite_scale(sprite, surface, &((t_rect){enemies->h_offset, enemies->v_offset, enemies->size / 2, enemies->size / 2, false}));
 			SDL_UpdateWindowSurface(window);
 			continue ;
 		}
@@ -114,7 +152,8 @@ int		main()
 		set_timer(enemies, player);
 		
 		drawing(map, player, enemies, props, drawer, pixel, img);
-		blit_sprite_scale(sprite, surface, &((t_rect){enemies->h_offset, enemies->v_offset, enemies->size / 2, enemies->size / 2, false}));
+		// drawing(map, player, enemies, props, drawer, pixel, img, sprite, surface);
+		// blit_sprite_scale(sprite, surface, &((t_rect){enemies->h_offset, enemies->v_offset, enemies->size / 2, enemies->size / 2, false}));
 
 		SDL_UpdateWindowSurface(window);
 	}
@@ -191,7 +230,10 @@ t_drawer	*def_drawer()
 }
 
 void	drawing(t_map *map, t_player *player, t_enemy *enemies, t_props *props, t_drawer *drawer, int *pixel, int *img)
+// void	drawing(t_map *map, t_player *player, t_enemy *enemies, t_props *props, t_drawer *drawer, int *pixel, int *img, t_sprite **wad_sprite, SDL_Surface *screen)
 {
+	static int sprt = 0;
+	
 	drawer->cursor_x = 0;
 	while (drawer->cursor_x < WIDTH)
 	{
@@ -226,9 +268,29 @@ void	drawing(t_map *map, t_player *player, t_enemy *enemies, t_props *props, t_d
 	// 	pixel[i] = 0;
 	// 	i += 1;
 	// }
-	
-	
+
 	draw_enemies(player, enemies, pixel, img, z_buff);
+
+	static int		ttime = 0;
+	
+	// enemies->shift_x = WIDTH / 2;
+	// enemies->h_offset = enemies->shift_x - enemies->size / 2;
+	// enemies->v_offset = HEIGHT / 2 - enemies->size / 2;
+	
+	// enemies->size = (int)(HEIGHT * 2 / enemies->dist);
+	// enemies->h_offset = enemies->shift_x + wad_sprite->h / enemies->dist;
+	// enemies->v_offset = HEIGHT / 2 - enemies->size / 2;
+	
+	// // WATTIMER
+	// if (!(ttime % 10))
+	// {
+	// 	sprt += 1;
+	// 	if (sprt == 4)
+	// 		sprt = 0;
+	// }
+	// ttime += 1;
+	// blit_sprite_scale(enemies, wad_sprite[sprt], screen, &((t_rect){enemies->h_offset, enemies->v_offset, enemies->size, enemies->size, false}));
+	
 	draw_props(player, props, pixel, img, z_buff);
 	draw_cross(pixel, enemies);
 	

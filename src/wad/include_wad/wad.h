@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/28 12:14:39 by bdrinkin          #+#    #+#             */
-/*   Updated: 2020/11/30 20:23:22 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/12/03 13:17:07 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,44 @@
 # ifndef WIDTH
 #  define WIDTH 1600
 # endif
+
+typedef struct		s_epath
+{
+	int				index;
+	double			crd_x;
+	double			crd_y;
+	double			normal;
+	struct s_epath	*next;
+}					t_epath;
+
+typedef struct		s_enemy
+{
+	t_epath			*path;
+	t_epath			*start;
+	t_epath			*end;
+	double			pos_x;
+	double			pos_y;
+	double			normal;
+	int				main_tile;
+	char			health;
+	char			condition;
+	char			phase;
+	
+	int				shift_tile;
+	double			p_div;
+	int				tile;
+	double			p_dir;
+
+	double			hfov;	
+	
+	double			dist;
+	int				size;
+	int				shift_x;
+	int				h_offset;
+	int				v_offset;
+	
+	struct s_enemy	*next;
+}					t_enemy;
 
 typedef struct			s_wad_head
 {
@@ -81,7 +119,7 @@ typedef struct			s_wad
 uint16_t				bytes_to_short(const uint8_t *data, int offset);
 uint32_t				bytes_to_int(const uint8_t *data, int offset);
 Uint32					get_pixel(SDL_Surface *surface, int x, int y);
-uint32_t				get_pixel_sprite(t_sprite *sprite, int x, int y);
+uint32_t				get_pixel_sprite(t_watsprite *sprite, int x, int y);
 void					putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel);
 void					clear_surface(SDL_Surface *surface, Uint32 color);
 
@@ -111,10 +149,11 @@ uint32_t				find_offset_lump(t_dir *dir, char *lable, char *name_map);
 uint32_t				find_size_lump(t_dir *dir, char *lable, char *name_map);
 uint32_t				wad_find_texture(t_dir *dir, char *name);
 
-t_sprite				*sprite_create(t_wad *wad, char *name);
-void					draw_sprite(t_sprite *sprite, SDL_Surface *screen,
+t_watsprite				*sprite_create(t_wad *wad, char *name);
+void					draw_sprite(t_watsprite *sprite, SDL_Surface *screen,
 							t_rect rect);
-void					blit_sprite_scale(t_sprite *src, SDL_Surface *dst, t_rect *rdst);
+// void					blit_sprite_scale(t_watsprite *src, SDL_Surface *dst, t_rect *rdst);
+void					blit_sprite_scale(t_enemy *enemies, t_watsprite *src, SDL_Surface *dst, t_rect *rdst);
 
 
 #endif
