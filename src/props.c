@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/30 17:04:46 by jthuy             #+#    #+#             */
-/*   Updated: 2020/11/30 18:15:17 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/12/04 13:17:06 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ t_props	*def_props(t_map *map)
 			node = (t_props *)malloc(sizeof(t_props)); // NEED PROTECT
 			node->pos_x = index % map->width;
 			node->pos_y = index / map->width;
-			node->tile = 133;
+			node->main_tile = 133;
 			if (!props)
 			{
 				props = node;
@@ -44,7 +44,7 @@ t_props	*def_props(t_map *map)
 			node = (t_props *)malloc(sizeof(t_props)); // NEED PROTECT
 			node->pos_x = index % map->width;
 			node->pos_y = index / map->width;
-			node->tile = 134;
+			node->main_tile = 134;
 			if (!props)
 			{
 				props = node;
@@ -109,8 +109,8 @@ void	draw_vertlprops(t_props *props, int *pixel, int *img, double *z_buff, int c
 	int		tile_v;
 	int		cursor_y;
 
-	tile_u = props->tile % 16;
-	tile_v = props->tile / 16;
+	tile_u = props->main_tile % 16;
+	tile_v = props->main_tile / 16;
 	cursor_y = 0;
 	while (cursor_y < props->size)
 	{

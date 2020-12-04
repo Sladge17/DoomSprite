@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:55:30 by jthuy             #+#    #+#             */
-/*   Updated: 2020/12/03 17:21:02 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/12/04 13:03:58 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,7 +141,7 @@ int		main()
 		// // handling_event(windowEvent, player, enemies);
 		if (handling_event(windowEvent, player, enemies))
 		{
-			set_spritesparam(enemies, player);
+			set_enemiesparam(enemies, player);
 			set_propsparam(props, player);
 			drawing(map, player, enemies, props, drawer, pixel, img);
 			// drawing(map, player, enemies, props, drawer, pixel, img, sprite, surface);
@@ -270,28 +270,8 @@ void	drawing(t_map *map, t_player *player, t_enemy *enemies, t_props *props, t_d
 	// 	i += 1;
 	// }
 
-	draw_enemies(player, enemies, pixel, img, z_buff);
+	draw_enemies(enemies, pixel, img, z_buff);
 
-	static int		ttime = 0;
-	
-	// enemies->shift_x = WIDTH / 2;
-	// enemies->h_offset = enemies->shift_x - enemies->size / 2;
-	// enemies->v_offset = HEIGHT / 2 - enemies->size / 2;
-	
-	// enemies->size = (int)(HEIGHT * 2 / enemies->dist);
-	// enemies->h_offset = enemies->shift_x + wad_sprite->h / enemies->dist;
-	// enemies->v_offset = HEIGHT / 2 - enemies->size / 2;
-	
-	// // WATTIMER
-	// if (!(ttime % 10))
-	// {
-	// 	sprt += 1;
-	// 	if (sprt == 4)
-	// 		sprt = 0;
-	// }
-	// ttime += 1;
-	// blit_sprite_scale(enemies, wad_sprite[sprt], screen, &((t_rect){enemies->h_offset, enemies->v_offset, enemies->size, enemies->size, false}));
-	
 	draw_props(player, props, pixel, img, z_buff);
 	draw_cross(pixel, enemies);
 	

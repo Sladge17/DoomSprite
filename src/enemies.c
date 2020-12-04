@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/16 12:57:17 by jthuy             #+#    #+#             */
-/*   Updated: 2020/12/03 17:21:55 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/12/04 13:06:13 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -286,7 +286,7 @@ void	set_econdition(t_enemy *enemies, t_player *player)
 void	set_eshoot(t_enemy *enemies, t_player *player)
 {
 	enemies->shift_tile = enemies->sprite->main_tile + 47;
-	enemies->tile = enemies->shift_tile + enemies->phase;
+	enemies->sprite->tile = enemies->shift_tile + enemies->phase;
 	// if (fabs(enemies->hfov) < (45 / 2) * M_PI / 180 && enemies->dist < 5)
 	if (enemies->sprite->dist < 8)
 	{
@@ -308,7 +308,7 @@ void	set_eshoot(t_enemy *enemies, t_player *player)
 
 void	set_edetect(t_enemy *enemies, t_player *player)
 {
-	enemies->tile = enemies->sprite->main_tile + 46;
+	enemies->sprite->tile = enemies->sprite->main_tile + 46;
 	enemies->phase = 0;
 	if (fabs(enemies->hfov) < (45 / 2) * M_PI / 180 && enemies->sprite->dist < 5)
 	{
@@ -322,17 +322,17 @@ void	set_edead(t_enemy *enemies, t_player *player)
 {
 	if (enemies->phase == 3)
 	{
-		enemies->tile = enemies->sprite->main_tile + 45;
+		enemies->sprite->tile = enemies->sprite->main_tile + 45;
 		return ;
 	}
 	enemies->shift_tile = enemies->sprite->main_tile + 41;
-	enemies->tile = enemies->shift_tile + enemies->phase;
+	enemies->sprite->tile = enemies->shift_tile + enemies->phase;
 	enemies->phase += 1;
 }
 
 void	set_epunch(t_enemy *enemies, t_player *player)
 {
-	enemies->tile = enemies->sprite->main_tile + 40;
+	enemies->sprite->tile = enemies->sprite->main_tile + 40;
 	enemies->health -= 40;
 	// printf("%d\n", enemies->health);
 	if (enemies->health <= 0)
@@ -356,7 +356,12 @@ void	set_ewalk(t_enemy *enemies, t_player *player)
 	set_eposition(enemies);
 	set_erotation(enemies, player);
 	set_ewalkphase(enemies);
-	set_spriteparam(enemies, player);
+	set_spriteparam(enemies->sprite, player);
+
+	enemies->hfov = atan2(enemies->sprite->p_dirx, enemies->sprite->p_diry) + M_PI - enemies->normal;
+	if (enemies->hfov > M_PI)
+		enemies->hfov -= 2 * M_PI;
+	
 	if (fabs(enemies->hfov) < (45 / 2) * M_PI / 180 && enemies->sprite->dist < 5)
 		enemies->condition = 0b100;
 }
@@ -429,169 +434,253 @@ void	set_erotation(t_enemy *enemies, t_player *player)
 void	set_ewalkphase(t_enemy *enemies)
 {
 	if (enemies->phase == 0)
-		enemies->tile = enemies->shift_tile + 8;
+		enemies->sprite->tile = enemies->shift_tile + 8;
 	else if (enemies->phase == 1)
-		enemies->tile = enemies->shift_tile + 16;
+		enemies->sprite->tile = enemies->shift_tile + 16;
 	else if (enemies->phase == 2)
-		enemies->tile = enemies->shift_tile + 24;
+		enemies->sprite->tile = enemies->shift_tile + 24;
 	else // enemies->phase == 3
-		enemies->tile = enemies->shift_tile + 32;
+		enemies->sprite->tile = enemies->shift_tile + 32;
 	enemies->phase += 1;
 	if (enemies->phase == 4)
 		enemies->phase = 0;
 }
 
-void	set_spritesparam(t_enemy *enemies, t_player *player)
+void	set_enemiesparam(t_enemy *enemies, t_player *player)
 {
 	while (enemies)
 	{
-		set_spriteparam(enemies, player);
+		set_spriteparam(enemies->sprite, player);
+		// set_erotation(enemies, player);
+		
+		// NEED OPIMIZE
+		// enemies->hfov = atan2(enemies->sprite->p_dirx, enemies->sprite->p_diry) + M_PI - enemies->normal;
+		// if (enemies->hfov > M_PI)
+		// 	enemies->hfov -= 2 * M_PI;
+		// if (fabs(enemies->hfov) < (45 / 2) * M_PI / 180 && enemies->sprite->dist < 5)
+		// enemies->condition = 0b100;
+		// set_econdition(enemies, player);
+		
+		
 		// if (enemies->condition == 0b01)
 		// 	enemies->condition = 0b1;
 		enemies = enemies->next;
 	}
 }
 
-void	set_spriteparam(t_enemy *enemies, t_player *player)
+void	set_spriteparam(t_sprite *sprite, t_player *player)
 {
-	enemies->sprite->p_dirx = enemies->sprite->pos_x - player->pos_x;
-	enemies->sprite->p_diry = enemies->sprite->pos_y - player->pos_y;
-	enemies->sprite->p_dir = atan2(enemies->sprite->p_dirx, enemies->sprite->p_diry);
-	if (enemies->sprite->p_dir - player->angle > M_PI)
-		enemies->sprite->p_dir -= 2 * M_PI; 
-	else if (enemies->sprite->p_dir - player->angle < -M_PI)
-		enemies->sprite->p_dir += 2 * M_PI;
-	enemies->sprite->p_dir -= player->angle;
+	sprite->p_dirx = sprite->pos_x - player->pos_x;
+	sprite->p_diry = sprite->pos_y - player->pos_y;
+	sprite->p_dir = atan2(sprite->p_dirx, sprite->p_diry);
+	if (sprite->p_dir - player->angle > M_PI)
+		sprite->p_dir -= 2 * M_PI; 
+	else if (sprite->p_dir - player->angle < -M_PI)
+		sprite->p_dir += 2 * M_PI;
+	sprite->p_dir -= player->angle;
 	
-	// NEED OPIMIZE
-	enemies->hfov = atan2(enemies->sprite->p_dirx, enemies->sprite->p_diry) + M_PI - enemies->normal;
-	if (enemies->hfov > M_PI)
-		enemies->hfov -= 2 * M_PI;
+	// // NEED OPIMIZE
+	// enemies->hfov = atan2(enemies->sprite->p_dirx, enemies->sprite->p_diry) + M_PI - enemies->normal;
+	// if (enemies->hfov > M_PI)
+	// 	enemies->hfov -= 2 * M_PI;
 
-	enemies->sprite->shift_x = WIDTH / 2 - (enemies->sprite->p_dir * (WIDTH) / (player->fov));
+	sprite->shift_x = WIDTH / 2 - (sprite->p_dir * (WIDTH) / (player->fov));
 	
-	enemies->sprite->dist = sqrt(pow(enemies->sprite->p_dirx, 2) + pow(enemies->sprite->p_diry, 2));
-	enemies->sprite->size = (int)(HEIGHT * 2 / enemies->sprite->dist);
-	enemies->sprite->h_offset = enemies->sprite->shift_x - enemies->sprite->size / 2;
-	enemies->sprite->v_offset = HEIGHT / 2 - enemies->sprite->size / 2;
+	sprite->dist = sqrt(pow(sprite->p_dirx, 2) + pow(sprite->p_diry, 2));
+	sprite->size = (int)(HEIGHT * 2 / sprite->dist);
+	sprite->h_offset = sprite->shift_x - sprite->size / 2;
+	sprite->v_offset = HEIGHT / 2 - sprite->size / 2;
 }
 
-void	draw_enemies(t_player *player, t_enemy *enemies, int *pixel, int *img, double *z_buff)
-{
-	int		cursor_x;
+// void	draw_enemies(t_player *player, t_enemy *enemies, int *pixel, int *img, double *z_buff)
+// {
+// 	int		cursor_x;
 	
+// 	while (enemies)
+// 	{
+// 		cursor_x = 0;
+// 		while (cursor_x < enemies->sprite->size)
+// 		{
+// 			if (enemies->sprite->h_offset + cursor_x < 0 || enemies->sprite->h_offset + cursor_x >= WIDTH)
+// 			{
+// 				cursor_x += 1;
+// 				continue;
+// 			}
+// 			draw_vertlenemy(enemies, pixel, img, z_buff, cursor_x, player);
+// 			cursor_x += 1;
+// 		}
+// 		enemies = enemies->next;
+// 	}
+// }
+
+// void	draw_vertlenemy(t_enemy *enemies, int *pixel, int *img, double *z_buff, int cursor_x, t_player *player)
+// {
+// 	int		tile_u;
+// 	int		tile_v;
+// 	int		cursor_y;
+
+// 	tile_u = enemies->sprite->tile % 16;
+// 	tile_v = enemies->sprite->tile / 16;
+// 	cursor_y = 0;
+// 	while (cursor_y < enemies->sprite->size)
+// 	{
+// 		if (enemies->sprite->v_offset + cursor_y < 0 || enemies->sprite->v_offset + cursor_y >= HEIGHT)
+// 		{
+// 			cursor_y += 1;
+// 			continue;
+// 		}
+
+// 		// //WITH ALPHA
+// 		// if (enemies->p_div < 0 * M_PI / 180 && enemies->shift_tile != enemies->main_tile && enemies->shift_tile != enemies->main_tile + 4)
+// 		// {
+// 		// 	if (img[(int)(64 * ((enemies->size - cursor_x - 1) / (double)enemies->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->size)) + tile_u * 65 + tile_v * 1039 * 65] != 0xFF980088 &&
+// 		// 		enemies->dist < z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)])
+// 		// 	{
+// 		// 		pixel[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = img[(int)(64 * ((enemies->size - cursor_x - 1) / (double)enemies->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->size)) + tile_u * 65 + tile_v * 1039 * 65];
+// 		// 		z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = enemies->dist;
+// 		// 	}
+// 		// }
+// 		// else
+// 		// {
+// 		// 	if (img[(int)(64 * (cursor_x / (double)enemies->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->size)) + tile_u * 65 + tile_v * 1039 * 65] != 0xFF980088 &&
+// 		// 		enemies->dist < z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)])
+// 		// 	{
+// 		// 		pixel[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = img[(int)(64 * (cursor_x / (double)enemies->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->size)) + tile_u * 65 + tile_v * 1039 * 65];
+// 		// 		z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = enemies->dist;
+// 		// 	}
+// 		// }	
+		
+// 		//WITHOUT ALPHA
+// 		if (enemies->p_div < 0 * M_PI / 180 && enemies->shift_tile != enemies->sprite->main_tile && enemies->shift_tile != enemies->sprite->main_tile + 4)
+// 		{
+// 			if (img[(int)(64 * ((enemies->sprite->size - cursor_x - 1) / (double)enemies->sprite->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->sprite->size)) + tile_u * 65 + tile_v * 1039 * 65] != 0xffffffff &&
+// 				enemies->sprite->dist < z_buff[enemies->sprite->h_offset + cursor_x + WIDTH * (enemies->sprite->v_offset + cursor_y)])
+// 			{
+// 				pixel[enemies->sprite->h_offset + cursor_x + WIDTH * (enemies->sprite->v_offset + cursor_y)] = img[(int)(64 * ((enemies->sprite->size - cursor_x - 1) / (double)enemies->sprite->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->sprite->size)) + tile_u * 65 + tile_v * 1039 * 65];
+// 				z_buff[enemies->sprite->h_offset + cursor_x + WIDTH * (enemies->sprite->v_offset + cursor_y)] = enemies->sprite->dist;
+// 			}
+// 		}
+// 		else
+// 		{
+// 			if (img[(int)(64 * (cursor_x / (double)enemies->sprite->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->sprite->size)) + tile_u * 65 + tile_v * 1039 * 65] != 0xFFffffff &&
+// 				enemies->sprite->dist < z_buff[enemies->sprite->h_offset + cursor_x + WIDTH * (enemies->sprite->v_offset + cursor_y)])
+// 			{
+// 				pixel[enemies->sprite->h_offset + cursor_x + WIDTH * (enemies->sprite->v_offset + cursor_y)] = img[(int)(64 * (cursor_x / (double)enemies->sprite->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->sprite->size)) + tile_u * 65 + tile_v * 1039 * 65];
+// 				z_buff[enemies->sprite->h_offset + cursor_x + WIDTH * (enemies->sprite->v_offset + cursor_y)] = enemies->sprite->dist;
+// 			}
+// 		}	
+		
+// 		// // WITHOUT ALPHA
+// 		// if (enemies->p_div < 0 * M_PI / 180 && enemies->tile != enemies->shift_tile && enemies->tile != enemies->shift_tile + 4)
+// 		// {
+// 		// 	if (enemies->dist < z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)])
+// 		// 	{
+// 		// 		pixel[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = img[(int)(64 * ((enemies->size - cursor_x - 1) / (double)enemies->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->size)) + tile_u * 65 + tile_v * 1039 * 65];
+// 		// 		z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = enemies->dist;
+// 		// 	}
+// 		// }
+// 		// else
+// 		// {
+// 		// 	if (enemies->dist < z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)])
+// 		// 	{
+// 		// 		pixel[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = img[(int)(64 * (cursor_x / (double)enemies->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->size)) + tile_u * 65 + tile_v * 1039 * 65];
+// 		// 		z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = enemies->dist;
+// 		// 	}
+// 		// }	
+		
+	
+// 		// // ENEMY_MASK
+// 		// if (enemies->p_div < 0 * M_PI / 180 && enemies->tile != enemies->shift_tile && enemies->tile != enemies->shift_tile + 4)
+// 		// {
+// 		// 	if (img[(int)(64 * ((enemies->size - cursor_x - 1) / (double)enemies->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->size)) + tile_u * 65 + tile_v * 1039 * 65] != 0xFF980088 &&
+// 		// 		enemies->dist < z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)])
+// 		// 	{
+// 		// 		pixel[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = 0xFFFFFF;
+// 		// 		z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = enemies->dist;
+// 		// 	}
+// 		// }
+// 		// else
+// 		// {
+// 		// 	if (img[(int)(64 * (cursor_x / (double)enemies->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->size)) + tile_u * 65 + tile_v * 1039 * 65] != 0xFF980088 &&
+// 		// 		enemies->dist < z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)])
+// 		// 	{
+// 		// 		pixel[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = 0xFFFFFF;
+// 		// 		z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = enemies->dist;
+// 		// 	}
+// 		// }	
+		
+// 		cursor_y += 1;
+// 	}
+// }
+
+void	draw_enemies(t_enemy *enemies, int *pixel, int *img, double *z_buff)
+{
 	while (enemies)
 	{
-		cursor_x = 0;
-		while (cursor_x < enemies->sprite->size)
-		{
-			if (enemies->sprite->h_offset + cursor_x < 0 || enemies->sprite->h_offset + cursor_x >= WIDTH)
-			{
-				cursor_x += 1;
-				continue;
-			}
-			draw_vertlenemy(enemies, pixel, img, z_buff, cursor_x, player);
-			cursor_x += 1;
-		}
+		if (enemies->p_div < 0 * M_PI / 180 &&
+			enemies->shift_tile != enemies->sprite->main_tile &&
+			enemies->shift_tile != enemies->sprite->main_tile + 4)
+			draw_sprites(enemies->sprite, pixel, img, z_buff, 1);
+		else
+			draw_sprites(enemies->sprite, pixel, img, z_buff, 0);
 		enemies = enemies->next;
 	}
 }
 
-void	draw_vertlenemy(t_enemy *enemies, int *pixel, int *img, double *z_buff, int cursor_x, t_player *player)
+void	draw_sprites(t_sprite *sprite, int *pixel, int *img, double *z_buff, char invers)
+{
+	int		cursor_x;
+	
+	cursor_x = 0;
+	while (cursor_x < sprite->size)
+	{
+		if (sprite->h_offset + cursor_x < 0 || sprite->h_offset + cursor_x >= WIDTH)
+		{
+			cursor_x += 1;
+			continue;
+		}
+		draw_vertlenemy(sprite, pixel, img, z_buff, cursor_x, invers);
+		cursor_x += 1;
+	}
+}
+
+// alpha color 0xFF980088
+void	draw_vertlenemy(t_sprite *sprite, int *pixel, int *img, double *z_buff, int cursor_x, char invers)
 {
 	int		tile_u;
 	int		tile_v;
 	int		cursor_y;
 
-	tile_u = enemies->tile % 16;
-	tile_v = enemies->tile / 16;
+	tile_u = sprite->tile % 16;
+	tile_v = sprite->tile / 16;
 	cursor_y = 0;
-	while (cursor_y < enemies->sprite->size)
+	while (cursor_y < sprite->size)
 	{
-		if (enemies->sprite->v_offset + cursor_y < 0 || enemies->sprite->v_offset + cursor_y >= HEIGHT)
+		if (sprite->v_offset + cursor_y < 0 || sprite->v_offset + cursor_y >= HEIGHT)
 		{
 			cursor_y += 1;
 			continue;
 		}
-
-		// //WITH ALPHA
-		// if (enemies->p_div < 0 * M_PI / 180 && enemies->shift_tile != enemies->main_tile && enemies->shift_tile != enemies->main_tile + 4)
-		// {
-		// 	if (img[(int)(64 * ((enemies->size - cursor_x - 1) / (double)enemies->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->size)) + tile_u * 65 + tile_v * 1039 * 65] != 0xFF980088 &&
-		// 		enemies->dist < z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)])
-		// 	{
-		// 		pixel[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = img[(int)(64 * ((enemies->size - cursor_x - 1) / (double)enemies->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->size)) + tile_u * 65 + tile_v * 1039 * 65];
-		// 		z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = enemies->dist;
-		// 	}
-		// }
-		// else
-		// {
-		// 	if (img[(int)(64 * (cursor_x / (double)enemies->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->size)) + tile_u * 65 + tile_v * 1039 * 65] != 0xFF980088 &&
-		// 		enemies->dist < z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)])
-		// 	{
-		// 		pixel[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = img[(int)(64 * (cursor_x / (double)enemies->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->size)) + tile_u * 65 + tile_v * 1039 * 65];
-		// 		z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = enemies->dist;
-		// 	}
-		// }	
 		
 		//WITHOUT ALPHA
-		if (enemies->p_div < 0 * M_PI / 180 && enemies->shift_tile != enemies->sprite->main_tile && enemies->shift_tile != enemies->sprite->main_tile + 4)
+		if (invers)
 		{
-			if (img[(int)(64 * ((enemies->sprite->size - cursor_x - 1) / (double)enemies->sprite->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->sprite->size)) + tile_u * 65 + tile_v * 1039 * 65] != 0xffffffff &&
-				enemies->sprite->dist < z_buff[enemies->sprite->h_offset + cursor_x + WIDTH * (enemies->sprite->v_offset + cursor_y)])
+			if (img[(int)(64 * ((sprite->size - cursor_x - 1) / (double)sprite->size)) + 1039 * (int)(64 * (cursor_y / (double)sprite->size)) + tile_u * 65 + tile_v * 1039 * 65] != 0xffffffff &&
+				sprite->dist < z_buff[sprite->h_offset + cursor_x + WIDTH * (sprite->v_offset + cursor_y)])
 			{
-				pixel[enemies->sprite->h_offset + cursor_x + WIDTH * (enemies->sprite->v_offset + cursor_y)] = img[(int)(64 * ((enemies->sprite->size - cursor_x - 1) / (double)enemies->sprite->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->sprite->size)) + tile_u * 65 + tile_v * 1039 * 65];
-				z_buff[enemies->sprite->h_offset + cursor_x + WIDTH * (enemies->sprite->v_offset + cursor_y)] = enemies->sprite->dist;
+				pixel[sprite->h_offset + cursor_x + WIDTH * (sprite->v_offset + cursor_y)] = img[(int)(64 * ((sprite->size - cursor_x - 1) / (double)sprite->size)) + 1039 * (int)(64 * (cursor_y / (double)sprite->size)) + tile_u * 65 + tile_v * 1039 * 65];
+				z_buff[sprite->h_offset + cursor_x + WIDTH * (sprite->v_offset + cursor_y)] = sprite->dist;
 			}
 		}
 		else
 		{
-			if (img[(int)(64 * (cursor_x / (double)enemies->sprite->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->sprite->size)) + tile_u * 65 + tile_v * 1039 * 65] != 0xFFffffff &&
-				enemies->sprite->dist < z_buff[enemies->sprite->h_offset + cursor_x + WIDTH * (enemies->sprite->v_offset + cursor_y)])
+			if (img[(int)(64 * (cursor_x / (double)sprite->size)) + 1039 * (int)(64 * (cursor_y / (double)sprite->size)) + tile_u * 65 + tile_v * 1039 * 65] != 0xFFffffff &&
+				sprite->dist < z_buff[sprite->h_offset + cursor_x + WIDTH * (sprite->v_offset + cursor_y)])
 			{
-				pixel[enemies->sprite->h_offset + cursor_x + WIDTH * (enemies->sprite->v_offset + cursor_y)] = img[(int)(64 * (cursor_x / (double)enemies->sprite->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->sprite->size)) + tile_u * 65 + tile_v * 1039 * 65];
-				z_buff[enemies->sprite->h_offset + cursor_x + WIDTH * (enemies->sprite->v_offset + cursor_y)] = enemies->sprite->dist;
+				pixel[sprite->h_offset + cursor_x + WIDTH * (sprite->v_offset + cursor_y)] = img[(int)(64 * (cursor_x / (double)sprite->size)) + 1039 * (int)(64 * (cursor_y / (double)sprite->size)) + tile_u * 65 + tile_v * 1039 * 65];
+				z_buff[sprite->h_offset + cursor_x + WIDTH * (sprite->v_offset + cursor_y)] = sprite->dist;
 			}
 		}	
-		
-		// // WITHOUT ALPHA
-		// if (enemies->p_div < 0 * M_PI / 180 && enemies->tile != enemies->shift_tile && enemies->tile != enemies->shift_tile + 4)
-		// {
-		// 	if (enemies->dist < z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)])
-		// 	{
-		// 		pixel[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = img[(int)(64 * ((enemies->size - cursor_x - 1) / (double)enemies->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->size)) + tile_u * 65 + tile_v * 1039 * 65];
-		// 		z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = enemies->dist;
-		// 	}
-		// }
-		// else
-		// {
-		// 	if (enemies->dist < z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)])
-		// 	{
-		// 		pixel[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = img[(int)(64 * (cursor_x / (double)enemies->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->size)) + tile_u * 65 + tile_v * 1039 * 65];
-		// 		z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = enemies->dist;
-		// 	}
-		// }	
-		
-	
-		// // ENEMY_MASK
-		// if (enemies->p_div < 0 * M_PI / 180 && enemies->tile != enemies->shift_tile && enemies->tile != enemies->shift_tile + 4)
-		// {
-		// 	if (img[(int)(64 * ((enemies->size - cursor_x - 1) / (double)enemies->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->size)) + tile_u * 65 + tile_v * 1039 * 65] != 0xFF980088 &&
-		// 		enemies->dist < z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)])
-		// 	{
-		// 		pixel[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = 0xFFFFFF;
-		// 		z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = enemies->dist;
-		// 	}
-		// }
-		// else
-		// {
-		// 	if (img[(int)(64 * (cursor_x / (double)enemies->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->size)) + tile_u * 65 + tile_v * 1039 * 65] != 0xFF980088 &&
-		// 		enemies->dist < z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)])
-		// 	{
-		// 		pixel[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = 0xFFFFFF;
-		// 		z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = enemies->dist;
-		// 	}
-		// }	
 		
 		cursor_y += 1;
 	}

@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:57:39 by jthuy             #+#    #+#             */
-/*   Updated: 2020/12/03 17:22:05 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/12/04 13:17:28 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,7 @@ typedef struct	s_sprite
 	double		pos_x;
 	double		pos_y;
 	int			main_tile;
-	
+	int			tile;
 	
 	double		p_dirx;
 	double		p_diry;
@@ -150,7 +150,7 @@ typedef struct		s_enemy
 	
 	int				shift_tile;
 	double			p_div;
-	int				tile;
+	// int				tile;
 	// double			p_dir;
 
 	double			hfov;	
@@ -168,7 +168,7 @@ typedef struct		s_props
 {
 	double			pos_x;
 	double			pos_y;
-	int				tile;
+	int				main_tile;
 	
 	double			p_dir;
 	double			dist;
@@ -216,13 +216,15 @@ void	set_ewalk(t_enemy *enemies, t_player *player);
 void	set_eposition(t_enemy *enemies);
 void	set_erotation(t_enemy *enemies, t_player *player);
 void	set_ewalkphase(t_enemy *enemies);
-void	set_spritesparam(t_enemy *enemies, t_player *player);
-void	set_spriteparam(t_enemy *enemies, t_player *player);
+void	set_enemiesparam(t_enemy *enemies, t_player *player);
+void	set_spriteparam(t_sprite *sprite, t_player *player);
 
+// void	draw_vertlenemy(t_enemy *sprite, int *pixel, int *img, double *z_buff, int cursor_x, t_player *player);
 
+void	draw_enemies(t_enemy *enemies, int *pixel, int *img, double *z_buff);
+void	draw_sprites(t_sprite *sprite, int *pixel, int *img, double *z_buff, char invers);
+void	draw_vertlenemy(t_sprite *sprite, int *pixel, int *img, double *z_buff, int cursor_x, char invers);
 
-void	draw_enemies(t_player *player, t_enemy *enemies, int *pixel, int *img, double *z_buff);
-void	draw_vertlenemy(t_enemy *sprite, int *pixel, int *img, double *z_buff, int cursor_x, t_player *player);
 void	print_enemies(t_enemy *enemies);
 void	print_epath(t_enemy *enemies);
 
@@ -245,8 +247,8 @@ char		handling_event(SDL_Event windowEvent, t_player *player, t_enemy *enemies);
 ** draw_sprite.c
 */
 // void	draw_sprite(t_map *map, t_player *player, int *pixel, int *img, int sprite_poz, int tile_numb, double *z_buff);
-void	def_spriteparam(t_sprite *sprite, int sprite_poz, t_map *map, t_player *player);
-void	draw_vertline(t_sprite *sprite, int *pixel, int *img, int tile_numb, double *z_buff);
+// void	def_spriteparam(t_sprite *sprite, int sprite_poz, t_map *map, t_player *player);
+// void	draw_vertline(t_sprite *sprite, int *pixel, int *img, int tile_numb, double *z_buff);
 /*
 ** door_sprite.c
 */
