@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:55:30 by jthuy             #+#    #+#             */
-/*   Updated: 2020/12/04 13:48:03 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/12/04 16:06:52 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,6 +129,8 @@ int		main()
 	// while (++m < 5)
 	// 	sprite[m] = sprite_create(wad, name[m]);
 		
+	long	timer = 0;
+	
 	SDL_Event	windowEvent;
 	while (1)
 	{
@@ -141,6 +143,7 @@ int		main()
 		// // handling_event(windowEvent, player, enemies);
 		if (handling_event(windowEvent, player, enemies))
 		{
+			timer += 1;
 			set_enemiesparam(enemies, player);
 			set_propsparam(props, player);
 			drawing(map, player, enemies, props, drawer, pixel, img);
@@ -150,32 +153,39 @@ int		main()
 			continue ;
 		}
 		// // printf("out\n");
-		set_timer(enemies, player);
+		// set_timer(enemies, player);
+
+		if (!(timer % 100))
+		{
+			set_pcondition(player, enemies);
+			set_econdition(enemies, player);
+			drawing(map, player, enemies, props, drawer, pixel, img);
+			SDL_UpdateWindowSurface(window);
+		}
+		timer += 1;
 		
-		drawing(map, player, enemies, props, drawer, pixel, img);
 		// drawing(map, player, enemies, props, drawer, pixel, img, sprite, surface);
 		// blit_sprite_scale(sprite, surface, &((t_rect){enemies->h_offset, enemies->v_offset, enemies->size / 2, enemies->size / 2, false}));
 
-		SDL_UpdateWindowSurface(window);
 	}
 	return (0);
 }
 
-void	set_timer(t_enemy *enemies, t_player *player)
-{
-	static long	time = 0;
+// void	set_timer(t_enemy *enemies, t_player *player)
+// {
+// 	static long	time = 0;
 
-	if (time % 50 == 0)
-	{
-		// player->tile = player->tile_weapon + player->phase;
-		// player->phase += 1;
-		// if (player->phase > 4)
-		// 	player->phase = 0;
-		set_pcondition(player, enemies);
-		set_econdition(enemies, player);
-	}
-	time += 1;
-}
+// 	if (time % 50 == 0)
+// 	{
+// 		// player->tile = player->tile_weapon + player->phase;
+// 		// player->phase += 1;
+// 		// if (player->phase > 4)
+// 		// 	player->phase = 0;
+// 		set_pcondition(player, enemies);
+// 		set_econdition(enemies, player);
+// 	}
+// 	time += 1;
+// }
 
 t_map		*def_map()
 {

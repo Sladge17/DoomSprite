@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:57:39 by jthuy             #+#    #+#             */
-/*   Updated: 2020/12/04 13:36:32 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/12/04 15:52:05 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -231,7 +231,7 @@ void	print_epath(t_enemy *enemies);
 /*
 ** wolf3d.c
 */
-void		set_timer(t_enemy *enemies, t_player *player);
+// void		set_timer(t_enemy *enemies, t_player *player);
 t_map		*def_map();
 t_drawer	*def_drawer();
 void		drawing(t_map *map, t_player *player, t_enemy *enemies, t_props *props, t_drawer *drawer, int *pixel, int *img);
