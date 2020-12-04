@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:55:30 by jthuy             #+#    #+#             */
-/*   Updated: 2020/12/04 13:03:58 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/12/04 13:48:03 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -271,8 +271,8 @@ void	drawing(t_map *map, t_player *player, t_enemy *enemies, t_props *props, t_d
 	// }
 
 	draw_enemies(enemies, pixel, img, z_buff);
-
-	draw_props(player, props, pixel, img, z_buff);
+	draw_props(props, pixel, img, z_buff);
+	
 	draw_cross(pixel, enemies);
 	
 	// draw_ui(pixel, img, 0, 33);

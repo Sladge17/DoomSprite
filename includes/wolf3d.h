@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:57:39 by jthuy             #+#    #+#             */
-/*   Updated: 2020/12/04 13:17:28 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/12/04 13:36:32 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,16 +166,17 @@ typedef struct		s_enemy
 
 typedef struct		s_props
 {
-	double			pos_x;
-	double			pos_y;
-	int				main_tile;
+	t_sprite		*sprite;
+	// double			pos_x;
+	// double			pos_y;
+	// int				main_tile;
 	
-	double			p_dir;
-	double			dist;
-	int				size;
-	int				shift_x;
-	int				h_offset;
-	int				v_offset;
+	// double			p_dir;
+	// double			dist;
+	// int				size;
+	// int				shift_x;
+	// int				h_offset;
+	// int				v_offset;
 	
 	struct s_props	*next;
 }					t_props;
@@ -187,9 +188,8 @@ typedef struct		s_props
 */
 t_props	*def_props(t_map *map);
 void	set_propsparam(t_props *props, t_player *player);
-void	print_props(t_props *props);
-void	draw_props(t_player *player, t_props *props, int *pixel, int *img, double *z_buff);
-void	draw_vertlprops(t_props *props, int *pixel, int *img, double *z_buff, int cursor_x, t_player *player);
+void	draw_props(t_props *props, int *pixel, int *img, double *z_buff);
+
 
 /*
 ** player.c

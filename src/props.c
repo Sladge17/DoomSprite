@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/30 17:04:46 by jthuy             #+#    #+#             */
-/*   Updated: 2020/12/04 13:17:06 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/12/04 13:36:43 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,11 @@ t_props	*def_props(t_map *map)
 		if (map->field[index] == 'H')
 		{
 			node = (t_props *)malloc(sizeof(t_props)); // NEED PROTECT
-			node->pos_x = index % map->width;
-			node->pos_y = index / map->width;
-			node->main_tile = 133;
+			node->sprite = (t_sprite *)malloc(sizeof(t_sprite)); // NEED PROTECT
+			node->sprite->pos_x = index % map->width;
+			node->sprite->pos_y = index / map->width;
+			node->sprite->main_tile = 133;
+			node->sprite->tile = node->sprite->main_tile;
 			if (!props)
 			{
 				props = node;
@@ -42,9 +44,11 @@ t_props	*def_props(t_map *map)
 		if (map->field[index] == 'A')
 		{
 			node = (t_props *)malloc(sizeof(t_props)); // NEED PROTECT
-			node->pos_x = index % map->width;
-			node->pos_y = index / map->width;
-			node->main_tile = 134;
+			node->sprite = (t_sprite *)malloc(sizeof(t_sprite)); // NEED PROTECT
+			node->sprite->pos_x = index % map->width;
+			node->sprite->pos_y = index / map->width;
+			node->sprite->main_tile = 134;
+			node->sprite->tile = node->sprite->main_tile;
 			if (!props)
 			{
 				props = node;
@@ -66,117 +70,29 @@ void	set_propsparam(t_props *props, t_player *player)
 {
 	while (props)
 	{
-		props->p_dir = atan2(props->pos_x - player->pos_x, props->pos_y - player->pos_y);
-		if (props->p_dir - player->angle > M_PI)
-			props->p_dir -= 2 * M_PI; 
-		else if (props->p_dir - player->angle < -M_PI)
-			props->p_dir += 2 * M_PI;
-		props->p_dir -= player->angle;
-		props->shift_x = WIDTH / 2 - (props->p_dir * (WIDTH) / (player->fov));
+		set_spriteparam(props->sprite, player);
+		// set_erotation(enemies, player);
 		
-		props->dist = sqrt(pow(props->pos_x - player->pos_x, 2) + pow(props->pos_y - player->pos_y, 2));
-		props->size = (int)(HEIGHT * 2 / props->dist);
-		props->h_offset = props->shift_x - props->size / 2;
-		props->v_offset = HEIGHT / 2 - props->size / 2;
+		// NEED OPIMIZE
+		// enemies->hfov = atan2(enemies->sprite->p_dirx, enemies->sprite->p_diry) + M_PI - enemies->normal;
+		// if (enemies->hfov > M_PI)
+		// 	enemies->hfov -= 2 * M_PI;
+		// if (fabs(enemies->hfov) < (45 / 2) * M_PI / 180 && enemies->sprite->dist < 5)
+		// enemies->condition = 0b100;
+		// set_econdition(enemies, player);
+		
+		
+		// if (enemies->condition == 0b01)
+		// 	enemies->condition = 0b1;
 		props = props->next;
 	}
 }
 
-void	draw_props(t_player *player, t_props *props, int *pixel, int *img, double *z_buff)
-{
-	int		cursor_x;
-	
-	while (props)
-	{
-		cursor_x = 0;
-		while (cursor_x < props->size)
-		{
-			if (props->h_offset + cursor_x < 0 || props->h_offset + cursor_x >= WIDTH)
-			{
-				cursor_x += 1;
-				continue;
-			}
-			draw_vertlprops(props, pixel, img, z_buff, cursor_x, player);
-			cursor_x += 1;
-		}
-		props = props->next;
-	}
-}
-
-void	draw_vertlprops(t_props *props, int *pixel, int *img, double *z_buff, int cursor_x, t_player *player)
-{
-	int		tile_u;
-	int		tile_v;
-	int		cursor_y;
-
-	tile_u = props->main_tile % 16;
-	tile_v = props->main_tile / 16;
-	cursor_y = 0;
-	while (cursor_y < props->size)
-	{
-		if (props->v_offset + cursor_y < 0 || props->v_offset + cursor_y >= HEIGHT)
-		{
-			cursor_y += 1;
-			continue;
-		}
-
-		//WITH ALPHA
-		if (img[(int)(64 * (cursor_x / (double)props->size)) + 1039 * (int)(64 * (cursor_y / (double)props->size)) + tile_u * 65 + tile_v * 1039 * 65] != 0xFF980088 &&
-			props->dist < z_buff[props->h_offset + cursor_x + WIDTH * (props->v_offset + cursor_y)])
-		{
-			pixel[props->h_offset + cursor_x + WIDTH * (props->v_offset + cursor_y)] = img[(int)(64 * (cursor_x / (double)props->size)) + 1039 * (int)(64 * (cursor_y / (double)props->size)) + tile_u * 65 + tile_v * 1039 * 65];
-			z_buff[props->h_offset + cursor_x + WIDTH * (props->v_offset + cursor_y)] = props->dist;
-		}
-		
-		// // WITHOUT ALPHA
-		// if (enemies->p_div < 0 * M_PI / 180 && enemies->tile != enemies->shift_tile && enemies->tile != enemies->shift_tile + 4)
-		// {
-		// 	if (enemies->dist < z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)])
-		// 	{
-		// 		pixel[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = img[(int)(64 * ((enemies->size - cursor_x - 1) / (double)enemies->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->size)) + tile_u * 65 + tile_v * 1039 * 65];
-		// 		z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = enemies->dist;
-		// 	}
-		// }
-		// else
-		// {
-		// 	if (enemies->dist < z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)])
-		// 	{
-		// 		pixel[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = img[(int)(64 * (cursor_x / (double)enemies->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->size)) + tile_u * 65 + tile_v * 1039 * 65];
-		// 		z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = enemies->dist;
-		// 	}
-		// }	
-		
-	
-		// // ENEMY_MASK
-		// if (enemies->p_div < 0 * M_PI / 180 && enemies->tile != enemies->shift_tile && enemies->tile != enemies->shift_tile + 4)
-		// {
-		// 	if (img[(int)(64 * ((enemies->size - cursor_x - 1) / (double)enemies->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->size)) + tile_u * 65 + tile_v * 1039 * 65] != 0xFF980088 &&
-		// 		enemies->dist < z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)])
-		// 	{
-		// 		pixel[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = 0xFFFFFF;
-		// 		z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = enemies->dist;
-		// 	}
-		// }
-		// else
-		// {
-		// 	if (img[(int)(64 * (cursor_x / (double)enemies->size)) + 1039 * (int)(64 * (cursor_y / (double)enemies->size)) + tile_u * 65 + tile_v * 1039 * 65] != 0xFF980088 &&
-		// 		enemies->dist < z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)])
-		// 	{
-		// 		pixel[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = 0xFFFFFF;
-		// 		z_buff[enemies->h_offset + cursor_x + WIDTH * (enemies->v_offset + cursor_y)] = enemies->dist;
-		// 	}
-		// }	
-		
-		cursor_y += 1;
-	}
-}
-
-// TMP FUNC
-void	print_props(t_props *props)
+void	draw_props(t_props *props, int *pixel, int *img, double *z_buff)
 {
 	while (props)
 	{
-		printf("%f, %f\n", props->pos_x, props->pos_y);
+		draw_sprites(props->sprite, pixel, img, z_buff, 0);
 		props = props->next;
 	}
 }
