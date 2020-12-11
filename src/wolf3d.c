@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:55:30 by jthuy             #+#    #+#             */
-/*   Updated: 2020/12/11 18:11:40 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/12/11 20:40:49 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,7 +123,7 @@ int		main()
 	// while (++m < 5)
 	// 	sprite[m] = sprite_create(wad, name[m]);
 		
-	long	timer = 0;
+	// long	timer = 0;
 	int		z_i;
 	SDL_Event	windowEvent;
 	t_timer		fps;
@@ -132,40 +132,45 @@ int		main()
 	timer_start(&fps);
 	while (1)
 	{
-		if (handling_event(windowEvent, player, enemies))
+		if (get_ticks(&fps) >= 120)
 		{
+			handling_event(windowEvent, player, enemies);
 			z_i = 0;
 			while (z_i < WIDTH * HEIGHT)
 			{
 				z_buff[z_i] = 2147483647;
 				z_i += 1;
 			}
+						set_pcondition(player, enemies);
+						set_econdition(enemies, player);
 			set_enemiesparam(enemies, player);
 			set_propsparam(props, player);
 			drawing(map, player, enemies, props, drawer, pixel, img);
 			SDL_UpdateWindowSurface(window);
 			// fps_counter(&fps);
 			// timer += 1;
-			continue ;
+			// continue ;
+			timer_stop(&fps);
+			timer_start(&fps);
+		// fps_counter(&fps);
 		}
-
+				
 		// if (!(timer % 100))
-		if (fps.counted_frames >= 60)
-		{
-			
-			z_i = 0;
-			while (z_i < WIDTH * HEIGHT)
-			{
-				z_buff[z_i] = 2147483647;
-				z_i += 1;
-			}
-			set_pcondition(player, enemies);
-			set_econdition(enemies, player);
-			drawing(map, player, enemies, props, drawer, pixel, img);
-			SDL_UpdateWindowSurface(window);
-		}
-			fps_counter(&fps);
-		timer += 1;
+		// if (fps.counted_frames >= 60)
+		// {
+		// 	z_i = 0;
+		// 	while (z_i < WIDTH * HEIGHT)
+		// 	{
+		// 		z_buff[z_i] = 2147483647;
+		// 		z_i += 1;
+		// 	}
+		// 	set_pcondition(player, enemies);
+		// 	set_econdition(enemies, player);
+		// 	drawing(map, player, enemies, props, drawer, pixel, img);
+		// 	SDL_UpdateWindowSurface(window);
+		// }
+		
+		// timer += 1;
 	}
 	return (0);
 }
@@ -509,7 +514,9 @@ int		def_pixel(t_drawer *drawer, int tile_u, int tile_v, char inverse)
 char	handling_event(SDL_Event windowEvent, t_player *player, t_enemy *enemies)
 {
 	static char		condition = 1;
+	const Uint8		*keystat;
 	
+		keystat =  SDL_GetKeyboardState(NULL);
 	if (SDL_PollEvent(&windowEvent))
 	{
 		// // WHAT IS IT ???
@@ -518,28 +525,34 @@ char	handling_event(SDL_Event windowEvent, t_player *player, t_enemy *enemies)
 		// 	SDL_FlushEvent(SDL_KEYDOWN);
 		// 	return (1);  //MAYBE NEED RETURT 0
 		// }
-		if (windowEvent.type == SDL_QUIT ||
-		(windowEvent.type == SDL_KEYDOWN && windowEvent.key.keysym.sym == SDLK_ESCAPE))
+		// if (windowEvent.type == SDL_QUIT ||
+		// (windowEvent.type == SDL_KEYDOWN && windowEvent.key.keysym.sym == SDLK_ESCAPE))
+		if (windowEvent.type == SDL_QUIT || keystat[SDL_SCANCODE_ESCAPE])
 			exit(0);
-		if (windowEvent.type == SDL_KEYDOWN && windowEvent.key.keysym.sym == SDLK_a)
+			
+		// if (windowEvent.type == SDL_KEYDOWN && windowEvent.key.keysym.sym == SDLK_a)
+		if (keystat[SDL_SCANCODE_A])
 		{
 			player->pos_x += 0.1 * sin(player->angle + (90 * M_PI / (double)180));
 			player->pos_y += 0.1 * cos(player->angle + (90 * M_PI / (double)180));
 			return (1);
 		}
-		if (windowEvent.type == SDL_KEYDOWN && windowEvent.key.keysym.sym == SDLK_d)
+		// if (windowEvent.type == SDL_KEYDOWN && windowEvent.key.keysym.sym == SDLK_d)
+		if (keystat[SDL_SCANCODE_D])
 		{
 			player->pos_x -= 0.1 * sin(player->angle + (90 * M_PI / (double)180));
 			player->pos_y -= 0.1 * cos(player->angle + (90 * M_PI / (double)180));
 			return (1);
 		}
-		if (windowEvent.type == SDL_KEYDOWN && windowEvent.key.keysym.sym == SDLK_w)
+		// if (windowEvent.type == SDL_KEYDOWN && windowEvent.key.keysym.sym == SDLK_w)
+		if (keystat[SDL_SCANCODE_W])
 		{
 			player->pos_x += 0.1 * sin(player->angle);
 			player->pos_y += 0.1 * cos(player->angle);
 			return (1);
 		}
-		if (windowEvent.type == SDL_KEYDOWN && windowEvent.key.keysym.sym == SDLK_s)
+		// if (windowEvent.type == SDL_KEYDOWN && windowEvent.key.keysym.sym == SDLK_s)
+		if (keystat[SDL_SCANCODE_S])
 		{
 			player->pos_x -= 0.1 * sin(player->angle);
 			player->pos_y -= 0.1 * cos(player->angle);
