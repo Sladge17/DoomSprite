@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:55:30 by jthuy             #+#    #+#             */
-/*   Updated: 2020/12/04 16:06:52 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/12/11 18:11:40 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,14 @@ int		main()
 		exit(0);
 	}
 
+	if (!(drawer = def_drawer()))
+	{
+		SDL_FreeSurface(athlas);
+		SDL_FreeSurface(surface);
+		SDL_DestroyWindow(window);
+		exit(0);
+	}
+	
 	if (!(player = def_player(map)))
 	{
 		SDL_FreeSurface(athlas);
@@ -97,22 +105,8 @@ int		main()
 		SDL_DestroyWindow(window);
 		exit(0);
 	}
-	// print_props(props);
-	// exit(0);
-
-	
-	// set_enemies(enemies, player); // not need with patrol animation
-	
-
-	if (!(drawer = def_drawer()))
-	{
-		SDL_FreeSurface(athlas);
-		SDL_FreeSurface(surface);
-		SDL_DestroyWindow(window);
-		exit(0);
-	}
-
 	set_propsparam(props, player);
+
 	
 	// wad = (t_wad *)ft_memalloc(sizeof(t_wad));
 	// wad_loader(wad, "map.wad");
@@ -130,62 +124,51 @@ int		main()
 	// 	sprite[m] = sprite_create(wad, name[m]);
 		
 	long	timer = 0;
-	
+	int		z_i;
 	SDL_Event	windowEvent;
+	t_timer		fps;
+	
+	timer_init(&fps);
+	timer_start(&fps);
 	while (1)
 	{
-		int		i = 0;
-		while (i < WIDTH * HEIGHT)
-		{
-			z_buff[i] = 2147483647;
-			i += 1;
-		}
-		// // handling_event(windowEvent, player, enemies);
 		if (handling_event(windowEvent, player, enemies))
 		{
-			timer += 1;
+			z_i = 0;
+			while (z_i < WIDTH * HEIGHT)
+			{
+				z_buff[z_i] = 2147483647;
+				z_i += 1;
+			}
 			set_enemiesparam(enemies, player);
 			set_propsparam(props, player);
 			drawing(map, player, enemies, props, drawer, pixel, img);
-			// drawing(map, player, enemies, props, drawer, pixel, img, sprite, surface);
-			// blit_sprite_scale(sprite, surface, &((t_rect){enemies->h_offset, enemies->v_offset, enemies->size / 2, enemies->size / 2, false}));
 			SDL_UpdateWindowSurface(window);
+			// fps_counter(&fps);
+			// timer += 1;
 			continue ;
 		}
-		// // printf("out\n");
-		// set_timer(enemies, player);
 
-		if (!(timer % 100))
+		// if (!(timer % 100))
+		if (fps.counted_frames >= 60)
 		{
+			
+			z_i = 0;
+			while (z_i < WIDTH * HEIGHT)
+			{
+				z_buff[z_i] = 2147483647;
+				z_i += 1;
+			}
 			set_pcondition(player, enemies);
 			set_econdition(enemies, player);
 			drawing(map, player, enemies, props, drawer, pixel, img);
 			SDL_UpdateWindowSurface(window);
 		}
+			fps_counter(&fps);
 		timer += 1;
-		
-		// drawing(map, player, enemies, props, drawer, pixel, img, sprite, surface);
-		// blit_sprite_scale(sprite, surface, &((t_rect){enemies->h_offset, enemies->v_offset, enemies->size / 2, enemies->size / 2, false}));
-
 	}
 	return (0);
 }
-
-// void	set_timer(t_enemy *enemies, t_player *player)
-// {
-// 	static long	time = 0;
-
-// 	if (time % 50 == 0)
-// 	{
-// 		// player->tile = player->tile_weapon + player->phase;
-// 		// player->phase += 1;
-// 		// if (player->phase > 4)
-// 		// 	player->phase = 0;
-// 		set_pcondition(player, enemies);
-// 		set_econdition(enemies, player);
-// 	}
-// 	time += 1;
-// }
 
 t_map		*def_map()
 {
@@ -257,36 +240,9 @@ void	drawing(t_map *map, t_player *player, t_enemy *enemies, t_props *props, t_d
 		drawer->cursor_x += 1;
 	}
 
-	// int	door_pos = map->width + 1;
-	// while (map->field[door_pos] != 'E')
-	// 	door_pos += 1;
-	// draw_door(map, player, pixel, img, door_pos, 98, z_buff, drawer);
-
-	
-	// int	sprite_pos = map->width + 1;
-	// while (sprite_pos < map->width * map->height)
-	// {
-	// 	if (map->field[sprite_pos] == 'B')
-	// 		draw_sprite(map, player, pixel, img, sprite_pos, 156, z_buff);
-	// 		// draw_sprite(map, player, pixel, img, sprite_pos, 164, z_buff);
-	// 	sprite_pos += 1;
-	// }
-
-	// // CLEAR SCREEN
-	// int		i = 0;
-	// while (i < WIDTH * HEIGHT)
-	// {
-	// 	pixel[i] = 0;
-	// 	i += 1;
-	// }
-
 	draw_enemies(enemies, pixel, img, z_buff);
 	draw_props(props, pixel, img, z_buff);
-	
 	draw_cross(pixel, enemies);
-	
-	// draw_ui(pixel, img, 0, 33);
-	// draw_ui(pixel, img, 527);
 	draw_ui(pixel, img, player->tile);
 }
 

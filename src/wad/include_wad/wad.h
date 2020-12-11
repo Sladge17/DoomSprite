@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/28 12:14:39 by bdrinkin          #+#    #+#             */
-/*   Updated: 2020/12/03 13:50:55 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/12/11 17:56:46 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,15 @@
 #  define WIDTH 1600
 # endif
 
+typedef struct		s_timer
+{
+	Uint32			start_ticks;
+	Uint32			paused_ticks;
+	bool			paused;
+	bool			started;
+	int				counted_frames;
+}					t_timer;
+
 typedef struct		s_epath
 {
 	int				index;
@@ -45,15 +54,39 @@ typedef struct		s_epath
 	struct s_epath	*next;
 }					t_epath;
 
+typedef struct	s_sprite
+{
+	double		pos_x;
+	double		pos_y;
+	
+	int			main_tile;
+	int			tile;
+	
+	double		p_dirx;
+	double		p_diry;
+	double		p_dir;
+	double		dist;
+	int			size;
+	int			shift_x;
+	int			h_offset;
+	int			v_offset;
+	// int			cursor_x;
+	// int			cursor_y;
+}				t_sprite;
+
+
 typedef struct		s_enemy
 {
 	t_epath			*path;
 	t_epath			*start;
 	t_epath			*end;
+	
+	t_sprite		*sprite;
 	double			pos_x;
 	double			pos_y;
-	double			normal;
 	int				main_tile;
+	
+	double			normal;
 	char			health;
 	char			condition;
 	char			phase;
@@ -154,6 +187,22 @@ void					draw_sprite(t_watsprite *sprite, SDL_Surface *screen,
 							t_rect rect);
 // void					blit_sprite_scale(t_watsprite *src, SDL_Surface *dst, t_rect *rdst);
 void					blit_sprite_scale(t_enemy *enemies, t_watsprite *src, SDL_Surface *dst, t_rect *rdst);
+
+/*
+** struct_timer.c
+*/
+void					timer_init(t_timer *time);
+void					timer_start(t_timer *time);
+void					timer_stop(t_timer *time);
+void					timer_pause(t_timer *time);
+void					timer_unpause(t_timer *time);
+/*
+** timer.c
+*/
+Uint32					get_ticks(t_timer *time);
+bool					time_is_started(t_timer *time);
+bool					time_is_paused(t_timer *time);
+void					fps_counter(t_timer *time);
 
 
 #endif

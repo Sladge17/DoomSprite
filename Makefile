@@ -27,7 +27,9 @@ SRC_LIST =	wolf3d.c \
 			wad/src_wad/draw_wad.c \
 			wad/src_wad/wad_get.c \
 			wad/src_wad/wad_loader.c \
-			wad/src_wad/wad_reader.c
+			wad/src_wad/wad_reader.c \
+			wad/src_wad/timer.c \
+			wad/src_wad/struct_timer.c
 
 # SRC_LIST = wolf2.c
 SRC = $(addprefix $(SRC_DIR), $(SRC_LIST))
