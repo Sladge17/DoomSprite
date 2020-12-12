@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/30 17:04:46 by jthuy             #+#    #+#             */
-/*   Updated: 2020/12/04 13:36:43 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/12/12 15:01:19 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,11 +88,11 @@ void	set_propsparam(t_props *props, t_player *player)
 	}
 }
 
-void	draw_props(t_props *props, int *pixel, int *img, double *z_buff)
+void	draw_props(t_props *props, SDL_Surface *surface, int *img, double *z_buff)
 {
 	while (props)
 	{
-		draw_sprites(props->sprite, pixel, img, z_buff, 0);
+		draw_sprites(props->sprite, surface, img, z_buff, 0);
 		props = props->next;
 	}
 }

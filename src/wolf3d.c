@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:55:30 by jthuy             #+#    #+#             */
-/*   Updated: 2020/12/11 20:40:49 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/12/12 15:30:28 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ int		main()
 	SDL_Window	*window = SDL_CreateWindow("wolf3d", SDL_WINDOWPOS_UNDEFINED,
 		SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
 	SDL_Surface	*surface = SDL_GetWindowSurface(window);
-	int			*pixel = (int *)surface->pixels;
+	// int			*pixel = (int *)surface->pixels;
 	SDL_Surface	*athlas = IMG_Load("resurses/athlas.png");
 	int			*img = (int *)athlas->pixels;
 
@@ -124,7 +124,8 @@ int		main()
 	// 	sprite[m] = sprite_create(wad, name[m]);
 		
 	// long	timer = 0;
-	int		z_i;
+	// int		z_i;
+
 	SDL_Event	windowEvent;
 	t_timer		fps;
 	
@@ -134,45 +135,32 @@ int		main()
 	{
 		if (get_ticks(&fps) >= 120)
 		{
+			clear_zbuff();
 			handling_event(windowEvent, player, enemies);
-			z_i = 0;
-			while (z_i < WIDTH * HEIGHT)
-			{
-				z_buff[z_i] = 2147483647;
-				z_i += 1;
-			}
-						set_pcondition(player, enemies);
-						set_econdition(enemies, player);
 			set_enemiesparam(enemies, player);
 			set_propsparam(props, player);
-			drawing(map, player, enemies, props, drawer, pixel, img);
+						set_pcondition(player, enemies);
+						set_econdition(enemies, player);
+			drawing(map, player, enemies, props, drawer, surface, img);
 			SDL_UpdateWindowSurface(window);
-			// fps_counter(&fps);
-			// timer += 1;
-			// continue ;
+
 			timer_stop(&fps);
 			timer_start(&fps);
-		// fps_counter(&fps);
 		}
-				
-		// if (!(timer % 100))
-		// if (fps.counted_frames >= 60)
-		// {
-		// 	z_i = 0;
-		// 	while (z_i < WIDTH * HEIGHT)
-		// 	{
-		// 		z_buff[z_i] = 2147483647;
-		// 		z_i += 1;
-		// 	}
-		// 	set_pcondition(player, enemies);
-		// 	set_econdition(enemies, player);
-		// 	drawing(map, player, enemies, props, drawer, pixel, img);
-		// 	SDL_UpdateWindowSurface(window);
-		// }
-		
-		// timer += 1;
 	}
 	return (0);
+}
+
+void	clear_zbuff()
+{
+	int		i;
+
+	i = 0;
+	while (i < WIDTH * HEIGHT)
+	{
+		z_buff[i] = 2147483647;
+		i += 1;
+	}
 }
 
 t_map		*def_map()
@@ -228,7 +216,7 @@ t_drawer	*def_drawer()
 	return (drawer);
 }
 
-void	drawing(t_map *map, t_player *player, t_enemy *enemies, t_props *props, t_drawer *drawer, int *pixel, int *img)
+void	drawing(t_map *map, t_player *player, t_enemy *enemies, t_props *props, t_drawer *drawer, SDL_Surface *surface, int *img)
 // void	drawing(t_map *map, t_player *player, t_enemy *enemies, t_props *props, t_drawer *drawer, int *pixel, int *img, t_sprite **wad_sprite, SDL_Surface *screen)
 {
 	static int sprt = 0;
@@ -241,14 +229,14 @@ void	drawing(t_map *map, t_player *player, t_enemy *enemies, t_props *props, t_d
 		
 		def_walltile_u(drawer);
 		def_wallparams(player, drawer);
-		draw_room(player, drawer, pixel, img);
+		draw_room(player, drawer, (int *)surface->pixels, img);
 		drawer->cursor_x += 1;
 	}
 
-	draw_enemies(enemies, pixel, img, z_buff);
-	draw_props(props, pixel, img, z_buff);
-	draw_cross(pixel, enemies);
-	draw_ui(pixel, img, player->tile);
+	draw_enemies(enemies, surface, img, z_buff);
+	draw_props(props, surface, img, z_buff); // need fix segfault
+	draw_cross((int *)surface->pixels, enemies);
+	draw_ui((int *)surface->pixels, img, player->tile);
 }
 
 void	def_wallparams(t_player *player, t_drawer *drawer)
@@ -516,7 +504,7 @@ char	handling_event(SDL_Event windowEvent, t_player *player, t_enemy *enemies)
 	static char		condition = 1;
 	const Uint8		*keystat;
 	
-		keystat =  SDL_GetKeyboardState(NULL);
+	keystat =  SDL_GetKeyboardState(NULL);
 	if (SDL_PollEvent(&windowEvent))
 	{
 		// // WHAT IS IT ???
@@ -558,7 +546,8 @@ char	handling_event(SDL_Event windowEvent, t_player *player, t_enemy *enemies)
 			player->pos_y -= 0.1 * cos(player->angle);
 			return (1);
 		}
-		if (windowEvent.type == SDL_KEYDOWN && windowEvent.key.keysym.sym == SDLK_q)
+		// if (windowEvent.type == SDL_KEYDOWN && windowEvent.key.keysym.sym == SDLK_q)
+		if (keystat[SDL_SCANCODE_Q])
 		{
 			player->angle += 1 * M_PI / (double)180;
 			// if (player->angle > M_PI)
@@ -567,7 +556,8 @@ char	handling_event(SDL_Event windowEvent, t_player *player, t_enemy *enemies)
 				player->angle -= 2 * M_PI;
 			return (1);
 		}
-		if (windowEvent.type == SDL_KEYDOWN && windowEvent.key.keysym.sym == SDLK_e)
+		// if (windowEvent.type == SDL_KEYDOWN && windowEvent.key.keysym.sym == SDLK_e)
+		if (keystat[SDL_SCANCODE_E])
 		{
 			player->angle -= 1 * M_PI / (double)180;
 			// if (player->angle < -M_PI)
@@ -576,14 +566,8 @@ char	handling_event(SDL_Event windowEvent, t_player *player, t_enemy *enemies)
 				player->angle = 2 * M_PI + player->angle;
 			return (1);
 		}
-		if (windowEvent.type == SDL_KEYDOWN && windowEvent.key.keysym.sym == SDLK_z)
-		{
-			player->pos_x = 1; // Координата игрока по оси X
-			player->pos_y = 1; // Координата игрока по оси Y
-			player->angle = 0; // Направление игрока
-			return (1);
-		}
-		if (windowEvent.type == SDL_KEYDOWN && windowEvent.key.keysym.sym == SDLK_SPACE)
+		// if (windowEvent.type == SDL_KEYDOWN && windowEvent.key.keysym.sym == SDLK_SPACE)
+		if (keystat[SDL_SCANCODE_SPACE])
 		{
 			// if (!condition)
 			// 	return (0);
@@ -591,16 +575,17 @@ char	handling_event(SDL_Event windowEvent, t_player *player, t_enemy *enemies)
 			// player->shoot = 1;
 			player->condition |= 0b1;
 			shoot_player(player, enemies);
-			return (1);
-		}
-		if (windowEvent.type == SDL_KEYUP && windowEvent.key.keysym.sym == SDLK_SPACE)
-		{
-			// player->shoot = 0;
 			player->condition ^= 0b1;
-			shoot_player(player, enemies);
-			// condition = 1;
 			return (1);
 		}
+		// if (windowEvent.type == SDL_KEYUP && windowEvent.key.keysym.sym == SDLK_SPACE)
+		// {
+		// 	// player->shoot = 0;
+		// 	player->condition ^= 0b1;
+		// 	shoot_player(player, enemies);
+		// 	// condition = 1;
+		// 	return (1);
+		// }
 	}
 	return (0);
 }

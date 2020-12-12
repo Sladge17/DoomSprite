@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:57:39 by jthuy             #+#    #+#             */
-/*   Updated: 2020/12/11 20:40:29 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/12/12 15:00:38 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -189,7 +189,7 @@ typedef struct		s_props
 */
 t_props	*def_props(t_map *map);
 void	set_propsparam(t_props *props, t_player *player);
-void	draw_props(t_props *props, int *pixel, int *img, double *z_buff);
+void	draw_props(t_props *props, SDL_Surface *surface, int *img, double *z_buff);
 
 
 /*
@@ -222,8 +222,10 @@ void	set_spriteparam(t_sprite *sprite, t_player *player);
 
 // void	draw_vertlenemy(t_enemy *sprite, int *pixel, int *img, double *z_buff, int cursor_x, t_player *player);
 
-void	draw_enemies(t_enemy *enemies, int *pixel, int *img, double *z_buff);
-void	draw_sprites(t_sprite *sprite, int *pixel, int *img, double *z_buff, char invers);
+void	draw_enemies(t_enemy *enemies, SDL_Surface *surface, int *img, double *z_buff);
+// void	draw_enemies(t_enemy *enemies, int *pixel, int *img, double *z_buff);
+void	draw_sprites(t_sprite *sprite, SDL_Surface *surface, int *img, double *z_buff, char invers);
+// void	draw_sprites(t_sprite *sprite, int *pixel, int *img, double *z_buff, char invers);
 void	draw_vertlenemy(t_sprite *sprite, int *pixel, int *img, double *z_buff, int cursor_x, char invers);
 
 void	print_enemies(t_enemy *enemies);
@@ -233,9 +235,11 @@ void	print_epath(t_enemy *enemies);
 ** wolf3d.c
 */
 // void		set_timer(t_enemy *enemies, t_player *player);
+void		clear_zbuff();
 t_map		*def_map();
 t_drawer	*def_drawer();
-void		drawing(t_map *map, t_player *player, t_enemy *enemies, t_props *props, t_drawer *drawer, int *pixel, int *img);
+void	drawing(t_map *map, t_player *player, t_enemy *enemies, t_props *props, t_drawer *drawer, SDL_Surface *surface, int *img);
+// void		drawing(t_map *map, t_player *player, t_enemy *enemies, t_props *props, t_drawer *drawer, int *pixel, int *img);
 // void		drawing(t_map *map, t_player *player, t_enemy *enemies, t_props *props, t_drawer *drawer, int *pixel, int *img, t_sprite **, SDL_Surface *);
 void		def_wallparams(t_player *player, t_drawer *drawer);
 void		draw_room(t_player *player, t_drawer *drawer, int *pixel, int *img);

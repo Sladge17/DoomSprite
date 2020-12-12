@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/16 12:57:17 by jthuy             #+#    #+#             */
-/*   Updated: 2020/12/04 13:06:13 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/12/11 20:53:28 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -613,21 +613,22 @@ void	set_spriteparam(t_sprite *sprite, t_player *player)
 // 	}
 // }
 
-void	draw_enemies(t_enemy *enemies, int *pixel, int *img, double *z_buff)
+
+void	draw_enemies(t_enemy *enemies, SDL_Surface *surface, int *img, double *z_buff)
 {
 	while (enemies)
 	{
 		if (enemies->p_div < 0 * M_PI / 180 &&
 			enemies->shift_tile != enemies->sprite->main_tile &&
 			enemies->shift_tile != enemies->sprite->main_tile + 4)
-			draw_sprites(enemies->sprite, pixel, img, z_buff, 1);
+			draw_sprites(enemies->sprite, surface, img, z_buff, 1);
 		else
-			draw_sprites(enemies->sprite, pixel, img, z_buff, 0);
+			draw_sprites(enemies->sprite, surface, img, z_buff, 0);
 		enemies = enemies->next;
 	}
 }
 
-void	draw_sprites(t_sprite *sprite, int *pixel, int *img, double *z_buff, char invers)
+void	draw_sprites(t_sprite *sprite, SDL_Surface *surface, int *img, double *z_buff, char invers)
 {
 	int		cursor_x;
 	
@@ -639,7 +640,7 @@ void	draw_sprites(t_sprite *sprite, int *pixel, int *img, double *z_buff, char i
 			cursor_x += 1;
 			continue;
 		}
-		draw_vertlenemy(sprite, pixel, img, z_buff, cursor_x, invers);
+		draw_vertlenemy(sprite, (int *)surface->pixels, img, z_buff, cursor_x, invers);
 		cursor_x += 1;
 	}
 }
