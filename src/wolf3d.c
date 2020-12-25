@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:55:30 by jthuy             #+#    #+#             */
-/*   Updated: 2020/12/12 19:43:46 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/12/25 20:16:59 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,33 +18,6 @@
 
 double		*z_buff;
 
-void			name_big_digit(char **name)
-{
-	int			i;
-	i = -1;
-	while (++i < 6)
-		name[i] = (char *)ft_memalloc(sizeof(char) * 9);
-	// name[0] = "SARGA1";
-	// name[1] = "SARGB1";
-	// name[2] = "SARGC1";
-	// name[3] = "SARGD1";
-	// name[4] = "SARGE1";
-	
-	// name[0] = "BOSSA1";
-	// name[1] = "BOSSB1";
-	// name[2] = "BOSSC1";
-	// name[3] = "BOSSD1";
-	// name[4] = "BOSSE1";
-	
-	name[0] = "POSSA1";
-	name[1] = "POSSB1";
-	name[2] = "POSSC1";
-	name[3] = "POSSD1";
-	name[4] = "POSSE1";
-
-	name[5] = NULL;
-}
-
 int		main()
 {
 	t_map		*map;
@@ -52,7 +25,6 @@ int		main()
 	t_enemy		*enemies;
 	t_props		*props;
 	t_drawer	*drawer;
-	// t_wad		*wad;
 	
 	if (SDL_Init(SDL_INIT_VIDEO))
 		exit(0);
@@ -108,24 +80,10 @@ int		main()
 	set_propsparam(props, player);
 
 	
-	// wad = (t_wad *)ft_memalloc(sizeof(t_wad));
-	// wad_loader(wad, "map.wad");
-	// wad_reader(wad);
-
-	// LOAD WADSPRITES
-	// t_sprite **sprite;
-	// int m = -1;
-	// char **name;
-
-	// name = (char **)ft_memalloc(sizeof(char *) * 6);
-	// name_big_digit(name);
-	// sprite = (t_sprite **)ft_memalloc(sizeof(t_sprite *) * 6);
-	// while (++m < 5)
-	// 	sprite[m] = sprite_create(wad, name[m]);
 		
 	// long	timer = 0;
 	// int		z_i;
-
+	t_wad		*wad = init_wad("map.wad");
 	SDL_Event	windowEvent;
 	t_timer		fps;
 	
@@ -141,7 +99,7 @@ int		main()
 				clear_zbuff();
 				set_enemiesparam(enemies, player);
 				set_propsparam(props, player);
-				drawing(map, player, enemies, props, drawer, surface, img);
+				drawing(map, player, enemies, props, drawer, surface, img, wad);
 				SDL_UpdateWindowSurface(window);
 			}
 			
@@ -162,7 +120,7 @@ int		main()
 				set_propsparam(props, player);
 							set_pcondition(player, enemies);
 							set_econdition(enemies, player);
-				drawing(map, player, enemies, props, drawer, surface, img);
+				drawing(map, player, enemies, props, drawer, surface, img, wad);
 				SDL_UpdateWindowSurface(window);
 
 				timer_stop(&fps);
@@ -239,7 +197,7 @@ t_drawer	*def_drawer()
 	return (drawer);
 }
 
-void	drawing(t_map *map, t_player *player, t_enemy *enemies, t_props *props, t_drawer *drawer, SDL_Surface *surface, int *img)
+void	drawing(t_map *map, t_player *player, t_enemy *enemies, t_props *props, t_drawer *drawer, SDL_Surface *surface, int *img, t_wad *wad)
 // void	drawing(t_map *map, t_player *player, t_enemy *enemies, t_props *props, t_drawer *drawer, int *pixel, int *img, t_sprite **wad_sprite, SDL_Surface *screen)
 {
 	static int sprt = 0;
@@ -256,7 +214,7 @@ void	drawing(t_map *map, t_player *player, t_enemy *enemies, t_props *props, t_d
 		drawer->cursor_x += 1;
 	}
 
-	draw_enemies(enemies, surface, img, z_buff);
+	draw_enemies(enemies, surface, img, z_buff, wad);
 	draw_props(props, surface, img, z_buff); // need fix segfault
 	draw_cross((int *)surface->pixels, enemies);
 	draw_ui((int *)surface->pixels, img, player->tile);

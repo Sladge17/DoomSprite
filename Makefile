@@ -1,84 +1,218 @@
+# NAME = sprite_test
+# # FLAG = -Wall -Wextra -Werror
+# FLAG = -g -O0
+
+# HEADER_DIR = includes/
+# HEADER = -I $(HEADER_DIR) -I $(LIBFT_INC)
+
+# SRC_DIR = src/
+# SRC_LIST =	calc_quads.c \
+# 		draw_door.c \
+# 		draw_room.c \
+# 		draw_ui.c \
+# 		enemies.c \
+# 		player.c \
+# 		props.c \
+# 		wad/blit_sprite_scale.c \
+# 		wad/bytes_shift.c \
+# 		wad/debug_file.c \
+# 		wad/draw_hud.c \
+# 		wad/draw_sprite.c \
+# 		wad/draw_texture.c \
+# 		wad/draw_wad.c \
+# 		wad/fill_functions.c \
+# 		wad/init_hud.c \
+# 		wad/init_wad.c \
+# 		wad/struct_timer.c \
+# 		wad/timer.c \
+# 		wad/wad_get.c \
+# 		wad/wad_loader.c \
+# 		wad/wad_main_menu.c \
+# 		wad/wad_reader.c \
+# 		wad/wad_sprite.c \
+# 		wad/acces_pixel.c \
+# 		wolf3d.c
+
+# # SRC_LIST = wolf2.c
+# SRC = $(addprefix $(SRC_DIR), $(SRC_LIST))
+
+# OBJ_DIR = obj/
+# OBJ_LIST = $(patsubst %.c, %.o, $(SRC_LIST))
+# OBJ = $(addprefix $(OBJ_DIR), $(OBJ_LIST))
+
+# # LIBFT_DIR = LibFT/
+# # LIBFT = $(LIBFT_DIR)libft.a
+
+# LIBFT_DIR = libft/
+# LIBFT_INC = $(LIBFT_DIR)includes
+# LIBFT = -L $(LIBFT_DIR) -lft
+# LIBFT_NAME = $(LIBFT_DIR)libft.a
+
+# # SDL = -L sdl/lib/ -lSDL2 -lSDL2_image
+# # SDL_HEADER = -I sdl/include/SDL2
+
+# SDL = -F Frameworks\
+# 	-framework SDL2\
+# 	-framework SDL2_image\
+# 	-framework SDL2_mixer\
+# 	-rpath Frameworks
+
+# SDL_HEADER = -F Frameworks\
+# 			-I Frameworks/SDL2.framework/Headers\
+# 			-I Frameworks/SDL2_image.framework/Headers\
+# 			-I Frameworks/SDL2_mixer.framework/Headers
+
+# all: $(NAME)
+
+# $(NAME): $(LIBFT_NAME) $(OBJ)
+# 	# @make re -C $(LIBFT_DIR)
+# 	# gcc -o wolf -I includes src/*.c -Wall -Wextra -Werror -L sdl/lib/ -I sdl/include/SDL2 -lSDL2
+# 	@gcc -o -g $(NAME) $(OBJ) $(LIBFT) $(SDL)
+
+# $(LIBFT_NAME):
+# 	@make -sC $(LIBFT_DIR)
+
+# $(OBJ_DIR)%.o : $(SRC_DIR)%.c $(HEADER_DIR)*.h
+# 	@mkdir -p $(OBJ_DIR)
+# 	@mkdir -p $(OBJ_DIR)wad
+# 	@gcc -c -g $(HEADER) $(SDL_HEADER) $< -o $@
+
+# clean:
+# 	@rm -rf $(OBJ_DIR)
+# 	@make clean -sC $(LIBFT_DIR)
+
+# fclean: clean
+# 	@rm -f $(NAME)
+# 	@make fclean -sC $(LIBFT_DIR)
+
+# re: fclean all
+
+# .PHONY: all clean fclean re
+
+
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: bdrinkin <bdrinkin@student.42.fr>          +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2020/03/21 19:14:26 by kain2250          #+#    #+#              #
+#    Updated: 2020/12/12 15:11:10 by bdrinkin         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
+# Определение системных команд
 NAME = sprite_test
-# FLAG = -Wall -Wextra -Werror
-FLAG = -g -O0
+RES = resource
 
-HEADER_DIR = includes/
-HEADER_DIR_WAD = src/wad/$(HEADER_WAD)
-HEADER_WAD = include_wad/
-HEADER = -I $(HEADER_DIR) -I $(HEADER_DIR_WAD) -I $(LIBFT_DIR)
+# Флаги компиляции:
+GCC = gcc -O0
+CCFLAGS = -Wall -Wextra
+OTHERS_FLAGS = -lm
 
-SRC_DIR = src/
-SRC_LIST =	wolf3d.c \
-			draw_room.c \
-			calc_quads.c \
-			player.c \
-			enemies.c \
-			props.c \
-			draw_ui.c \
-			draw_door.c \
-			wad/src_wad/acces_pixel.c \
-			wad/src_wad/blit_sprite_scale.c \
-			wad/src_wad/blit_surf_scale.c \
-			wad/src_wad/debug_file.c \
-			wad/src_wad/main.c \
-			wad/src_wad/bytes_shift.c \
-			wad/src_wad/draw_sprite.c \
-			wad/src_wad/draw_texture.c \
-			wad/src_wad/draw_wad.c \
-			wad/src_wad/wad_get.c \
-			wad/src_wad/wad_loader.c \
-			wad/src_wad/wad_reader.c \
-			wad/src_wad/timer.c \
-			wad/src_wad/struct_timer.c
+# Список фреймворков и их пути:
+FRAME_SDL2_DIR = Frameworks
+FRAME_SDL2 = $(FRAME_SDL2_DIR)/SDL2.framework
+FRAME_SDL2_IMAGE = $(FRAME_SDL2_DIR)/SDL2_image.framework
+FRAME_SDL2_MIXER = $(FRAME_SDL2_DIR)/SDL2_mixer.framework
+FRAMEWORKS = -F Frameworks \
+	-framework SDL2 \
+	-framework SDL2_image \
+	-framework SDL2_mixer \
+	-rpath $(FRAME_SDL2_DIR)
 
-# SRC_LIST = wolf2.c
-SRC = $(addprefix $(SRC_DIR), $(SRC_LIST))
+# Список библиотек и их пути:
+LIBFT_DIRECTORY = libft
 
-OBJ_DIR = obj/
-OBJ_LIST = $(patsubst %.c, %.o, $(SRC_LIST))
-OBJ = $(addprefix $(OBJ_DIR), $(OBJ_LIST))
+# Флаги для сборки библиотек
+LIBRARIES_LIBFT = -L $(LIBFT_DIRECTORY) -lft
 
-# LIBFT_DIR = LibFT/
-# LIBFT = $(LIBFT_DIR)libft.a
+# Заголовочные файлы и их пути:
+INCLUDES_DIRECTORY = includes/
+INCLUDES_DIRECTORY_LIBFT = $(LIBFT_DIRECTORY)/includes
+INCLUDES_SDL2 = -F $(FRAME_SDL2_DIR) \
+	-I $(FRAME_SDL2)/Headers \
+	-I $(FRAME_SDL2_IMAGE)/Headers \
+	-I $(FRAME_SDL2_MIXER)/Headers
 
-LIBFT_DIR = LibFT/
-LIBFT = -L $(LIBFT_DIR) -lft
+INCLUDES = -I$(INCLUDES_DIRECTORY) \
+	-I$(INCLUDES_DIRECTORY_LIBFT) \
+	$(INCLUDES_SDL2)
 
-# SDL = -L sdl/lib/ -lSDL2 -lSDL2_image
-# SDL_HEADER = -I sdl/include/SDL2
+HEADERS_LIST = *.h
 
-SDL = -F Frameworks\
-	-framework SDL2\
-	-framework SDL2_image\
-	-framework SDL2_mixer\
-	-rpath Frameworks
+HEADERS = $(addprefix $(INCLUDES_DIRECTORY), $(HEADERS_LIST))
 
-SDL_HEADER = -F Frameworks\
-			-I Frameworks/SDL2.framework/Headers\
-			-I Frameworks/SDL2_image.framework/Headers\
-			-I Frameworks/SDL2_mixer.framework/Headers
+# Основные файлы программы и их пути:
+SRC_DIRECTORY = src/
+SRC_LIST = calc_quads.c \
+		draw_door.c \
+		draw_room.c \
+		draw_ui.c \
+		enemies.c \
+		player.c \
+		props.c \
+		wad/blit_sprite_scale.c \
+		wad/bytes_shift.c \
+		wad/debug_file.c \
+		wad/draw_hud.c \
+		wad/draw_sprite.c \
+		wad/draw_texture.c \
+		wad/draw_wad.c \
+		wad/fill_functions.c \
+		wad/init_hud.c \
+		wad/init_wad.c \
+		wad/struct_timer.c \
+		wad/timer.c \
+		wad/wad_get.c \
+		wad/wad_loader.c \
+		wad/wad_main_menu.c \
+		wad/wad_reader.c \
+		wad/wad_sprite.c \
+		wad/acces_pixel.c \
+		wolf3d.c
 
-all: $(NAME)
+SRC = $(addprefix $(SRC_DIRECTORY), $(SRC_LIST))
 
-$(NAME): $(OBJ)
-	# @make re -C $(LIBFT_DIR)
-	# gcc -o wolf -I includes src/*.c -Wall -Wextra -Werror -L sdl/lib/ -I sdl/include/SDL2 -lSDL2
-	@gcc -o $(NAME) $(OBJ) $(LIBFT) $(SDL)
+OBJECTS_DIRECTORY = obj/
+OBJECTS_LIST = $(patsubst %.c, %.o, $(SOURCES_LIST))
+OBJECTS	= $(addprefix $(OBJECTS_DIRECTORY), $(OBJECTS_LIST))
 
-$(OBJ_DIR)%.o : $(SRC_DIR)%.c $(HEADER_DIR)*.h
-	@mkdir -p $(OBJ_DIR)
-	@mkdir -p $(OBJ_DIR)wad
-	@mkdir -p $(OBJ_DIR)wad/src_wad
-	@gcc -c $(HEADER) $(SDL_HEADER) $< -o $@ $(FLAG)
+# Определение цвета вывода:
+GREEN = \033[0;32;1m
+RED = \033[0;31;1m
+RESET = \033[0m
+
+# Лабуда-бу-даб-даб
+.PHONY: all clean fclean re
+
+# Основные правила сборки:
+all: $(NAME) $(LIBFT_DIRECTORY)
+
+$(NAME): $(SRC) $(HEADERS)
+	@echo "wolf3d: $(GREEN)Компиляция исполняемого файла$(RESET)\n"
+	@$(GCC) $(CCFLAGS) $(INCLUDES) $(LIBRARIES_LIBFT) $(FRAMEWORKS) $(OTHERS_FLAGS) $(SRC) -o $(NAME)
+	@echo "wolf3d: $(GREEN)Компиляция завершена$(RESET)\n"
+
+$(LIBFT_DIRECTORY):
+	@$(MAKE) -sC $(LIBFT_DIRECTORY)
+
+debug: $(LIBFT_DIRECTORY) $(SRC) $(HEADERS) $(RES)
+	@$(MAKE) -sC $(LIBFT_DIRECTORY)
+	@echo "wolf3d: $(GREEN)Компиляция исполняемого файла$(RESET)\n"
+	@$(GCC) -g $(CCFLAGS) $(INCLUDES) $(LIBRARIES_LIBFT) $(FRAMEWORKS) $(OTHERS_FLAGS) $(SRC) -o $(NAME)
+	@echo "wolf3d: $(GREEN)Компиляция завершена$(RESET)\n"
 
 clean:
-	@rm -rf $(OBJ_DIR)
-	# @make clean -C $(LIBFT_DIR)
+	@$(MAKE) -C $(LIBFT_DIRECTORY) clean
 
 fclean: clean
 	@rm -f $(NAME)
-	# @make fclean -C $(LIBFT_DIR)
+	@echo "$(NAME): $(RED)Исполняемый файл $(NAME) удален$(RESET)\n"
+	@$(MAKE) -sC $(LIBFT_DIRECTORY) fclean
+	@$(MAKE) -sC $(LIBFT_DIRECTORY) clean
 
-re: fclean all
-
-.PHONY: all clean fclean re
+re:
+	@$(MAKE) fclean
+	@$(MAKE) all

@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:57:39 by jthuy             #+#    #+#             */
-/*   Updated: 2020/12/12 15:00:38 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/12/25 20:16:25 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@
 # define HEIGHT	800
 
 # define PLAYER_ANGLE 0
+
 
 typedef struct	s_map
 {
@@ -104,66 +105,66 @@ typedef struct	s_drawer
 	
 }				t_drawer;
 
-// typedef struct	s_sprite
-// {
-// 	double		pos_x;
-// 	double		pos_y;
+typedef struct	s_sprite
+{
+	double		pos_x;
+	double		pos_y;
 	
-// 	int			main_tile;
-// 	int			tile;
+	int			main_tile;
+	int			tile;
 	
-// 	double		p_dirx;
-// 	double		p_diry;
-// 	double		p_dir;
-// 	double		dist;
-// 	int			size;
-// 	int			shift_x;
-// 	int			h_offset;
-// 	int			v_offset;
-// 	// int			cursor_x;
-// 	// int			cursor_y;
-// }				t_sprite;
+	double		p_dirx;
+	double		p_diry;
+	double		p_dir;
+	double		dist;
+	int			size;
+	int			shift_x;
+	int			h_offset;
+	int			v_offset;
+	// int			cursor_x;
+	// int			cursor_y;
+}				t_sprite;
 
-// typedef struct		s_epath
-// {
-// 	int				index;
-// 	double			crd_x;
-// 	double			crd_y;
-// 	double			normal;
-// 	struct s_epath	*next;
-// }					t_epath;
+typedef struct		s_epath
+{
+	int				index;
+	double			crd_x;
+	double			crd_y;
+	double			normal;
+	struct s_epath	*next;
+}					t_epath;
 
-// typedef struct		s_enemy
-// {
-// 	t_epath			*path;
-// 	t_epath			*start;
-// 	t_epath			*end;
+typedef struct		s_enemy
+{
+	t_epath			*path;
+	t_epath			*start;
+	t_epath			*end;
 	
-// 	t_sprite		*sprite;
-// 	// double			pos_x;
-// 	// double			pos_y;
-// 	// int				main_tile;
+	t_sprite		*sprite;
+	double			pos_x;
+	double			pos_y;
+	int				main_tile;
 	
-// 	double			normal;
-// 	char			health;
-// 	char			condition;
-// 	char			phase;
+	double			normal;
+	char			health;
+	char			condition;
+	char			phase;
 	
-// 	int				shift_tile;
-// 	double			p_div;
-// 	// int				tile;
-// 	// double			p_dir;
+	int				shift_tile;
+	double			p_div;
+	int				tile;
+	double			p_dir;
 
-// 	double			hfov;	
+	double			hfov;	
 	
-// 	// double			dist;
-// 	// int				size;
-// 	// int				shift_x;
-// 	// int				h_offset;
-// 	// int				v_offset;
+	double			dist;
+	int				size;
+	int				shift_x;
+	int				h_offset;
+	int				v_offset;
 	
-// 	struct s_enemy	*next;
-// }					t_enemy;
+	struct s_enemy	*next;
+}					t_enemy;
 
 typedef struct		s_props
 {
@@ -181,8 +182,6 @@ typedef struct		s_props
 	
 	struct s_props	*next;
 }					t_props;
-
-
 
 /*
 ** props.c
@@ -222,7 +221,8 @@ void	set_spriteparam(t_sprite *sprite, t_player *player);
 
 // void	draw_vertlenemy(t_enemy *sprite, int *pixel, int *img, double *z_buff, int cursor_x, t_player *player);
 
-void	draw_enemies(t_enemy *enemies, SDL_Surface *surface, int *img, double *z_buff);
+void	draw_enemies(t_enemy *enemies, SDL_Surface *surface, int *img, double *z_buff, t_wad *wad);
+// void	draw_enemies(t_enemy *enemies, SDL_Surface *surface, int *img, double *z_buff);
 // void	draw_enemies(t_enemy *enemies, int *pixel, int *img, double *z_buff);
 void	draw_sprites(t_sprite *sprite, SDL_Surface *surface, int *img, double *z_buff, char invers);
 // void	draw_sprites(t_sprite *sprite, int *pixel, int *img, double *z_buff, char invers);
@@ -238,7 +238,8 @@ void	print_epath(t_enemy *enemies);
 void		clear_zbuff();
 t_map		*def_map();
 t_drawer	*def_drawer();
-void	drawing(t_map *map, t_player *player, t_enemy *enemies, t_props *props, t_drawer *drawer, SDL_Surface *surface, int *img);
+void	drawing(t_map *map, t_player *player, t_enemy *enemies, t_props *props, t_drawer *drawer, SDL_Surface *surface, int *img, t_wad *wad);
+// void	drawing(t_map *map, t_player *player, t_enemy *enemies, t_props *props, t_drawer *drawer, SDL_Surface *surface, int *img);
 // void		drawing(t_map *map, t_player *player, t_enemy *enemies, t_props *props, t_drawer *drawer, int *pixel, int *img);
 // void		drawing(t_map *map, t_player *player, t_enemy *enemies, t_props *props, t_drawer *drawer, int *pixel, int *img, t_sprite **, SDL_Surface *);
 void		def_wallparams(t_player *player, t_drawer *drawer);
