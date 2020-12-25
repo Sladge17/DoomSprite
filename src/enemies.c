@@ -6,7 +6,7 @@
 /*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/16 12:57:17 by jthuy             #+#    #+#             */
-/*   Updated: 2020/12/11 20:53:28 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/12/12 19:54:41 by jthuy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -286,7 +286,10 @@ void	set_econdition(t_enemy *enemies, t_player *player)
 void	set_eshoot(t_enemy *enemies, t_player *player)
 {
 	enemies->shift_tile = enemies->sprite->main_tile + 47;
-	enemies->sprite->tile = enemies->shift_tile + enemies->phase;
+	if (enemies->phase == 1 || enemies->phase == 0 || enemies->phase == 2)
+		enemies->sprite->tile = enemies->shift_tile;
+	if (enemies->phase == 3)
+		enemies->sprite->tile = enemies->shift_tile + 1;
 	// if (fabs(enemies->hfov) < (45 / 2) * M_PI / 180 && enemies->dist < 5)
 	if (enemies->sprite->dist < 8)
 	{
@@ -295,7 +298,10 @@ void	set_eshoot(t_enemy *enemies, t_player *player)
 		if (enemies->normal < 0)
 			enemies->normal += M_PI;
 		///
-		enemies->phase ^= 1;
+		// enemies->phase ^= 1;
+		enemies->phase += 1;
+		if (enemies->phase == 4)
+			enemies->phase = 0;
 		if (enemies->phase == 0) // MAYBEE NEEED enemies->phase == 1
 			player->health -= 10;
 		enemies->condition = 0b1000;
