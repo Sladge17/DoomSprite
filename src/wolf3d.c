@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   wolf3d.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
+/*   By: bdrinkin <bdrinkin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/24 13:55:30 by jthuy             #+#    #+#             */
-/*   Updated: 2020/12/25 20:16:59 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/12/25 22:06:15 by bdrinkin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,7 @@ int		main()
 				set_enemiesparam(enemies, player);
 				set_propsparam(props, player);
 				drawing(map, player, enemies, props, drawer, surface, img, wad);
+				draw_hud(surface, wad->hud, wad->player);
 				SDL_UpdateWindowSurface(window);
 			}
 			
@@ -121,6 +122,7 @@ int		main()
 							set_pcondition(player, enemies);
 							set_econdition(enemies, player);
 				drawing(map, player, enemies, props, drawer, surface, img, wad);
+				draw_hud(surface, wad->hud, wad->player);
 				SDL_UpdateWindowSurface(window);
 
 				timer_stop(&fps);

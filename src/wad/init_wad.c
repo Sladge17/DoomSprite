@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init_wad.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
+/*   By: bdrinkin <bdrinkin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/12 14:29:58 by bdrinkin          #+#    #+#             */
-/*   Updated: 2020/12/25 18:43:08 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/12/25 22:04:17 by bdrinkin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,5 +75,13 @@ t_wad	*init_wad(char *av)
 	wad->name = def_name();
 	wad->hud = init_hud(wad);
 	wad->sprites = fill_sprites(sprt_total, wad->name, wad);
+	fill_limit(&wad->player.health, 0, 100, 100);
+	fill_limit(&wad->player.shield, 0, 0, 200);
+	fill_limit(&wad->player.ammo[0], 0, 60, 200);
+	fill_limit(&wad->player.ammo[1], 0, 10, 100);
+	fill_limit(&wad->player.ammo[2], 0, 15, 50);
+	fill_limit(&wad->player.ammo[3], 0, 11, 35);
+	wad->player.cur_gan = 0;
+
 	return (wad);
 }

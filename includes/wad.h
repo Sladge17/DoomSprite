@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   wad.h                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
+/*   By: bdrinkin <bdrinkin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/28 12:14:39 by bdrinkin          #+#    #+#             */
-/*   Updated: 2020/12/25 20:05:15 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/12/25 22:04:06 by bdrinkin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,7 @@ struct			s_wad {
 	t_wad_hud		*hud;
 	char			**name;
 	t_wad_sprite	**sprites;
+	t_wad_player	player;
 	int				buf1;
 	int				buf2;
 	uint16_t		bright;
@@ -153,5 +154,8 @@ void			wad_init_menu(t_wad *wad);
 t_wad			*init_wad(char *av);
 
 void			wad_destroy_patch(t_patch patch);
+Uint32				get_pixel(SDL_Surface *surface, int x, int y);
+uint32_t			get_pixel_sprite(t_wad_sprite *sprite, int x, int y);
+void				putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel);
 
 #endif

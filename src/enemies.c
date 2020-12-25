@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   enemies.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jthuy <jthuy@student.42.fr>                +#+  +:+       +#+        */
+/*   By: bdrinkin <bdrinkin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/16 12:57:17 by jthuy             #+#    #+#             */
-/*   Updated: 2020/12/25 20:21:07 by jthuy            ###   ########.fr       */
+/*   Updated: 2020/12/25 22:08:11 by bdrinkin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -619,22 +619,32 @@ void	set_spriteparam(t_sprite *sprite, t_player *player)
 // 	}
 // }
 
+static float		interpolate(t_limit_f x, t_limit_f c)
+{
+	float	ret;
+
+	ret = x.min + ((c.cur - c.min) / (c.max - c.min)) * ((x.max - x.min) / 1);
+	return (ret);
+}
 
 void	draw_enemies(t_enemy *enemies, SDL_Surface *surface, int *img, double *z_buff, t_wad *wad)
 {
+	float	distance;
+	
 	while (enemies)
 	{
+		distance = interpolate((t_limit_f){0.01, 0., 5.}, (t_limit_f){0., enemies->sprite->dist, 5});
 		if (enemies->p_div < 0 * M_PI / 180 &&
 			enemies->shift_tile != enemies->sprite->main_tile &&
 			enemies->shift_tile != enemies->sprite->main_tile + 4)
-			blit_sprite_scaled(wad->sprites[peh_a1], surface,
-				(t_sub_sprite){(t_pointf){enemies->sprite->pos_x, enemies->sprite->pos_y},
-				1, z_buff, peh_a1});
+			blit_sprite_scaled(wad->sprites[pig_a1], surface,
+				(t_sub_sprite){(t_pointf){enemies->sprite->shift_x, HEIGHT / 2},
+				1 / distance, z_buff, peh_a1});
 			// draw_sprites(enemies->sprite, surface, img, z_buff, 1);
 		else
-			blit_sprite_scaled(wad->sprites[peh_a1], surface,
-				(t_sub_sprite){(t_pointf){enemies->sprite->pos_x, enemies->sprite->pos_y},
-				1, z_buff, peh_a1});
+			blit_sprite_scaled(wad->sprites[pig_a1], surface,
+				(t_sub_sprite){(t_pointf){enemies->sprite->shift_x, HEIGHT / 2},
+				1 / distance, z_buff, pig_a1});
 			// draw_sprites(enemies->sprite, surface, img, z_buff, 0);
 		enemies = enemies->next;
 	}
@@ -678,7 +688,7 @@ void	draw_vertlenemy(t_sprite *sprite, int *pixel, int *img, double *z_buff, int
 		//WITHOUT ALPHA
 		if (invers)
 		{
-			if (img[(int)(64 * ((sprite->size - cursor_x - 1) / (double)sprite->size)) + 1039 * (int)(64 * (cursor_y / (double)sprite->size)) + tile_u * 65 + tile_v * 1039 * 65] != 0xffffffff &&
+			if (img[(int)(64 * ((sprite->size - cursor_x - 1) / (double)sprite->size)) + 1039 * (int)(64 * (cursor_y / (double)sprite->size)) + tile_u * 65 + tile_v * 1039 * 65] != 0xFF980088 &&
 				sprite->dist < z_buff[sprite->h_offset + cursor_x + WIDTH * (sprite->v_offset + cursor_y)])
 			{
 				pixel[sprite->h_offset + cursor_x + WIDTH * (sprite->v_offset + cursor_y)] = img[(int)(64 * ((sprite->size - cursor_x - 1) / (double)sprite->size)) + 1039 * (int)(64 * (cursor_y / (double)sprite->size)) + tile_u * 65 + tile_v * 1039 * 65];
@@ -687,7 +697,7 @@ void	draw_vertlenemy(t_sprite *sprite, int *pixel, int *img, double *z_buff, int
 		}
 		else
 		{
-			if (img[(int)(64 * (cursor_x / (double)sprite->size)) + 1039 * (int)(64 * (cursor_y / (double)sprite->size)) + tile_u * 65 + tile_v * 1039 * 65] != 0xFFffffff &&
+			if (img[(int)(64 * (cursor_x / (double)sprite->size)) + 1039 * (int)(64 * (cursor_y / (double)sprite->size)) + tile_u * 65 + tile_v * 1039 * 65] != 0xFF980088 &&
 				sprite->dist < z_buff[sprite->h_offset + cursor_x + WIDTH * (sprite->v_offset + cursor_y)])
 			{
 				pixel[sprite->h_offset + cursor_x + WIDTH * (sprite->v_offset + cursor_y)] = img[(int)(64 * (cursor_x / (double)sprite->size)) + 1039 * (int)(64 * (cursor_y / (double)sprite->size)) + tile_u * 65 + tile_v * 1039 * 65];
